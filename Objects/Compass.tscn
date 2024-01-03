@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://7d6ahlnqyw3r"]
+
+[ext_resource type="PackedScene" uid="uid://baepcmjcgsbk0" path="res://Objects/Compass.glb" id="1_ptpl6"]
+
+[node name="Compass" instance=ExtResource("1_ptpl6")]

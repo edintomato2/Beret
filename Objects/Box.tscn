@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://da143myvimsgb"]
+
+[ext_resource type="PackedScene" uid="uid://c5o8xkjxrw28u" path="res://Objects/Box.glb" id="1_yvw6e"]
+[ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://Materials/UI.tres" id="2_3wn0q"]
+
+[node name="Box" instance=ExtResource("1_yvw6e")]
+
+[node name="Box" parent="." index="0"]
+layers = 2
+surface_material_override/0 = ExtResource("2_3wn0q")
+
+[node name="AnimationPlayer" parent="." index="1"]
+autoplay = "Outer CubeAction"
+speed_scale = 4.0

@@ -1,0 +1,256 @@
+[gd_scene load_steps=19 format=3 uid="uid://d3tvbaplh3h68"]
+
+[ext_resource type="Script" path="res://Scenes/UISounds.gd" id="1_nupox"]
+[ext_resource type="Script" path="res://Scripts/EditorPos.gd" id="1_sjmg8"]
+[ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://default.tres" id="1_x573g"]
+[ext_resource type="Script" path="res://Scripts/menuFile.gd" id="2_vk4o8"]
+[ext_resource type="Script" path="res://Scripts/highlight_box.gd" id="3_gv2sg"]
+[ext_resource type="Script" path="res://Scripts/EditorInfo.gd" id="4_6agk8"]
+[ext_resource type="Script" path="res://Scripts/menuHelp.gd" id="4_hnf7k"]
+[ext_resource type="PackedScene" uid="uid://baepcmjcgsbk0" path="res://Objects/Compass.glb" id="5_mm52l"]
+[ext_resource type="PackedScene" uid="uid://lx304dkmvnqh" path="res://Scenes/LaunchBkg.tscn" id="6_kygcx"]
+[ext_resource type="Script" path="res://Scripts/Compass.gd" id="6_xoexa"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5nyl"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ip15m"]
+_surfaces = [{
+"aabb": AABB(-0.55, -0.55, -0.55, 1.1, 1.1, 1.10001),
+"format": 34896613377,
+"index_count": 144,
+"index_data": PackedByteArray(2, 0, 18, 0, 19, 0, 2, 0, 0, 0, 18, 0, 19, 0, 6, 0, 2, 0, 4, 0, 18, 0, 0, 0, 4, 0, 22, 0, 18, 0, 23, 0, 6, 0, 19, 0, 4, 0, 23, 0, 22, 0, 6, 0, 23, 0, 4, 0, 12, 0, 14, 0, 13, 0, 12, 0, 15, 0, 14, 0, 13, 0, 4, 0, 12, 0, 6, 0, 14, 0, 15, 0, 6, 0, 7, 0, 14, 0, 5, 0, 4, 0, 13, 0, 6, 0, 5, 0, 7, 0, 4, 0, 5, 0, 6, 0, 12, 0, 21, 0, 15, 0, 12, 0, 20, 0, 21, 0, 17, 0, 15, 0, 21, 0, 8, 0, 20, 0, 12, 0, 8, 0, 16, 0, 20, 0, 17, 0, 10, 0, 15, 0, 8, 0, 17, 0, 16, 0, 10, 0, 17, 0, 8, 0, 1, 0, 2, 0, 3, 0, 1, 0, 0, 0, 2, 0, 9, 0, 0, 0, 1, 0, 10, 0, 3, 0, 2, 0, 10, 0, 11, 0, 3, 0, 9, 0, 8, 0, 0, 0, 10, 0, 9, 0, 11, 0, 8, 0, 9, 0, 10, 0, 28, 0, 8, 0, 12, 0, 0, 0, 24, 0, 4, 0, 0, 0, 25, 0, 24, 0, 29, 0, 8, 0, 28, 0, 0, 0, 29, 0, 25, 0, 8, 0, 29, 0, 0, 0, 4, 0, 28, 0, 12, 0, 4, 0, 24, 0, 28, 0, 31, 0, 15, 0, 10, 0, 6, 0, 27, 0, 2, 0, 6, 0, 26, 0, 27, 0, 30, 0, 15, 0, 31, 0, 6, 0, 30, 0, 26, 0, 15, 0, 30, 0, 6, 0, 27, 0, 10, 0, 2, 0, 27, 0, 31, 0, 10, 0),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 32,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 0, 0, 69, 23, 69, 23, 254, 255, 0, 0, 0, 0, 255, 255, 254, 255, 0, 0, 69, 23, 185, 232, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 23, 69, 23, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 69, 23, 185, 232, 0, 0, 0, 0, 255, 255, 0, 0, 254, 255, 0, 0, 185, 232, 69, 23, 254, 255, 0, 0, 255, 255, 255, 255, 254, 255, 0, 0, 185, 232, 185, 232, 254, 255, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 185, 232, 69, 23, 0, 0, 0, 0, 185, 232, 185, 232, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 69, 23, 184, 232, 0, 0, 255, 255, 185, 232, 184, 232, 0, 0, 0, 0, 69, 23, 184, 232, 0, 0, 0, 0, 185, 232, 184, 232, 0, 0, 255, 255, 69, 23, 69, 23, 0, 0, 255, 255, 185, 232, 69, 23, 0, 0, 0, 0, 69, 23, 69, 23, 0, 0, 0, 0, 185, 232, 69, 23, 0, 0, 69, 23, 0, 0, 69, 23, 0, 0, 69, 23, 0, 0, 184, 232, 0, 0, 69, 23, 255, 255, 69, 23, 0, 0, 69, 23, 255, 255, 184, 232, 0, 0, 185, 232, 0, 0, 69, 23, 0, 0, 185, 232, 0, 0, 184, 232, 0, 0, 185, 232, 255, 255, 69, 23, 0, 0, 185, 232, 255, 255, 184, 232, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_w8xsl"]
+resource_name = "Box_Cube_001"
+_surfaces = [{
+"aabb": AABB(-0.55, -0.55, -0.55, 1.1, 1.1, 1.10001),
+"attribute_data": PackedByteArray(255, 95, 255, 255, 255, 31, 255, 63, 255, 95, 0, 0, 209, 101, 209, 5, 255, 159, 255, 255, 255, 159, 0, 0, 255, 223, 255, 63, 45, 154, 209, 5, 255, 95, 255, 191, 255, 31, 255, 127, 255, 95, 255, 191, 209, 101, 45, 186, 255, 159, 255, 191, 255, 159, 255, 191, 255, 223, 255, 127, 45, 154, 45, 186, 255, 95, 255, 63, 255, 95, 255, 63, 255, 95, 255, 63, 209, 101, 46, 58, 255, 159, 255, 63, 255, 159, 255, 63, 255, 159, 255, 63, 45, 154, 46, 58, 255, 95, 255, 127, 255, 95, 255, 127, 255, 95, 255, 127, 209, 101, 208, 133, 45, 154, 208, 133, 255, 159, 255, 127, 255, 159, 255, 127, 255, 159, 255, 127, 209, 101, 209, 69, 45, 154, 209, 69, 209, 101, 45, 250, 45, 154, 45, 250, 209, 101, 46, 122, 45, 154, 46, 122, 209, 101, 208, 197, 45, 154, 208, 197, 209, 37, 46, 122, 209, 37, 209, 69, 45, 218, 46, 122, 45, 218, 209, 69, 46, 90, 46, 122, 46, 90, 209, 69, 208, 165, 46, 122, 208, 165, 209, 69),
+"format": 34896613399,
+"index_count": 144,
+"index_data": PackedByteArray(4, 0, 34, 0, 35, 0, 4, 0, 0, 0, 34, 0, 35, 0, 12, 0, 4, 0, 8, 0, 34, 0, 0, 0, 8, 0, 38, 0, 34, 0, 39, 0, 12, 0, 35, 0, 8, 0, 39, 0, 38, 0, 12, 0, 39, 0, 8, 0, 25, 0, 28, 0, 27, 0, 25, 0, 29, 0, 28, 0, 27, 0, 10, 0, 25, 0, 13, 0, 28, 0, 29, 0, 13, 0, 15, 0, 28, 0, 11, 0, 10, 0, 27, 0, 13, 0, 11, 0, 15, 0, 10, 0, 11, 0, 13, 0, 26, 0, 37, 0, 31, 0, 26, 0, 36, 0, 37, 0, 33, 0, 31, 0, 37, 0, 18, 0, 36, 0, 26, 0, 18, 0, 32, 0, 36, 0, 33, 0, 22, 0, 31, 0, 18, 0, 33, 0, 32, 0, 22, 0, 33, 0, 18, 0, 3, 0, 5, 0, 7, 0, 3, 0, 2, 0, 5, 0, 19, 0, 2, 0, 3, 0, 20, 0, 7, 0, 5, 0, 20, 0, 23, 0, 7, 0, 19, 0, 17, 0, 2, 0, 20, 0, 19, 0, 23, 0, 17, 0, 19, 0, 20, 0, 44, 0, 16, 0, 24, 0, 1, 0, 40, 0, 9, 0, 1, 0, 41, 0, 40, 0, 45, 0, 16, 0, 44, 0, 1, 0, 45, 0, 41, 0, 16, 0, 45, 0, 1, 0, 9, 0, 44, 0, 24, 0, 9, 0, 40, 0, 44, 0, 47, 0, 30, 0, 21, 0, 14, 0, 43, 0, 6, 0, 14, 0, 42, 0, 43, 0, 46, 0, 30, 0, 47, 0, 14, 0, 46, 0, 42, 0, 30, 0, 46, 0, 14, 0, 43, 0, 21, 0, 6, 0, 43, 0, 47, 0, 21, 0),
+"material": SubResource("StandardMaterial3D_i5nyl"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 48,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 84, 213, 0, 0, 0, 0, 254, 255, 255, 191, 0, 0, 0, 0, 254, 255, 255, 191, 69, 23, 69, 23, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 84, 213, 0, 0, 255, 255, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 255, 255, 69, 23, 185, 232, 254, 255, 255, 191, 0, 0, 0, 0, 0, 0, 84, 213, 0, 0, 0, 0, 0, 0, 255, 191, 0, 0, 0, 0, 0, 0, 255, 255, 69, 23, 69, 23, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 84, 213, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 69, 23, 185, 232, 0, 0, 255, 255, 255, 255, 0, 0, 254, 255, 255, 191, 255, 255, 0, 0, 254, 255, 255, 191, 255, 255, 0, 0, 254, 255, 84, 213, 185, 232, 69, 23, 254, 255, 255, 191, 255, 255, 255, 255, 254, 255, 255, 191, 255, 255, 255, 255, 254, 255, 255, 255, 255, 255, 255, 255, 254, 255, 84, 213, 185, 232, 185, 232, 254, 255, 255, 191, 255, 255, 0, 0, 0, 0, 255, 191, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 84, 213, 185, 232, 69, 23, 0, 0, 255, 255, 185, 232, 185, 232, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 84, 213, 255, 255, 69, 23, 184, 232, 84, 213, 255, 255, 185, 232, 184, 232, 84, 213, 0, 0, 69, 23, 184, 232, 84, 213, 0, 0, 185, 232, 184, 232, 84, 213, 255, 255, 69, 23, 69, 23, 84, 213, 255, 255, 185, 232, 69, 23, 84, 213, 0, 0, 69, 23, 69, 23, 84, 213, 0, 0, 185, 232, 69, 23, 84, 213, 69, 23, 0, 0, 69, 23, 255, 191, 69, 23, 0, 0, 184, 232, 255, 191, 69, 23, 255, 255, 69, 23, 255, 255, 69, 23, 255, 255, 184, 232, 255, 255, 185, 232, 0, 0, 69, 23, 255, 191, 185, 232, 0, 0, 184, 232, 255, 191, 185, 232, 255, 255, 69, 23, 255, 255, 185, 232, 255, 255, 184, 232, 255, 255, 84, 213, 84, 213, 0, 0, 255, 127, 255, 255, 255, 255, 255, 255, 255, 255, 84, 213, 84, 213, 255, 255, 255, 255, 255, 127, 255, 191, 255, 255, 255, 255, 84, 213, 84, 213, 0, 0, 255, 127, 255, 191, 255, 191, 255, 191, 255, 191, 84, 213, 84, 213, 255, 191, 255, 191, 255, 127, 255, 191, 255, 191, 255, 191, 0, 0, 255, 127, 255, 255, 255, 255, 170, 42, 170, 42, 255, 255, 255, 255, 255, 255, 255, 255, 255, 127, 255, 191, 170, 42, 170, 42, 255, 255, 255, 255, 0, 0, 255, 127, 255, 191, 255, 191, 170, 42, 170, 42, 255, 191, 255, 191, 255, 191, 255, 191, 255, 191, 255, 191, 255, 127, 255, 191, 170, 42, 170, 42, 170, 42, 170, 42, 170, 42, 170, 42, 84, 213, 84, 213, 84, 213, 84, 213, 170, 42, 170, 42, 170, 42, 170, 42, 84, 213, 84, 213, 84, 213, 84, 213, 0, 0, 255, 127, 0, 0, 255, 127, 255, 127, 255, 191, 255, 127, 255, 191, 0, 0, 255, 127, 0, 0, 255, 127, 255, 127, 255, 191, 255, 127, 255, 191)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ip15m")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stfsq"]
+
+[sub_resource type="Animation" id="Animation_e8te5"]
+resource_name = "Outer CubeAction"
+length = 4.16667
+loop_mode = 2
+tracks/0/type = "scale_3d"
+tracks/0/imported = true
+tracks/0/enabled = true
+tracks/0/path = NodePath("Box")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1, 1, 1, 0.2, 1, 0.99913, 0.99913, 0.99913, 0.266667, 1, 0.998267, 0.998267, 0.998267, 0.3, 1, 0.997736, 0.997736, 0.997736, 0.333333, 1, 0.997142, 0.997142, 0.997142, 0.366667, 1, 0.996463, 0.996463, 0.996463, 0.4, 1, 0.995722, 0.995722, 0.995722, 0.433333, 1, 0.994921, 0.994921, 0.994921, 0.466667, 1, 0.994061, 0.994061, 0.994061, 0.5, 1, 0.993141, 0.993141, 0.993141, 0.533333, 1, 0.992146, 0.992146, 0.992146, 0.566667, 1, 0.991095, 0.991095, 0.991095, 0.6, 1, 0.989989, 0.989989, 0.989989, 0.633333, 1, 0.988829, 0.988829, 0.988829, 0.666667, 1, 0.987617, 0.987617, 0.987617, 0.7, 1, 0.986337, 0.986337, 0.986337, 0.733333, 1, 0.985007, 0.985007, 0.985007, 0.766667, 1, 0.983628, 0.983628, 0.983628, 0.8, 1, 0.982201, 0.982201, 0.982201, 0.833333, 1, 0.980728, 0.980728, 0.980728, 0.866667, 1, 0.979194, 0.979194, 0.979194, 0.9, 1, 0.977617, 0.977617, 0.977617, 0.933333, 1, 0.975996, 0.975996, 0.975996, 0.966667, 1, 0.974334, 0.974334, 0.974334, 1, 1, 0.972631, 0.972631, 0.972631, 1.03333, 1, 0.970876, 0.970876, 0.970876, 1.06667, 1, 0.969083, 0.969083, 0.969083, 1.1, 1, 0.967253, 0.967253, 0.967253, 1.13333, 1, 0.965387, 0.965387, 0.965387, 1.16667, 1, 0.963486, 0.963486, 0.963486, 1.2, 1, 0.961541, 0.961541, 0.961541, 1.23333, 1, 0.959564, 0.959564, 0.959564, 1.26667, 1, 0.957555, 0.957555, 0.957555, 1.3, 1, 0.955517, 0.955517, 0.955517, 1.33333, 1, 0.95345, 0.95345, 0.95345, 1.36667, 1, 0.951347, 0.951347, 0.951347, 1.4, 1, 0.949217, 0.949217, 0.949217, 1.43333, 1, 0.947063, 0.947063, 0.947063, 1.46667, 1, 0.944884, 0.944884, 0.944884, 1.5, 1, 0.942683, 0.942683, 0.942683, 1.56667, 1, 0.938202, 0.938202, 0.938202, 1.63333, 1, 0.933645, 0.933645, 0.933645, 1.7, 1, 0.929016, 0.929016, 0.929016, 1.83333, 1, 0.919584, 0.919584, 0.919584, 2.36667, 1, 0.881013, 0.881013, 0.881013, 2.46667, 1, 0.87391, 0.87391, 0.87391, 2.53333, 1, 0.86924, 0.86924, 0.86924, 2.6, 1, 0.864638, 0.864638, 0.864638, 2.66667, 1, 0.860105, 0.860105, 0.860105, 2.73333, 1, 0.855666, 0.855666, 0.855666, 2.76667, 1, 0.85348, 0.85348, 0.85348, 2.8, 1, 0.851317, 0.851317, 0.851317, 2.83333, 1, 0.849179, 0.849179, 0.849179, 2.86667, 1, 0.847075, 0.847075, 0.847075, 2.9, 1, 0.844999, 0.844999, 0.844999, 2.93333, 1, 0.842952, 0.842952, 0.842952, 2.96667, 1, 0.840933, 0.840933, 0.840933, 3, 1, 0.838946, 0.838946, 0.838946, 3.03333, 1, 0.837, 0.837, 0.837, 3.06667, 1, 0.835088, 0.835088, 0.835088, 3.1, 1, 0.833211, 0.833211, 0.833211, 3.13333, 1, 0.831369, 0.831369, 0.831369, 3.16667, 1, 0.829563, 0.829563, 0.829563, 3.2, 1, 0.827807, 0.827807, 0.827807, 3.23333, 1, 0.826091, 0.826091, 0.826091, 3.26667, 1, 0.824416, 0.824416, 0.824416, 3.3, 1, 0.822781, 0.822781, 0.822781, 3.33333, 1, 0.821189, 0.821189, 0.821189, 3.36667, 1, 0.819656, 0.819656, 0.819656, 3.4, 1, 0.818167, 0.818167, 0.818167, 3.43333, 1, 0.816725, 0.816725, 0.816725, 3.46667, 1, 0.81533, 0.81533, 0.81533, 3.5, 1, 0.813983, 0.813983, 0.813983, 3.53333, 1, 0.812703, 0.812703, 0.812703, 3.56667, 1, 0.811474, 0.811474, 0.811474, 3.6, 1, 0.810297, 0.810297, 0.810297, 3.63333, 1, 0.809173, 0.809173, 0.809173, 3.66667, 1, 0.808103, 0.808103, 0.808103, 3.7, 1, 0.807108, 0.807108, 0.807108, 3.73333, 1, 0.806169, 0.806169, 0.806169, 3.76667, 1, 0.805289, 0.805289, 0.805289, 3.8, 1, 0.804468, 0.804468, 0.804468, 3.83333, 1, 0.803707, 0.803707, 0.803707, 3.86667, 1, 0.803028, 0.803028, 0.803028, 3.9, 1, 0.802412, 0.802412, 0.802412, 3.96667, 1, 0.801374, 0.801374, 0.801374, 4.03333, 1, 0.800623, 0.800623, 0.800623, 4.16667, 1, 0.8, 0.8, 0.8)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_oxt2b"]
+_data = {
+"Outer CubeAction": SubResource("Animation_e8te5")
+}
+
+[sub_resource type="InputEventKey" id="InputEventKey_kofio"]
+device = -1
+alt_pressed = true
+keycode = 70
+
+[sub_resource type="Shortcut" id="Shortcut_aqtus"]
+events = [SubResource("InputEventKey_kofio")]
+
+[node name="Editor UI" type="Node3D"]
+
+[node name="Cursor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 10, 10)
+script = ExtResource("1_sjmg8")
+movementSpeed = 1.0
+
+[node name="Camera" type="Camera3D" parent="Cursor"]
+transform = Transform3D(-0.612372, 0.5, -0.612373, -0.0473672, 0.75, 0.65974, 0.789149, 0.433013, -0.435596, -10, 10, -10)
+current = true
+size = 10.0
+
+[node name="Box" type="MeshInstance3D" parent="Cursor"]
+transform = Transform3D(0.806501, 0, 0, 0, 0.806501, 0, 0, 0, 0.806501, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_w8xsl")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_stfsq")
+script = ExtResource("3_gv2sg")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Cursor/Box"]
+root_node = NodePath("../..")
+libraries = {
+"": SubResource("AnimationLibrary_oxt2b")
+}
+autoplay = "Outer CubeAction"
+speed_scale = 4.0
+
+[node name="UI" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_nupox")
+
+[node name="Titlebar" type="HBoxContainer" parent="UI"]
+layout_mode = 2
+theme = ExtResource("1_x573g")
+
+[node name="File" type="MenuButton" parent="UI/Titlebar"]
+layout_mode = 2
+shortcut = SubResource("Shortcut_aqtus")
+text = "File"
+flat = false
+item_count = 5
+popup/item_0/text = "Load Root"
+popup/item_0/id = 0
+popup/item_1/text = "Save Level"
+popup/item_1/id = 1
+popup/item_1/disabled = true
+popup/item_2/text = "Options"
+popup/item_2/id = 2
+popup/item_3/text = ""
+popup/item_3/id = 3
+popup/item_3/separator = true
+popup/item_4/text = "Quit"
+popup/item_4/id = 4
+script = ExtResource("2_vk4o8")
+
+[node name="LoadDialog" type="FileDialog" parent="UI/Titlebar/File"]
+title = "Open a Directory"
+initial_position = 1
+size = Vector2i(454, 400)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+
+[node name="Edit" type="MenuButton" parent="UI/Titlebar"]
+layout_mode = 2
+text = "Edit"
+flat = false
+
+[node name="View" type="MenuButton" parent="UI/Titlebar"]
+layout_mode = 2
+text = "View"
+flat = false
+
+[node name="Help" type="MenuButton" parent="UI/Titlebar"]
+layout_mode = 2
+text = "Help"
+flat = false
+item_count = 2
+popup/item_0/text = "FEZModding Wiki"
+popup/item_0/id = 0
+popup/item_1/text = "About"
+popup/item_1/id = 1
+script = ExtResource("4_hnf7k")
+
+[node name="About" type="Window" parent="UI/Titlebar/Help"]
+title = "About Beret"
+initial_position = 1
+visible = false
+keep_title_visible = true
+
+[node name="Label" type="Label" parent="UI/Titlebar/Help/About"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Beret - A level editor and viewer for FEZ.
+edintomato, 2023
+ "
+horizontal_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="UI/Titlebar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+color = Color(0, 0, 0, 1)
+
+[node name="Sidebar" type="HBoxContainer" parent="UI"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 15.0
+
+[node name="Spacer" type="Container" parent="UI/Sidebar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 5.3
+
+[node name="SidebarVertical" type="VBoxContainer" parent="UI/Sidebar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="EditorInfo" type="Label" parent="UI/Sidebar/SidebarVertical"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 3
+text = "Loading!"
+script = ExtResource("4_6agk8")
+
+[node name="CompassView" type="SubViewportContainer" parent="UI/Sidebar/SidebarVertical"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+stretch = true
+
+[node name="Compass" type="SubViewport" parent="UI/Sidebar/SidebarVertical/CompassView"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(203, 214)
+render_target_update_mode = 4
+
+[node name="CompassPos" type="Node3D" parent="UI/Sidebar/SidebarVertical/CompassView/Compass"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1000, -1000, 1000)
+
+[node name="CompassCam" type="Camera3D" parent="UI/Sidebar/SidebarVertical/CompassView/Compass/CompassPos"]
+transform = Transform3D(0.707107, -0.380968, 0.595704, 0, 0.842453, 0.538771, -0.707107, -0.380968, 0.595704, 6.79999, 6.79999, 6.79999)
+projection = 1
+size = 10.0
+far = 20.0
+
+[node name="Compass" parent="UI/Sidebar/SidebarVertical/CompassView/Compass/CompassPos" instance=ExtResource("5_mm52l")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+script = ExtResource("6_xoexa")
+
+[node name="Toolbar" type="HBoxContainer" parent="UI"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("1_x573g")
+
+[node name="Palette" type="ItemList" parent="UI/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SFX" type="AudioStreamPlayer" parent="UI"]
+
+[node name="Level" parent="." instance=ExtResource("6_kygcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 10, 10)
+visible = false
+
+[connection signal="hasMoved" from="Cursor" to="UI" method="_on_position_has_moved"]
+[connection signal="hasMoved" from="Cursor" to="UI/Sidebar/SidebarVertical/EditorInfo" method="_on_position_has_moved"]
+[connection signal="canceled" from="UI/Titlebar/File/LoadDialog" to="UI/Titlebar/File" method="_on_load_dialog_canceled"]
+[connection signal="confirmed" from="UI/Titlebar/File/LoadDialog" to="UI/Titlebar/File" method="_on_load_dialog_confirmed"]
+[connection signal="dir_selected" from="UI/Titlebar/File/LoadDialog" to="UI/Titlebar/File" method="_on_load_dialog_dir_selected"]
+[connection signal="close_requested" from="UI/Titlebar/Help/About" to="UI/Titlebar/Help" method="_on_about_close_requested"]

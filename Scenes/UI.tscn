@@ -1,0 +1,174 @@
+[gd_scene load_steps=10 format=3 uid="uid://cdwpy8hm6qseq"]
+
+[ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_yufu8"]
+[ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://default.tres" id="2_i42am"]
+[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuFile.gd" id="3_mnd5b"]
+[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="4_5u3hn"]
+[ext_resource type="PackedScene" uid="uid://baepcmjcgsbk0" path="res://Objects/Compass.glb" id="6_exilt"]
+[ext_resource type="Script" path="res://Scripts/UI/Compass.gd" id="7_lgwbb"]
+[ext_resource type="Script" path="res://Scripts/Importer/Importer.gd" id="7_uqe0w"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_kofio"]
+device = -1
+alt_pressed = true
+keycode = 70
+
+[sub_resource type="Shortcut" id="Shortcut_aqtus"]
+events = [SubResource("InputEventKey_kofio")]
+
+[node name="UI" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_yufu8")
+
+[node name="Titlebar" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme = ExtResource("2_i42am")
+
+[node name="File" type="MenuButton" parent="Titlebar"]
+layout_mode = 2
+shortcut = SubResource("Shortcut_aqtus")
+text = "File"
+flat = false
+item_count = 5
+popup/item_0/text = "Load Root"
+popup/item_0/id = 0
+popup/item_1/text = "Save Level"
+popup/item_1/id = 1
+popup/item_1/disabled = true
+popup/item_2/text = "Options"
+popup/item_2/id = 2
+popup/item_3/text = ""
+popup/item_3/id = 3
+popup/item_3/separator = true
+popup/item_4/text = "Quit"
+popup/item_4/id = 4
+script = ExtResource("3_mnd5b")
+
+[node name="LoadDialog" type="FileDialog" parent="Titlebar/File"]
+title = "Open a Directory"
+initial_position = 1
+size = Vector2i(454, 400)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+
+[node name="Edit" type="MenuButton" parent="Titlebar"]
+layout_mode = 2
+text = "Edit"
+flat = false
+
+[node name="View" type="MenuButton" parent="Titlebar"]
+layout_mode = 2
+text = "View"
+flat = false
+
+[node name="Help" type="MenuButton" parent="Titlebar"]
+layout_mode = 2
+text = "Help"
+flat = false
+item_count = 2
+popup/item_0/text = "FEZModding Wiki"
+popup/item_0/id = 0
+popup/item_1/text = "About"
+popup/item_1/id = 1
+script = ExtResource("4_5u3hn")
+
+[node name="About" type="Window" parent="Titlebar/Help"]
+title = "About Beret"
+initial_position = 1
+visible = false
+keep_title_visible = true
+
+[node name="Label" type="Label" parent="Titlebar/Help/About"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Beret - A level editor and viewer for FEZ.
+edintomato, 2023
+ "
+horizontal_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="Titlebar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+color = Color(0, 0, 0, 1)
+
+[node name="Sidebar" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 15.0
+
+[node name="Spacer" type="Container" parent="Sidebar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 5.3
+
+[node name="SidebarVertical" type="VBoxContainer" parent="Sidebar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="EditorInfo" type="Label" parent="Sidebar/SidebarVertical"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 3
+text = "Loading!"
+
+[node name="CompassView" type="SubViewportContainer" parent="Sidebar/SidebarVertical"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+stretch = true
+
+[node name="Compass" type="SubViewport" parent="Sidebar/SidebarVertical/CompassView"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(203, 214)
+render_target_update_mode = 4
+
+[node name="Compass" parent="Sidebar/SidebarVertical/CompassView/Compass" instance=ExtResource("6_exilt")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+script = ExtResource("7_lgwbb")
+
+[node name="CompPivot" type="Node3D" parent="Sidebar/SidebarVertical/CompassView/Compass"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
+
+[node name="CompassCam" type="Camera3D" parent="Sidebar/SidebarVertical/CompassView/Compass/CompPivot"]
+transform = Transform3D(0.707107, -0.380969, 0.595704, 0, 0.842453, 0.538771, -0.707107, -0.380969, 0.595704, 6.79999, 6.79999, 6.79999)
+cull_mask = 1
+projection = 1
+size = 10.0
+far = 20.0
+
+[node name="Toolbar" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("2_i42am")
+
+[node name="TextureRect" type="TextureRect" parent="Toolbar"]
+layout_mode = 2
+
+[node name="Palette" type="ItemList" parent="Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SFX" type="AudioStreamPlayer" parent="."]
+
+[node name="Loader" type="Node3D" parent="."]
+script = ExtResource("7_uqe0w")
+
+[connection signal="canceled" from="Titlebar/File/LoadDialog" to="." method="_on_load_dialog_canceled"]
+[connection signal="confirmed" from="Titlebar/File/LoadDialog" to="." method="_on_load_dialog_confirmed"]
+[connection signal="dir_selected" from="Titlebar/File/LoadDialog" to="Loader" method="_on_load_dialog_dir_selected"]
+[connection signal="close_requested" from="Titlebar/Help/About" to="Titlebar/Help" method="_on_about_close_requested"]

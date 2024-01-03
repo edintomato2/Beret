@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://q6hiwea1m8ok"]
+
+[ext_resource type="PackedScene" uid="uid://djsig0kkd1ved" path="res://Scenes/Cursor.tscn" id="1_qhvts"]
+[ext_resource type="PackedScene" uid="uid://cdwpy8hm6qseq" path="res://Scenes/UI.tscn" id="2_7lqbu"]
+[ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://Materials/DefaultEnv.tres" id="3_tf75n"]
+
+[node name="Main" type="Node"]
+
+[node name="UI" parent="." instance=ExtResource("2_7lqbu")]
+
+[node name="Cursor" parent="." instance=ExtResource("1_qhvts")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("3_tf75n")
+
+[connection signal="hasMoved" from="Cursor" to="UI" method="_on_cursor_has_moved"]
