@@ -35,6 +35,8 @@ func _on_cursor_has_moved(keyPress): # Sounds for movement, and rotation for Axi
 			_sfx.stream = soundLeft; _sfx.play()
 		"ui_rt", "ui_zoom_in", "ui_2d_enter":
 			_sfx.stream = soundRight; _sfx.play()
+		"fail":
+			_sfx.stream = soundCancel; _sfx.play()
 
 func _on_load_dialog_canceled():
 	_sfx.stream = soundCancel; _sfx.play()
