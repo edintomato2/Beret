@@ -23,8 +23,15 @@ func tweenToPos(obj: Object, property: NodePath, direction: Variant, action, spe
 	await tween.finished
 	allowMove = true
 	pass
-	
-	
+
+
+func failMove(): # call a fail sound when a movement fails
+	allowMove = false
+	emit_signal("hasMoved", "fail")
+	await get_tree().create_timer(.1).timeout # no spam noise
+	allowMove = true
+	pass
+
 func _ready():
 	emit_signal("hasMoved", "ready") # probably don't need this?
 	pass
@@ -59,11 +66,17 @@ func _input(_event):
 			
 			tweenToPos(localCam, "position", newCamPos, "N/A", Settings.animationSpeed)
 			
-		if Input.is_action_just_released("ui_zoom_in", true):
-			tweenToPos(localCam, "position", localCam.position + Settings.zoomSpeed, "ui_zoom_in", cursorSpeed)
+		if Input.is_action_just_released("ui_zoom_in", true): # Don't want the camera zooming into the cursor or even behind it
+			var movePosition = localCam.position + Settings.zoomSpeed
+			movePosition = round(movePosition) # rounding due to weird decimal stuff
+			if movePosition == position or movePosition > position:
+				failMove()
+			else:
+				tweenToPos(localCam, "position", localCam.position + Settings.zoomSpeed, "ui_zoom_in", cursorSpeed)
 			
-		if Input.is_action_just_released("ui_zoom_out", true):
+		if Input.is_action_just_released("ui_zoom_out", true): # zoom out is fine from zoom bug
 			tweenToPos(localCam, "position", localCam.position - Settings.zoomSpeed, "ui_zoom_out", cursorSpeed)
+
 
 ### Cursor Movement. There must be a better way.
 		if Input.is_action_pressed("ui_up_layer", true):
