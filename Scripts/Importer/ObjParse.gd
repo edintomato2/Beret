@@ -172,8 +172,8 @@ static func _create_obj(obj: String, mats: Dictionary) -> Mesh:
 				# UV
 				var n_uv: Vector2 = Vector2(parts[1].to_float(), 1 - parts[2].to_float())
 				uvs.append(n_uv)
-			"usemtl":
-				# Material group
+			"o":
+				# Surface group
 				count_mtl += 1
 				mat_name = parts[1].strip_edges()
 				if (!faces.has(mat_name)):

@@ -8,8 +8,8 @@ script = ExtResource("1_gsw3j")
 
 [node name="Box" parent="." instance=ExtResource("2_raobt")]
 
-[node name="Camera" type="Camera3D" parent="."]
-transform = Transform3D(-0.612372, 0.5, -0.612373, -0.0473672, 0.75, 0.65974, 0.789149, 0.433013, -0.435596, -10, 10, -10)
+[node name="Camera" type="Camera3D" parent="Box"]
+transform = Transform3D(-0.612372, 0.5, -0.612373, -0.0473672, 0.75, 0.65974, 0.789149, 0.433013, -0.435595, -10, 10, -10)
 cull_mask = 1048574
 current = true
 size = 10.0

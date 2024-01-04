@@ -1,14 +1,15 @@
 extends Node3D
 
-var allowMove = true
-var mode2D = false
-
-@onready var localCam = $"Camera"
+@onready var localCam = $"Box/Camera"
+@onready var cursorBox = $"Box"
 
 signal hasMoved(keyPress)
 
 var oldCamPos
 var newCamPos
+
+var allowMove = true
+var mode2D = false
 
 var cursorSpeed = Settings.animationSpeed * 0.5
 

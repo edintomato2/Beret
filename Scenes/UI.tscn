@@ -5,8 +5,8 @@
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuFile.gd" id="3_mnd5b"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="4_5u3hn"]
 [ext_resource type="PackedScene" uid="uid://baepcmjcgsbk0" path="res://Objects/Compass.glb" id="6_exilt"]
+[ext_resource type="Script" path="res://Scripts/Importer/FEZImporter.gd" id="7_8t0yp"]
 [ext_resource type="Script" path="res://Scripts/UI/Compass.gd" id="7_lgwbb"]
-[ext_resource type="Script" path="res://Scripts/Importer/Importer.gd" id="7_uqe0w"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kofio"]
 device = -1
@@ -57,6 +57,7 @@ size = Vector2i(454, 400)
 ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
+filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
 
 [node name="Edit" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
@@ -166,7 +167,7 @@ size_flags_horizontal = 3
 [node name="SFX" type="AudioStreamPlayer" parent="."]
 
 [node name="Loader" type="Node3D" parent="."]
-script = ExtResource("7_uqe0w")
+script = ExtResource("7_8t0yp")
 
 [connection signal="canceled" from="Titlebar/File/LoadDialog" to="." method="_on_load_dialog_canceled"]
 [connection signal="confirmed" from="Titlebar/File/LoadDialog" to="." method="_on_load_dialog_confirmed"]
