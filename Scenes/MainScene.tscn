@@ -9,6 +9,7 @@
 [node name="UI" parent="." instance=ExtResource("2_7lqbu")]
 
 [node name="Cursor" parent="." instance=ExtResource("1_qhvts")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 59, 20)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_tf75n")

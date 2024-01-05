@@ -43,7 +43,7 @@ func _process(_delta):
 func _input(_event):
 	if allowMove: # Movement control. Why does this have to be a bunch of if statements?
 		var forward = transform.basis.z; var right = -transform.basis.x
-		var moveTo = Vector3.ZERO # Prevent cursor from going below (0, 0, 0)
+		var _moveTo = Vector3.ZERO # Prevent cursor from going below (0, 0, 0)
 
 ### Camera Movement
 		if Input.is_action_pressed("ui_lt", true):
