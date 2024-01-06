@@ -1,10 +1,18 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://5wxvr808qkyw"]
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://5wxvr808qkyw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mceqj"]
 content_margin_left = 6.0
 content_margin_right = 6.0
 bg_color = Color(0, 0, 0, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7tf7i"]
+bg_color = Color(0, 0, 0, 0.196078)
+border_width_left = 3
+border_width_top = 3
+border_width_bottom = 3
+border_color = Color(0, 0, 0, 1)
+
 [resource]
 HBoxContainer/constants/separation = 0
 MenuButton/styles/normal = SubResource("StyleBoxFlat_mceqj")
+RichTextLabel/styles/normal = SubResource("StyleBoxFlat_7tf7i")

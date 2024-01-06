@@ -9,9 +9,11 @@ var soundRight = preload("res://Sounds/rotateright.wav")
 
 var posFormat = "(%d, %d, %d) (x, y, z)" # Position formatting.
 
-@onready var _infoLabel: Label = $"Sidebar/SidebarVertical/EditorInfo"
+@onready var _infoLabel: Label = $"Sidebar/SidebarVertical/Position"
 @onready var _cursor: Node3D = $"../Cursor"
 @onready var _sfx: AudioStreamPlayer = $"SFX"
+
+signal cursorPos(newPos: Vector3) # A relay from Loader.
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST: # Handle closing the window.
@@ -37,9 +39,9 @@ func _on_cursor_has_moved(keyPress): # Sounds for movement, and rotation for Axi
 			_sfx.stream = soundRight; _sfx.play()
 		"fail":
 			_sfx.stream = soundCancel; _sfx.play()
+		"loaded":
+			_sfx.stream = soundOK;     _sfx.play()
 
-func _on_load_dialog_canceled():
-	_sfx.stream = soundCancel; _sfx.play()
-
-func _on_load_dialog_confirmed():
-	_sfx.stream = soundOK;     _sfx.play()
+func _on_loader_new_cur_por(newPos):
+	emit_signal("cursorPos", newPos)
+	pass # Replace with function body.

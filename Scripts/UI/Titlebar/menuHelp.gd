@@ -10,12 +10,13 @@ func _ready():
 	self.get_popup().id_pressed.connect(_on_help_menu_pressed)
 
 func _on_help_menu_pressed(id: int):
+	sfx.stream = soundOK; sfx.play()
 	match id:
 		0:
-			sfx.stream = soundOK; sfx.play()
 			OS.shell_open("https://github.com/FEZModding/FEZRepacker/wiki")
 		1:
-			sfx.stream = soundOK; sfx.play()
+			OS.shell_open("https://github.com/edinosma/Beret")
+		3:
 			winAbout.visible = true
 
 func _on_about_close_requested():

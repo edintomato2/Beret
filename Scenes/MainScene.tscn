@@ -9,9 +9,10 @@
 [node name="UI" parent="." instance=ExtResource("2_7lqbu")]
 
 [node name="Cursor" parent="." instance=ExtResource("1_qhvts")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 59, 20)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_tf75n")
 
+[connection signal="cursorPos" from="UI" to="Cursor" method="_on_ui_cursor_pos"]
 [connection signal="hasMoved" from="Cursor" to="UI" method="_on_cursor_has_moved"]

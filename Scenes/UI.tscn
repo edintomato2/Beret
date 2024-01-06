@@ -1,11 +1,14 @@
-[gd_scene load_steps=10 format=3 uid="uid://cdwpy8hm6qseq"]
+[gd_scene load_steps=17 format=3 uid="uid://cdwpy8hm6qseq"]
 
 [ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_yufu8"]
 [ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://default.tres" id="2_i42am"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuFile.gd" id="3_mnd5b"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="4_5u3hn"]
+[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="4_i7j77"]
+[ext_resource type="Texture2D" uid="uid://cw063pifm8hls" path="res://beret_logo.png" id="5_tfvu3"]
 [ext_resource type="PackedScene" uid="uid://baepcmjcgsbk0" path="res://Objects/Compass.glb" id="6_exilt"]
 [ext_resource type="Script" path="res://Scripts/Importer/FEZImporter.gd" id="7_8t0yp"]
+[ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="7_jfdyk"]
 [ext_resource type="Script" path="res://Scripts/UI/Compass.gd" id="7_lgwbb"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kofio"]
@@ -15,6 +18,22 @@ keycode = 70
 
 [sub_resource type="Shortcut" id="Shortcut_aqtus"]
 events = [SubResource("InputEventKey_kofio")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_2jet3"]
+device = -1
+alt_pressed = true
+keycode = 86
+
+[sub_resource type="Shortcut" id="Shortcut_5p5ho"]
+events = [SubResource("InputEventKey_2jet3")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_oq4ek"]
+device = -1
+alt_pressed = true
+keycode = 72
+
+[sub_resource type="Shortcut" id="Shortcut_efjk7"]
+events = [SubResource("InputEventKey_oq4ek")]
 
 [node name="UI" type="VBoxContainer"]
 anchors_preset = 15
@@ -36,7 +55,7 @@ shortcut = SubResource("Shortcut_aqtus")
 text = "File"
 flat = false
 item_count = 5
-popup/item_0/text = "Load Root"
+popup/item_0/text = "Load Level"
 popup/item_0/id = 0
 popup/item_1/text = "Save Level"
 popup/item_1/id = 1
@@ -51,13 +70,14 @@ popup/item_4/id = 4
 script = ExtResource("3_mnd5b")
 
 [node name="LoadDialog" type="FileDialog" parent="Titlebar/File"]
-title = "Open a Directory"
+title = "Open a File"
 initial_position = 1
 size = Vector2i(454, 400)
-ok_button_text = "Select Current Folder"
-file_mode = 2
+ok_button_text = "Open"
+file_mode = 0
 access = 2
 filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
+use_native_dialog = true
 
 [node name="Edit" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
@@ -66,38 +86,74 @@ flat = false
 
 [node name="View" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
+shortcut = SubResource("Shortcut_5p5ho")
 text = "View"
 flat = false
+item_count = 5
+popup/item_0/text = "Palette"
+popup/item_0/id = 0
+popup/item_1/text = "Hide layers..."
+popup/item_1/id = 1
+popup/item_2/text = ""
+popup/item_2/id = 10
+popup/item_2/separator = true
+popup/item_3/text = "Debug terminal"
+popup/item_3/id = 2
+popup/item_4/text = "Raw FEZLVL.JSON"
+popup/item_4/id = 3
+script = ExtResource("4_i7j77")
+
+[node name="Palette" type="Window" parent="Titlebar/View"]
+title = "Palette"
+initial_position = 2
+visible = false
 
 [node name="Help" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
+shortcut = SubResource("Shortcut_efjk7")
 text = "Help"
 flat = false
-item_count = 2
+item_count = 4
 popup/item_0/text = "FEZModding Wiki"
 popup/item_0/id = 0
-popup/item_1/text = "About"
+popup/item_1/text = "Beret GitHub"
 popup/item_1/id = 1
+popup/item_2/text = ""
+popup/item_2/id = 2
+popup/item_2/separator = true
+popup/item_3/text = "About"
+popup/item_3/id = 3
 script = ExtResource("4_5u3hn")
 
 [node name="About" type="Window" parent="Titlebar/Help"]
 title = "About Beret"
-initial_position = 1
+initial_position = 2
+size = Vector2i(500, 100)
 visible = false
 keep_title_visible = true
 
-[node name="Label" type="Label" parent="Titlebar/Help/About"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Titlebar/Help/About"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Titlebar/Help/About/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("5_tfvu3")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="Titlebar/Help/About/HBoxContainer"]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Beret - A level editor and viewer for FEZ.
-edintomato, 2023
+edintomato and contributors, 2024
+This project is licensed under GPLv3!
  "
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ColorRect" type="ColorRect" parent="Titlebar"]
 layout_mode = 2
@@ -120,11 +176,20 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="EditorInfo" type="Label" parent="Sidebar/SidebarVertical"]
+[node name="Position" type="Label" parent="Sidebar/SidebarVertical"]
 layout_mode = 2
-size_flags_horizontal = 8
+mouse_filter = 1
+text = "(0, 0, 0) (x, y, z)"
+horizontal_alignment = 2
+
+[node name="EditorLog" type="RichTextLabel" parent="Sidebar/SidebarVertical"]
+layout_mode = 2
 size_flags_vertical = 3
-text = "Loading!"
+theme = ExtResource("2_i42am")
+text = "Welcome to Beret!"
+scroll_following = true
+threaded = true
+script = ExtResource("7_jfdyk")
 
 [node name="CompassView" type="SubViewportContainer" parent="Sidebar/SidebarVertical"]
 layout_mode = 2
@@ -135,7 +200,7 @@ stretch = true
 [node name="Compass" type="SubViewport" parent="Sidebar/SidebarVertical/CompassView"]
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(203, 214)
+size = Vector2i(203, 221)
 render_target_update_mode = 4
 
 [node name="Compass" parent="Sidebar/SidebarVertical/CompassView/Compass" instance=ExtResource("6_exilt")]
@@ -152,24 +217,18 @@ projection = 1
 size = 10.0
 far = 20.0
 
-[node name="Toolbar" type="HBoxContainer" parent="."]
-layout_mode = 2
-size_flags_vertical = 3
-theme = ExtResource("2_i42am")
-
-[node name="TextureRect" type="TextureRect" parent="Toolbar"]
-layout_mode = 2
-
-[node name="Palette" type="ItemList" parent="Toolbar"]
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="SFX" type="AudioStreamPlayer" parent="."]
 
 [node name="Loader" type="Node3D" parent="."]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 0
 script = ExtResource("7_8t0yp")
 
 [connection signal="canceled" from="Titlebar/File/LoadDialog" to="." method="_on_load_dialog_canceled"]
 [connection signal="confirmed" from="Titlebar/File/LoadDialog" to="." method="_on_load_dialog_confirmed"]
-[connection signal="dir_selected" from="Titlebar/File/LoadDialog" to="Loader" method="_on_load_dialog_dir_selected"]
+[connection signal="file_selected" from="Titlebar/File/LoadDialog" to="Loader" method="_on_load_dialog_file_selected"]
 [connection signal="close_requested" from="Titlebar/Help/About" to="Titlebar/Help" method="_on_about_close_requested"]
+[connection signal="levelJSON" from="Loader" to="Titlebar/View" method="_on_loader_level_json"]
+[connection signal="levelJSON" from="Loader" to="Sidebar/SidebarVertical/EditorLog" method="_on_loader_level_json"]
+[connection signal="newCurPor" from="Loader" to="." method="_on_loader_new_cur_por"]

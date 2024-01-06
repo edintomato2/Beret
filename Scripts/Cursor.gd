@@ -24,7 +24,6 @@ func tweenToPos(obj: Object, property: NodePath, direction: Variant, action, spe
 	allowMove = true
 	pass
 
-
 func failMove(): # call a fail sound when a movement fails
 	allowMove = false
 	emit_signal("hasMoved", "fail")
@@ -96,3 +95,8 @@ func _input(_event):
 			
 		if Input.is_action_pressed("ui_left", true):
 			tweenToPos(self, "position", position - (right * Settings.movementSpeed), "ui_left", cursorSpeed)
+
+# New cursor position
+func _on_ui_cursor_pos(newPos):
+	tweenToPos(self, "position", newPos, "loaded", cursorSpeed)
+	pass # Replace with function body.
