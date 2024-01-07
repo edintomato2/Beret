@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cdwpy8hm6qseq"]
+[gd_scene load_steps=18 format=3 uid="uid://cdwpy8hm6qseq"]
 
 [ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_yufu8"]
 [ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://default.tres" id="2_i42am"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://Scripts/Importer/FEZImporter.gd" id="7_8t0yp"]
 [ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="7_jfdyk"]
 [ext_resource type="Script" path="res://Scripts/UI/Compass.gd" id="7_lgwbb"]
+[ext_resource type="Script" path="res://Scripts/UI/Toolbar/Palette.gd" id="10_yvdlw"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kofio"]
 device = -1
@@ -186,7 +187,8 @@ horizontal_alignment = 2
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("2_i42am")
-text = "Welcome to Beret!"
+text = "Welcome to Beret!
+"
 scroll_following = true
 threaded = true
 script = ExtResource("7_jfdyk")
@@ -200,7 +202,7 @@ stretch = true
 [node name="Compass" type="SubViewport" parent="Sidebar/SidebarVertical/CompassView"]
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(203, 221)
+size = Vector2i(203, 205)
 render_target_update_mode = 4
 
 [node name="Compass" parent="Sidebar/SidebarVertical/CompassView/Compass" instance=ExtResource("6_exilt")]
@@ -217,6 +219,22 @@ projection = 1
 size = 10.0
 far = 20.0
 
+[node name="Toolbar" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureButton" type="TextureButton" parent="Toolbar"]
+layout_mode = 2
+
+[node name="Palette" type="ItemList" parent="Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_force_pass_scroll_events = false
+max_columns = 0
+same_column_width = true
+icon_scale = 2.0
+script = ExtResource("10_yvdlw")
+
 [node name="SFX" type="AudioStreamPlayer" parent="."]
 
 [node name="Loader" type="Node3D" parent="."]
@@ -231,4 +249,5 @@ script = ExtResource("7_8t0yp")
 [connection signal="close_requested" from="Titlebar/Help/About" to="Titlebar/Help" method="_on_about_close_requested"]
 [connection signal="levelJSON" from="Loader" to="Titlebar/View" method="_on_loader_level_json"]
 [connection signal="levelJSON" from="Loader" to="Sidebar/SidebarVertical/EditorLog" method="_on_loader_level_json"]
+[connection signal="loadedTS" from="Loader" to="Toolbar/Palette" method="_on_loader_loaded_ts"]
 [connection signal="newCurPor" from="Loader" to="." method="_on_loader_new_cur_por"]

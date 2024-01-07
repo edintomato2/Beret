@@ -20,6 +20,6 @@ func _on_view_menu_pressed(id: int):
 	pass
 
 
-func _on_loader_level_json(lvlJSON):
+func _on_loader_level_json(lvlJSON, _1, _2, _3):
 	levelPath = lvlJSON
 	pass # Replace with function body.

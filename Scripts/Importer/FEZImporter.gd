@@ -34,8 +34,8 @@ func _loadFEZLVL(path, dir):
 		
 		# Place fezlvl triles into scene.
 		var trilePlacements = lvlData["Triles"] # Extract emplacements, phi, and trile ID.
-		for triles in trilePlacements: # We should represent "Position" as a sort of delta btwn Emplacement and where the trile is rendered. 
-			_placeTrile(trileset[0], str(triles["Id"]), triles["Emplacement"], triles["Phi"] * -90, trileset[1])
+		for trile in trilePlacements: # We should represent "Position" as a sort of delta btwn Emplacement and where the trile is rendered. 
+			_placeTrile(trileset, trile)
 			pass
 			 
 		# Place art objects.
@@ -45,8 +45,8 @@ func _loadFEZLVL(path, dir):
 		
 		# Place NPCs.
 		var npcs = lvlData["NonPlayerCharacters"]
-		for chars in npcs:
-			_placeNPC(dir + "/character animations/", npcs[chars])
+		for char in npcs:
+			_placeNPC(dir + "/character animations/", npcs[char])
 			
 		emit_signal("levelJSON", path, trilePlacements.size(), artObjs.size(), npcs.size())
 		
@@ -98,9 +98,17 @@ func _loadObj(filepath: String, type: int = 4):
 			# NPCs will be a billboard texture. May be expensive to render because they're transparent.
 			return m
 	
-func _placeTrile(ts: ArrayMesh, id: String, emp, rot, mat: StandardMaterial3D):
-	var surfNum = ts.surface_find_by_name(id)
+func _placeTrile(ts: Array, info: Dictionary): # id: String, emp, rot, mat: StandardMaterial3D):
+	var mA = ts[0]
+	var mat = ts[1]
+	
+	var id = str(info["Id"])
+	var posTrile = info["Position"]
+	var rot = info["Phi"] * -90
+	
+	var surfNum = mA.surface_find_by_name(id)
 	var albColor = Color(1, 1, 1, 1)
+	
 	if (id != "-1") and (surfNum == -1): # Missing trile. Checkerboard material in its place!
 		surfNum = 0; albColor = Color(0, 0, 0, 1)
 		pass
@@ -110,11 +118,11 @@ func _placeTrile(ts: ArrayMesh, id: String, emp, rot, mat: StandardMaterial3D):
 	else:
 	
 		# Extract the surface we need and make it its own mesh.
-		var prim = ts.surface_get_primitive_type(surfNum)
-		var arrays = ts.surface_get_arrays(surfNum)
-		var _blendshapes = ts.surface_get_blend_shape_arrays(surfNum) # we probably don't need all this info
-		var _format = ts.surface_get_format(surfNum)
-		var pos = Vector3(emp[0], emp[1], emp[2])
+		var prim = mA.surface_get_primitive_type(surfNum)
+		var arrays = mA.surface_get_arrays(surfNum)
+		var _blendshapes = mA.surface_get_blend_shape_arrays(surfNum) # we probably don't need all this info
+		var _format = mA.surface_get_format(surfNum)
+		var pos = Vector3(posTrile[0], posTrile[1], posTrile[2])
 		
 		var trMesh = ArrayMesh.new()
 		trMesh.add_surface_from_arrays(prim, arrays)
@@ -130,7 +138,7 @@ func _placeTrile(ts: ArrayMesh, id: String, emp, rot, mat: StandardMaterial3D):
 		trile.layers = 2
 		
 		add_child(trile)
-		if pos == Vector3(30, 46, 20): print(trile.name)
+		if pos == Vector3(27, 24, 20): print(trile.name)
 		pass
 		
 func _placeAO(dir, ao):
