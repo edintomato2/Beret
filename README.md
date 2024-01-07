@@ -15,4 +15,4 @@
 3. Warp to your level with `warp <level_name>`!
 ---
 ### Screenshots
-![Screenshot of level "OWL"](https://github.com/edinosma/Beret/blob/master/beret_logo.png?raw=true)
+![Screenshot of level "OWL"](https://github.com/edinosma/Beret/blob/master/github/beret_screenshot.png?raw=true)
