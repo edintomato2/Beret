@@ -69,7 +69,9 @@ func _input(_event):
 			var movePosition = localCam.position + Settings.zoomSpeed + Vector3(.5,.5,.5)
 			#print(movePosition)
 			#print(position)
-			movePosition = round(movePosition) # rounding due to weird decimal stuff
+			movePosition = round(movePosition * 10) # rounding due to weird decimal stuff
+			movePosition /= 10
+			#print(movePosition)
 			if movePosition == position or movePosition > position:
 				failMove()
 			else:
