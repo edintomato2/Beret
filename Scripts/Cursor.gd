@@ -66,7 +66,9 @@ func _input(_event):
 			tweenToPos(localCam, "position", newCamPos, "N/A", Settings.animationSpeed)
 			
 		if Input.is_action_just_released("ui_zoom_in", true): # Don't want the camera zooming into the cursor or even behind it
-			var movePosition = localCam.position + Settings.zoomSpeed
+			var movePosition = localCam.position + Settings.zoomSpeed + Vector3(.5,.5,.5)
+			#print(movePosition)
+			#print(position)
 			movePosition = round(movePosition) # rounding due to weird decimal stuff
 			if movePosition == position or movePosition > position:
 				failMove()
