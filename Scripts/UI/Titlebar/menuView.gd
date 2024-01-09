@@ -9,7 +9,8 @@ func _ready():
 func _on_view_menu_pressed(id: int):
 	match id:
 		0:
-			palette.visible = true
+			#palette.visible = true
+			pass
 		1:
 			print("Make this a submenu that allows changing of culls for the Cursor camera.")
 		2:

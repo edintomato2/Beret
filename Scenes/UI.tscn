@@ -180,8 +180,14 @@ size_flags_vertical = 3
 [node name="Position" type="Label" parent="Sidebar/SidebarVertical"]
 layout_mode = 2
 mouse_filter = 1
-text = "(0, 0, 0) (x, y, z)"
-horizontal_alignment = 2
+text = "[0, 0, 0]"
+horizontal_alignment = 1
+
+[node name="Object" type="Label" parent="Sidebar/SidebarVertical"]
+layout_mode = 2
+mouse_filter = 1
+text = "None"
+horizontal_alignment = 1
 
 [node name="EditorLog" type="RichTextLabel" parent="Sidebar/SidebarVertical"]
 layout_mode = 2
@@ -194,6 +200,7 @@ threaded = true
 script = ExtResource("7_jfdyk")
 
 [node name="CompassView" type="SubViewportContainer" parent="Sidebar/SidebarVertical"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5
@@ -202,8 +209,8 @@ stretch = true
 [node name="Compass" type="SubViewport" parent="Sidebar/SidebarVertical/CompassView"]
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(203, 205)
-render_target_update_mode = 4
+size = Vector2i(2, 2)
+render_target_update_mode = 0
 
 [node name="Compass" parent="Sidebar/SidebarVertical/CompassView/Compass" instance=ExtResource("6_exilt")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)

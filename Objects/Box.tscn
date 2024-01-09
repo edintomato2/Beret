@@ -1,13 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://da143myvimsgb"]
+[gd_scene load_steps=4 format=3 uid="uid://da143myvimsgb"]
 
 [ext_resource type="PackedScene" uid="uid://c5o8xkjxrw28u" path="res://Objects/Box.glb" id="1_yvw6e"]
 [ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://Materials/UI.tres" id="2_3wn0q"]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_chimh"]
+points = PackedVector3Array(0.55, 0.55, 0.549993, 0.55, -0.55, 0.549993, 0.55, 0.55, -0.55, -0.55, 0.55, 0.549993, 0.55, -0.55, -0.55, -0.55, -0.55, 0.549993, -0.55, 0.55, -0.55, -0.55, -0.55, -0.55)
 
 [node name="Box" instance=ExtResource("1_yvw6e")]
 
 [node name="Box" parent="." index="0"]
 layers = 2
 surface_material_override/0 = ExtResource("2_3wn0q")
+
+[node name="Area3D" type="Area3D" parent="Box" index="0"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Box/Area3D" index="0"]
+shape = SubResource("ConvexPolygonShape3D_chimh")
 
 [node name="AnimationPlayer" parent="." index="1"]
 autoplay = "Outer CubeAction"

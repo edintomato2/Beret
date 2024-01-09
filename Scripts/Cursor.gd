@@ -1,17 +1,16 @@
 extends Node3D
 
-@onready var localCam = $"Box/Camera"
-@onready var cursorBox = $"Box"
+@onready var localCam: Camera3D = $"Pivot/Camera"
+@onready var pivot: Node3D = $"Pivot"
+@onready var cursorBox: MeshInstance3D = $"Box"
 
 signal hasMoved(keyPress)
 
-var oldCamPos
-var newCamPos
-
 var allowMove = true
-var mode2D = false
+var mode3D = false
 
 var cursorSpeed = Settings.animationSpeed * 0.5
+var gomezPos := Vector3.ZERO
 
 func tweenToPos(obj: Object, property: NodePath, direction: Variant, action, speed): # Function dedicated to smooth movement.
 	allowMove = false
@@ -45,58 +44,51 @@ func _input(_event):
 		var _moveTo = Vector3.ZERO # Prevent cursor from going below (0, 0, 0)
 
 ### Camera Movement
-		if Input.is_action_pressed("ui_lt", true):
-			tweenToPos(self, "rotation_degrees:y", rotation_degrees.y - 90, "ui_lt", Settings.animationSpeed)
+		if Input.is_action_pressed("move_lt", true):
+			tweenToPos(self, "rotation_degrees:y", rotation_degrees.y - 90, "move_lt", Settings.animationSpeed)
 			
-		if Input.is_action_pressed("ui_rt", true):
-			tweenToPos(self, "rotation_degrees:y", rotation_degrees.y + 90, "ui_rt", Settings.animationSpeed)
+		if Input.is_action_pressed("move_rt", true):
+			tweenToPos(self, "rotation_degrees:y", rotation_degrees.y + 90, "move_rt", Settings.animationSpeed)
 			
-		if Input.is_action_pressed("ui_2d", true):
-			if !mode2D:
-				emit_signal("hasMoved", "ui_2d_enter")
-				mode2D = true
-				oldCamPos = localCam.position
-				newCamPos = Vector3(oldCamPos.x, 0, 0)
+		if Input.is_action_just_pressed("cam_zoom_in", true): # Don't want the camera zooming into the cursor or even behind it
+			tweenToPos(localCam, "size", localCam.size - Settings.zoomSpeed, "cam_zoom_in", cursorSpeed)
 			
+		if Input.is_action_just_pressed("cam_zoom_out", true): # zoom out is fine from zoom bug
+			tweenToPos(localCam, "size", localCam.size + Settings.zoomSpeed, "cam_zoom_out", cursorSpeed)
+			
+		if Input.is_action_pressed("cam_2d", true): # zoom out is fine from zoom bug
+			if mode3D:
+				mode3D = false
+				tweenToPos(pivot, "rotation_degrees", Vector3(0, 0, 0), "cam_zoom_in", Settings.animationSpeed)
 			else:
-				emit_signal("hasMoved", "ui_2d_exit")
-				newCamPos = oldCamPos
-				mode2D = false
-			
-			tweenToPos(localCam, "position", newCamPos, "N/A", Settings.animationSpeed)
-			
-		if Input.is_action_just_released("ui_zoom_in", true): # Don't want the camera zooming into the cursor or even behind it
-			var movePosition = localCam.position + Settings.zoomSpeed
-			movePosition = round(movePosition) # rounding due to weird decimal stuff
-			if movePosition == position or movePosition > position:
-				failMove()
-			else:
-				tweenToPos(localCam, "position", localCam.position + Settings.zoomSpeed, "ui_zoom_in", cursorSpeed)
-			
-		if Input.is_action_just_released("ui_zoom_out", true): # zoom out is fine from zoom bug
-			tweenToPos(localCam, "position", localCam.position - Settings.zoomSpeed, "ui_zoom_out", cursorSpeed)
-
+				mode3D = true
+				tweenToPos(pivot, "rotation_degrees", Vector3(0, -45, -45), "cam_zoom_out", Settings.animationSpeed)
 
 ### Cursor Movement. There must be a better way.
-		if Input.is_action_pressed("ui_up_layer", true):
-			tweenToPos(self, "position:y", position.y + Settings.movementSpeed, "ui_up_layer", cursorSpeed)
+		if Input.is_action_pressed("move_forward", true):
+			tweenToPos(self, "position:y", position.y + Settings.movementSpeed, "move_up", cursorSpeed)
 			
-		if Input.is_action_pressed("ui_down_layer", true):
-			tweenToPos(self, "position:y", position.y - Settings.movementSpeed, "ui_down_layer", cursorSpeed)
+		if Input.is_action_pressed("move_backward", true):
+			tweenToPos(self, "position:y", position.y - Settings.movementSpeed, "move_down", cursorSpeed)
 			
-		if Input.is_action_pressed("ui_up", true):
-			tweenToPos(self, "position", position + (Settings.movementSpeed * forward), "ui_up", cursorSpeed)
+		if Input.is_action_pressed("move_up_layer", true):
+			tweenToPos(self, "position", position + (Settings.movementSpeed * right), "move_up_layer", cursorSpeed)
 			
-		if Input.is_action_pressed("ui_down", true):
-			tweenToPos(self, "position", position - (Settings.movementSpeed * forward), "ui_down", cursorSpeed)
+		if Input.is_action_pressed("move_down_layer", true):
+			tweenToPos(self, "position", position - (Settings.movementSpeed * right), "move_down_layer", cursorSpeed)
 			
-		if Input.is_action_pressed("ui_right", true):
-			tweenToPos(self, "position", position + (right * Settings.movementSpeed), "ui_right", cursorSpeed)
+		if Input.is_action_pressed("move_right", true):
+			tweenToPos(self, "position", position + (forward * Settings.movementSpeed), "move_right", cursorSpeed)
 			
-		if Input.is_action_pressed("ui_left", true):
-			tweenToPos(self, "position", position - (right * Settings.movementSpeed), "ui_left", cursorSpeed)
+		if Input.is_action_pressed("move_left", true):
+			tweenToPos(self, "position", position - (forward * Settings.movementSpeed), "move_left", cursorSpeed)
+			
+		if Input.is_action_pressed("move_gomez", true):
+			tweenToPos(self, "global_position", gomezPos, "loaded", cursorSpeed)
 
 # New cursor position
 func _on_ui_cursor_pos(newPos):
-	tweenToPos(self, "position", newPos, "loaded", cursorSpeed)
+	gomezPos = newPos
+	emit_signal("hasMoved", "loaded")
+	global_position = newPos
 	pass # Replace with function body.

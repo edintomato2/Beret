@@ -64,7 +64,7 @@ func _loadFEZLVL(path, dir):
 func _loadObj(filepath: String, type: int = 4):
 	var cleanPath = filepath.get_basename()
 	match type:
-		2: # Load trileset as ArrayMesh.
+		2: # Load trileset as ArrayMesh, and trile names as Dictionary.
 			var mA = ObjParse.load_obj(cleanPath + ".obj") 
 			
 			var mat = StandardMaterial3D.new() # Make a new material for the object, set settings.
@@ -73,7 +73,13 @@ func _loadObj(filepath: String, type: int = 4):
 			mat.albedo_texture = tex
 			mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 			
-			return [mA, mat]
+			# Load in trile names.
+			var readTS = JSON.new()
+			var err = readTS.parse(FileAccess.get_file_as_string(filepath))
+			if err == OK:
+				var tsData = readTS.data
+				var trileIDs = tsData["Triles"]
+				return [mA, mat, trileIDs]
 			
 		_: # Load everything else as MeshInstance3D.
 			var m = MeshInstance3D.new() # Make a new mesh instance.
@@ -94,6 +100,7 @@ func _loadObj(filepath: String, type: int = 4):
 				m.set_surface_override_material(numMat, mat)
 			m.layers = type # 8 for npcs, 4 for art objects, 2 for trilesets, 1 for UI.
 			# find a way to put AOs, triles, NPCs into the palette
+			m.create_convex_collision(false, false) # Make a dirty collision so we can approx. what object the cursor is on.
 			
 			# NPCs will be a billboard texture. May be expensive to render because they're transparent.
 			return m
@@ -101,6 +108,7 @@ func _loadObj(filepath: String, type: int = 4):
 func _placeTrile(ts: Array, info: Dictionary): # id: String, emp, rot, mat: StandardMaterial3D):
 	var mA = ts[0]
 	var mat = ts[1]
+	var names = ts[2]
 	
 	var id = str(info["Id"])
 	var posTrile = info["Position"]
@@ -116,12 +124,9 @@ func _placeTrile(ts: Array, info: Dictionary): # id: String, emp, rot, mat: Stan
 		surfNum = 0; albColor = Color(0, 0, 0, 1)
 		pass
 	else:
-	
 		# Extract the surface we need and make it its own mesh.
 		var prim = mA.surface_get_primitive_type(surfNum)
 		var arrays = mA.surface_get_arrays(surfNum)
-		var _blendshapes = mA.surface_get_blend_shape_arrays(surfNum) # we probably don't need all this info
-		var _format = mA.surface_get_format(surfNum)
 		var pos = Vector3(posTrile[0], posTrile[1], posTrile[2])
 		
 		var trMesh = ArrayMesh.new()
@@ -134,11 +139,12 @@ func _placeTrile(ts: Array, info: Dictionary): # id: String, emp, rot, mat: Stan
 		trile.set_surface_override_material(0, mat)
 		trile.position = pos
 		trile.rotation_degrees = Vector3(0, rot, 0)
+		trile.create_convex_collision(false, false) # Same reason as with the AOs!
 		
 		trile.layers = 2
+		trile.set_meta("Name", names[id]["Name"])
 		
 		add_child(trile)
-		if pos == Vector3(27, 24, 20): print(trile.name)
 		pass
 		
 func _placeAO(dir, ao):
@@ -153,7 +159,10 @@ func _placeAO(dir, ao):
 	obj.scale = Vector3(scale[0], scale[1], scale[2])
 	# Godot places objects by the center. Trixel places objects by their corners.
 	obj.position = Vector3(pos[0] - 0.5, pos[1] - 0.5, pos[2] - 0.5)
+	obj.mesh
+	
 	# Add in ActorSetting data later.
+	obj.set_meta("Name", objName)
 	
 	add_child(obj)
 	pass
@@ -176,7 +185,7 @@ func _placeStart(dir, posArray):
 	var face = posArray["Face"]
 	var adjust: Vector3
 	
-	match face:
+	match face: # Test with levels to find out where we should place Gomez!
 		"Front": adjust = Vector3.FORWARD
 		"Back":  adjust = Vector3.DOWN
 		"Left":  adjust = Vector3.LEFT
