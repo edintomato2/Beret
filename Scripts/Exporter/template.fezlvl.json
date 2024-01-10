@@ -1,0 +1,81 @@
+{
+  "Name": "TEMPLATE",
+  "NodeType": "Lesser",
+  "Size": [51, 58, 67],
+  "StartingPosition": {
+	"Id": [30, 21, 40],
+	"Face": "Front"
+  },
+  "Flat": false,
+  "Quantum": false,
+  "Descending": false,
+  "Loops": false,
+  "Rainy": false,
+  "BaseDiffuse": 1,
+  "BaseAmbient": 0.35,
+  "SkyName": "Blue",
+  "SkipPostProcess": false,
+  "GomezHaloName": "",
+  "HaloFiltering": true,
+  "BlinkingAlpha": false,
+  "WaterHeight": 0,
+  "WaterType": "None",
+  "SongName": "Villageville",
+  "MutedLoops": [],
+  "AmbienceTracks": [
+	{
+	  "Name": "Ambience ^ wind_01",
+	  "Day": false,
+	  "Dusk": false,
+	  "Night": true,
+	  "Dawn": true
+	},
+	{
+	  "Name": "Ambience ^ night_01",
+	  "Day": false,
+	  "Dusk": false,
+	  "Night": true,
+	  "Dawn": true
+	},
+	{
+	  "Name": "Ambience ^ villageville",
+	  "Day": true,
+	  "Dusk": true,
+	  "Night": true,
+	  "Dawn": false
+	},
+	{
+	  "Name": "Ambience ^ wind_02",
+	  "Day": true,
+	  "Dusk": true,
+	  "Night": false,
+	  "Dawn": false
+	},
+	{
+	  "Name": "Ambience ^ wind_03",
+	  "Day": true,
+	  "Dusk": true,
+	  "Night": true,
+	  "Dawn": true
+	}
+  ],
+  "SequenceSamplesPath": "",
+  "LowPass": false,
+  "FAPFadeOutStart": 0,
+  "FAPFadeOutLength": 0,
+  "TrileSetName": "Tree",
+  "Triles": [
+  ],
+  "Groups": {
+  },
+  "Volumes": {
+  },
+  "ArtObjects": {
+  },
+  "BackgroundPlanes": {
+  },
+  "Paths": {
+  },
+  "NonPlayerCharacters": {
+  }
+}

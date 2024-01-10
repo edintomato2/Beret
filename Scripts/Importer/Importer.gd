@@ -35,24 +35,24 @@ func _loadFEZLVL(path, dir):
 		# Place fezlvl triles into scene.
 		var trilePlacements = lvlData["Triles"] # Extract emplacements, phi, and trile ID.
 		for trile in trilePlacements: # We should represent "Position" as a sort of delta btwn Emplacement and where the trile is rendered. 
-			_placeTrile(trileset, trile)
+			placeTrile(trileset, trile)
 			pass
 			 
 		# Place art objects.
 		var artObjs = lvlData["ArtObjects"]
 		for ao in artObjs:
-			_placeAO(dir + "/art objects/", artObjs[ao])
+			placeAO(dir + "/art objects/", artObjs[ao])
 		
 		# Place NPCs.
 		var npcs = lvlData["NonPlayerCharacters"]
-		for char in npcs:
-			_placeNPC(dir + "/character animations/", npcs[char])
+		for npc in npcs:
+			placeNPC(dir + "/character animations/", npcs[npc])
 			
 		emit_signal("levelJSON", path, trilePlacements.size(), artObjs.size(), npcs.size())
 		
 		# Place Gomez, move the cursor there.
 		var startPos = lvlData["StartingPosition"]
-		var curPos = _placeStart(dir + "/character animations/", startPos)
+		var curPos = placeStart(dir + "/character animations/", startPos)
 		emit_signal("newCurPor", curPos)
 		
 		# Notify the Palette we've loaded a new trileset.
@@ -65,6 +65,7 @@ func _loadObj(filepath: String, type: int = 4):
 	var cleanPath = filepath.get_basename()
 	match type:
 		2: # Load trileset as ArrayMesh, and trile names as Dictionary.
+			var tsName = cleanPath.get_basename().get_file()
 			var mA = ObjParse.load_obj(cleanPath + ".obj") 
 			
 			var mat = StandardMaterial3D.new() # Make a new material for the object, set settings.
@@ -79,7 +80,7 @@ func _loadObj(filepath: String, type: int = 4):
 			if err == OK:
 				var tsData = readTS.data
 				var trileIDs = tsData["Triles"]
-				return [mA, mat, trileIDs]
+				return [mA, mat, trileIDs, tsName]
 			
 		_: # Load everything else as MeshInstance3D.
 			var m = MeshInstance3D.new() # Make a new mesh instance.
@@ -105,7 +106,7 @@ func _loadObj(filepath: String, type: int = 4):
 			# NPCs will be a billboard texture. May be expensive to render because they're transparent.
 			return m
 	
-func _placeTrile(ts: Array, info: Dictionary): # id: String, emp, rot, mat: StandardMaterial3D):
+func placeTrile(ts: Array, info: Dictionary):
 	var mA = ts[0]
 	var mat = ts[1]
 	var names = ts[2]
@@ -142,12 +143,14 @@ func _placeTrile(ts: Array, info: Dictionary): # id: String, emp, rot, mat: Stan
 		trile.create_convex_collision(false, false) # Same reason as with the AOs!
 		
 		trile.layers = 2
+		trile.set_meta("Type", "Trile")
 		trile.set_meta("Name", names[id]["Name"])
+		trile.set_meta("Id", id)
 		
 		add_child(trile)
 		pass
 		
-func _placeAO(dir, ao):
+func placeAO(dir, ao):
 	var objName = ao["Name"].to_lower()
 	var pos = ao["Position"]
 	var rot = ao["Rotation"]
@@ -159,19 +162,19 @@ func _placeAO(dir, ao):
 	obj.scale = Vector3(scale[0], scale[1], scale[2])
 	# Godot places objects by the center. Trixel places objects by their corners.
 	obj.position = Vector3(pos[0] - 0.5, pos[1] - 0.5, pos[2] - 0.5)
-	obj.mesh
 	
 	# Add in ActorSetting data later.
 	obj.set_meta("Name", objName)
+	obj.set_meta("Type", "AO")
 	
 	add_child(obj)
 	pass
 	
-func _placeNPC(dir, npc):
+func placeNPC(_dir, _npc):
 	# To do! 
 	pass
 	
-func _placeStart(dir, posArray):
+func placeStart(dir, posArray):
 	# Gomez is a simple billboard AnimatedSprite3D.
 	var gomez = AnimatedSprite3D.new()
 	var tex = GifManager.sprite_frames_from_file(dir + "gomez/idlewink.gif")
@@ -198,4 +201,7 @@ func _placeStart(dir, posArray):
 	gomez.position = pos
 	gomez.layers = 8
 	add_child(gomez)
+	gomez.set_meta("Type", "StartingPoint")
+	gomez.set_meta("Id", posStr)
+	gomez.set_meta("Face", face)
 	return pos

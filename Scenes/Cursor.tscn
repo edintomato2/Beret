@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://Scripts/Cursor.gd" id="1_gsw3j"]
 [ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://Materials/UI.tres" id="2_0tkj2"]
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_4lrr7"]
-points = PackedVector3Array(0.55, 0.55, 0.549993, 0.55, -0.55, 0.549993, 0.55, 0.55, -0.55, -0.55, 0.55, 0.549993, 0.55, -0.55, -0.55, -0.55, -0.55, 0.549993, -0.55, 0.55, -0.55, -0.55, -0.55, -0.55)
+[sub_resource type="SphereShape3D" id="SphereShape3D_87ky0"]
+radius = 0.3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5nyl"]
 
@@ -55,16 +55,15 @@ _data = {
 }
 
 [node name="Cursor" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.56, 0.56, 0.56)
 script = ExtResource("1_gsw3j")
 
 [node name="Area3D" type="Area3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
-shape = SubResource("ConvexPolygonShape3D_4lrr7")
+shape = SubResource("SphereShape3D_87ky0")
 
 [node name="Box" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 layers = 2
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_351w7")

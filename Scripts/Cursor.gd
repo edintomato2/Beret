@@ -38,7 +38,7 @@ func _process(_delta):
 	localCam.look_at(position) # Have the camera always looking at the cursor.
 	pass
 	
-func _input(_event):
+func _unhandled_input(_event):
 	if allowMove: # Movement control. Why does this have to be a bunch of if statements?
 		var forward = transform.basis.z; var right = -transform.basis.x
 		var _moveTo = Vector3.ZERO # Prevent cursor from going below (0, 0, 0)

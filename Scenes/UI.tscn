@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cdwpy8hm6qseq"]
+[gd_scene load_steps=25 format=3 uid="uid://cdwpy8hm6qseq"]
 
 [ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_yufu8"]
 [ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://default.tres" id="2_i42am"]
@@ -7,10 +7,11 @@
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="4_i7j77"]
 [ext_resource type="Texture2D" uid="uid://cw063pifm8hls" path="res://beret_logo.png" id="5_tfvu3"]
 [ext_resource type="PackedScene" uid="uid://baepcmjcgsbk0" path="res://Objects/Compass.glb" id="6_exilt"]
-[ext_resource type="Script" path="res://Scripts/Importer/FEZImporter.gd" id="7_8t0yp"]
 [ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="7_jfdyk"]
 [ext_resource type="Script" path="res://Scripts/UI/Compass.gd" id="7_lgwbb"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/Palette.gd" id="10_yvdlw"]
+[ext_resource type="Script" path="res://Scripts/Importer/Importer.gd" id="11_b3xhm"]
+[ext_resource type="Script" path="res://Scripts/Exporter/Exporter.gd" id="12_4xdn3"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kofio"]
 device = -1
@@ -19,6 +20,30 @@ keycode = 70
 
 [sub_resource type="Shortcut" id="Shortcut_aqtus"]
 events = [SubResource("InputEventKey_kofio")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_fwuaw"]
+device = -1
+ctrl_pressed = true
+keycode = 79
+
+[sub_resource type="Shortcut" id="Shortcut_8hi2n"]
+events = [SubResource("InputEventKey_fwuaw")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_txw7b"]
+device = -1
+ctrl_pressed = true
+keycode = 83
+
+[sub_resource type="Shortcut" id="Shortcut_c4g0v"]
+events = [SubResource("InputEventKey_txw7b")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_slhck"]
+device = -1
+ctrl_pressed = true
+keycode = 81
+
+[sub_resource type="Shortcut" id="Shortcut_x4u3j"]
+events = [SubResource("InputEventKey_slhck")]
 
 [sub_resource type="InputEventKey" id="InputEventKey_2jet3"]
 device = -1
@@ -55,6 +80,7 @@ layout_mode = 2
 shortcut = SubResource("Shortcut_aqtus")
 text = "File"
 flat = false
+switch_on_hover = true
 item_count = 5
 popup/item_0/text = "Load Level"
 popup/item_0/id = 0
@@ -69,8 +95,11 @@ popup/item_3/separator = true
 popup/item_4/text = "Quit"
 popup/item_4/id = 4
 script = ExtResource("3_mnd5b")
+loadShortcut = SubResource("Shortcut_8hi2n")
+saveShortcut = SubResource("Shortcut_c4g0v")
+quitShortcut = SubResource("Shortcut_x4u3j")
 
-[node name="LoadDialog" type="FileDialog" parent="Titlebar/File"]
+[node name="Load" type="FileDialog" parent="Titlebar/File"]
 title = "Open a File"
 initial_position = 1
 size = Vector2i(454, 400)
@@ -80,16 +109,26 @@ access = 2
 filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
 use_native_dialog = true
 
+[node name="Save" type="FileDialog" parent="Titlebar/File"]
+title = "Save FEZLVL as"
+initial_position = 2
+dialog_hide_on_ok = true
+access = 2
+filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
+use_native_dialog = true
+
 [node name="Edit" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
 text = "Edit"
 flat = false
+switch_on_hover = true
 
 [node name="View" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
 shortcut = SubResource("Shortcut_5p5ho")
 text = "View"
 flat = false
+switch_on_hover = true
 item_count = 5
 popup/item_0/text = "Palette"
 popup/item_0/id = 0
@@ -114,6 +153,7 @@ layout_mode = 2
 shortcut = SubResource("Shortcut_efjk7")
 text = "Help"
 flat = false
+switch_on_hover = true
 item_count = 4
 popup/item_0/text = "FEZModding Wiki"
 popup/item_0/id = 0
@@ -214,6 +254,7 @@ render_target_update_mode = 0
 
 [node name="Compass" parent="Sidebar/SidebarVertical/CompassView/Compass" instance=ExtResource("6_exilt")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+visible = false
 script = ExtResource("7_lgwbb")
 
 [node name="CompPivot" type="Node3D" parent="Sidebar/SidebarVertical/CompassView/Compass"]
@@ -237,6 +278,8 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_force_pass_scroll_events = false
+theme = ExtResource("2_i42am")
+allow_search = false
 max_columns = 0
 same_column_width = true
 icon_scale = 2.0
@@ -248,12 +291,20 @@ script = ExtResource("10_yvdlw")
 process_thread_group = 2
 process_thread_group_order = 0
 process_thread_messages = 0
-script = ExtResource("7_8t0yp")
+script = ExtResource("11_b3xhm")
 
-[connection signal="canceled" from="Titlebar/File/LoadDialog" to="." method="_on_load_dialog_canceled"]
-[connection signal="confirmed" from="Titlebar/File/LoadDialog" to="." method="_on_load_dialog_confirmed"]
-[connection signal="file_selected" from="Titlebar/File/LoadDialog" to="Loader" method="_on_load_dialog_file_selected"]
+[node name="Exporter" type="Node" parent="."]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 0
+script = ExtResource("12_4xdn3")
+
+[connection signal="canceled" from="Titlebar/File/Load" to="." method="_on_load_dialog_canceled"]
+[connection signal="confirmed" from="Titlebar/File/Load" to="." method="_on_load_dialog_confirmed"]
+[connection signal="file_selected" from="Titlebar/File/Load" to="Loader" method="_on_load_dialog_file_selected"]
+[connection signal="file_selected" from="Titlebar/File/Save" to="Exporter" method="_on_save_file_selected"]
 [connection signal="close_requested" from="Titlebar/Help/About" to="Titlebar/Help" method="_on_about_close_requested"]
+[connection signal="levelJSON" from="Loader" to="Titlebar/File" method="_on_loader_level_json"]
 [connection signal="levelJSON" from="Loader" to="Titlebar/View" method="_on_loader_level_json"]
 [connection signal="levelJSON" from="Loader" to="Sidebar/SidebarVertical/EditorLog" method="_on_loader_level_json"]
 [connection signal="loadedTS" from="Loader" to="Toolbar/Palette" method="_on_loader_loaded_ts"]

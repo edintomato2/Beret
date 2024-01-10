@@ -22,6 +22,7 @@ func _on_loader_loaded_ts(trileset):
 		atl.region = Rect2(offsetX, offsetY, TRILE_SIZE, TRILE_SIZE)
 		atl.filter_clip = true
 		
-		add_item(info[trile]["Name"], atl, true)
+		var idx = add_item(info[trile]["Name"], atl, true)
+		set_item_metadata(idx, trile) # Set trile ID as metadata.
 		pass
 	pass
