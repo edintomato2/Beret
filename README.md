@@ -2,7 +2,7 @@
   <img src="https://github.com/edinosma/Beret/blob/master/beret_logo.png?raw=true" />
 </p>
 
-### Beret, a level editor and viewer for FEZ.
+### HARDHAT, a level editor and viewer for FEZ.
 ---
 #### Level viewing and editing:
 1. Use [FEZRepacker](https://github.com/FEZModding/FEZRepacker) to extract the contents of your FEZ `.pak` files. Note that most of the good stuff is stored in `Other.pak`!
