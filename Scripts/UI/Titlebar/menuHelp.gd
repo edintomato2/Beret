@@ -15,7 +15,7 @@ func _on_help_menu_pressed(id: int):
 		0:
 			OS.shell_open("https://github.com/FEZModding/FEZRepacker/wiki")
 		1:
-			OS.shell_open("https://github.com/edinosma/Beret")
+			OS.shell_open("https://github.com/edintomato2/HARDHAT")
 		3:
 			winAbout.visible = true
 

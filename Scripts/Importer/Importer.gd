@@ -11,55 +11,81 @@ extends Node
 
 var trileset
 
+var _thread: Thread # Threading. To get data into a thread, use a Mutex!
+var _sema: Semaphore
+var _mutex: Mutex
+var _path: String
+var _threadFlag = false
+
 signal newCurPor(newPos: Vector3)
 signal loadedTS(trileset: Array)
 signal levelJSON(lvlJSON: String, trileNum: int, aoNum: int, npcNum: int)
 
+func _ready():
+	_thread = Thread.new() # Prepare threading.
+	_sema = Semaphore.new()
+	_mutex = Mutex.new()
+	
+	_thread.start(_loadFEZLVL) # Start thread in bkg.
+	pass
+
 func _on_load_dialog_file_selected(path):
 	for n in get_child_count(): # Clear out all objects.
 		get_child(n).queue_free()
-		
-	var dir = path.get_base_dir().get_base_dir() # Stored in "levels" dir. We need to get to the root.
-	_loadFEZLVL(path, dir)
+	
+	_mutex.lock(); _path = path; _mutex.unlock(); # Send file path to thread.
+	_sema.post() # Tell thread to start processing.
 	pass
 
-func _loadFEZLVL(path, dir):
-	print("Found level: " + path.get_file())
-	var readLvl = JSON.new()
-	var err = readLvl.parse(FileAccess.get_file_as_string(path))
-	if err == OK:
-		var lvlData = readLvl.data 
-		# Load trileset.
-		trileset = await _loadObj(dir + "/trile sets/" + lvlData["TrileSetName"].to_lower() + ".fezts.json", 2)
+func _loadFEZLVL():
+	while true:
+		_sema.wait() # Wait for signal from main thread to start processing.
 		
-		# Place fezlvl triles into scene.
-		var trilePlacements = lvlData["Triles"] # Extract emplacements, phi, and trile ID.
-		for trile in trilePlacements: # We should represent "Position" as a sort of delta btwn Emplacement and where the trile is rendered. 
-			placeTrile(trileset, trile)
-			pass
-			 
-		# Place art objects.
-		var artObjs = lvlData["ArtObjects"]
-		for ao in artObjs:
-			placeAO(dir + "/art objects/", artObjs[ao])
+		_mutex.lock() # Do we stop?
+		var stopThread = _threadFlag
+		_mutex.unlock()
 		
-		# Place NPCs.
-		var npcs = lvlData["NonPlayerCharacters"]
-		for npc in npcs:
-			placeNPC(dir + "/character animations/", npcs[npc])
+		if stopThread: break 
+		
+		_mutex.lock() # Get data, make sure it doesn't change!
+		var path = _path
+		_mutex.unlock() 
+		
+		print("Found level: " + path.get_file())
+		var readLvl = JSON.new()
+		var err = readLvl.parse(FileAccess.get_file_as_string(path))
+		if err == OK:
+			var lvlData = readLvl.data 
+			# Load trileset.
+			trileset = await _loadObj(Settings.TSDir + lvlData["TrileSetName"].to_lower() + ".fezts.json", 2)
 			
-		emit_signal("levelJSON", path, trilePlacements.size(), artObjs.size(), npcs.size())
-		
-		# Place Gomez, move the cursor there.
-		var startPos = lvlData["StartingPosition"]
-		var curPos = placeStart(dir + "/character animations/", startPos)
-		emit_signal("newCurPor", curPos)
-		
-		# Notify the Palette we've loaded a new trileset.
-		emit_signal("loadedTS", trileset)
-		# We also have level size, which we can generate automatically I think. Could be useful in setting bounds.
-	else: print("Error reading .fezlvl.")
-	pass
+			# Place fezlvl triles into scene.
+			var trilePlacements = lvlData["Triles"] # Extract emplacements, phi, and trile ID.
+			for trile in trilePlacements: # We should represent "Position" as a sort of delta btwn Emplacement and where the trile is rendered. 
+				placeTrile(trileset, trile)
+				pass
+				 
+			# Place art objects.
+			var artObjs = lvlData["ArtObjects"]
+			for ao in artObjs:
+				placeAO(Settings.AODir, artObjs[ao])
+			
+			# Place NPCs.
+			var npcs = lvlData["NonPlayerCharacters"]
+			for npc in npcs:
+				placeNPC(Settings.NPCDir, npcs[npc])
+				
+			call_deferred("emit_signal", "levelJSON", path, trilePlacements.size(), artObjs.size(), npcs.size())
+			
+			# Place Gomez, move the cursor there.
+			var startPos = lvlData["StartingPosition"]
+			var curPos = placeStart(Settings.NPCDir, startPos)
+			call_deferred("emit_signal", "newCurPor", curPos)
+			
+			# Notify the Palette we've loaded a new trileset.
+			call_deferred("emit_signal", "loadedTS", trileset)
+		else: 
+			print("Error reading .fezlvl.")
 
 func _loadObj(filepath: String, type: int = 4):
 	var cleanPath = filepath.get_basename()
@@ -101,7 +127,8 @@ func _loadObj(filepath: String, type: int = 4):
 				m.set_surface_override_material(numMat, mat)
 			m.layers = type # 8 for npcs, 4 for art objects, 2 for trilesets, 1 for UI.
 			# find a way to put AOs, triles, NPCs into the palette
-			m.create_convex_collision(false, false) # Make a dirty collision so we can approx. what object the cursor is on.
+			m.call_deferred("create_convex_collision", false, false)
+			#m.create_convex_collision(false, false) # Make a dirty collision so we can approx. what object the cursor is on.
 			
 			# NPCs will be a billboard texture. May be expensive to render because they're transparent.
 			return m
@@ -140,14 +167,14 @@ func placeTrile(ts: Array, info: Dictionary):
 		trile.set_surface_override_material(0, mat)
 		trile.position = pos
 		trile.rotation_degrees = Vector3(0, rot, 0)
-		trile.create_convex_collision(false, false) # Same reason as with the AOs!
+		trile.call_deferred("create_convex_collision", false, false)
 		
 		trile.layers = 2
 		trile.set_meta("Type", "Trile")
 		trile.set_meta("Name", names[id]["Name"])
 		trile.set_meta("Id", id)
 		
-		add_child(trile)
+		call_deferred("add_child", trile)
 		pass
 		
 func placeAO(dir, ao):
@@ -167,7 +194,7 @@ func placeAO(dir, ao):
 	obj.set_meta("Name", objName)
 	obj.set_meta("Type", "AO")
 	
-	add_child(obj)
+	call_deferred("add_child", obj)
 	pass
 	
 func placeNPC(_dir, _npc):
@@ -200,8 +227,18 @@ func placeStart(dir, posArray):
 	
 	gomez.position = pos
 	gomez.layers = 8
-	add_child(gomez)
 	gomez.set_meta("Type", "StartingPoint")
 	gomez.set_meta("Id", posStr)
 	gomez.set_meta("Face", face)
+	call_deferred("add_child", gomez)
 	return pos
+
+func _exit_tree():
+	_mutex.lock() # Exit thread gracefully.
+	_threadFlag = true 
+	_mutex.unlock()
+	
+	_sema.post()
+	
+	_thread.wait_to_finish()
+	pass

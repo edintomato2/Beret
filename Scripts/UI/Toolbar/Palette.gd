@@ -3,6 +3,8 @@ extends ItemList
 const TRILE_SIZE = 18 # Width and height of trile textures, in pixels.
 
 func _on_loader_loaded_ts(trileset):
+	clear() # Empty out list, in case it's full from another level.
+	
 	var tex: Texture2D = trileset[1].albedo_texture # Get texture
 	var info: Dictionary = trileset[2] # Extract atlas offset and trile name from here!
 	

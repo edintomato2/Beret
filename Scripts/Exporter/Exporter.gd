@@ -33,8 +33,9 @@ func _saveFEZLVL(path, filename):
 				"Trile":
 					var pos = [obj.position.x, obj.position.y, obj.position.z]
 					var emp = [round(pos[0]), round(pos[1]), round(pos[2])]
-					var phi = 0
+					var phi = abs(obj.rotation_degrees.y / 90)
 					var actset = null
+					
 			
 					var trileDict = { "Emplacement": emp,
 									"Position": pos,
@@ -96,4 +97,4 @@ func _findLargest(triles, idx: int):
 		if trile["Position"][idx] > comparer:
 			comparer = trile["Position"][idx]
 		pass
-	return comparer
+	return comparer + 1 # Just in case we need some extra space!

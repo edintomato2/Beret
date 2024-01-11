@@ -1,10 +1,9 @@
-[gd_scene load_steps=25 format=3 uid="uid://cdwpy8hm6qseq"]
+[gd_scene load_steps=24 format=3 uid="uid://cdwpy8hm6qseq"]
 
 [ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_yufu8"]
-[ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://default.tres" id="2_i42am"]
+[ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://Defaults/default.tres" id="2_pfeim"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuFile.gd" id="3_mnd5b"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="4_5u3hn"]
-[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="4_i7j77"]
 [ext_resource type="Texture2D" uid="uid://cw063pifm8hls" path="res://beret_logo.png" id="5_tfvu3"]
 [ext_resource type="PackedScene" uid="uid://baepcmjcgsbk0" path="res://Objects/Compass.glb" id="6_exilt"]
 [ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="7_jfdyk"]
@@ -73,7 +72,7 @@ script = ExtResource("1_yufu8")
 
 [node name="Titlebar" type="HBoxContainer" parent="."]
 layout_mode = 2
-theme = ExtResource("2_i42am")
+theme = ExtResource("2_pfeim")
 
 [node name="File" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
@@ -141,12 +140,6 @@ popup/item_3/text = "Debug terminal"
 popup/item_3/id = 2
 popup/item_4/text = "Raw FEZLVL.JSON"
 popup/item_4/id = 3
-script = ExtResource("4_i7j77")
-
-[node name="Palette" type="Window" parent="Titlebar/View"]
-title = "Palette"
-initial_position = 2
-visible = false
 
 [node name="Help" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
@@ -190,7 +183,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Beret - A level editor and viewer for FEZ.
-edintomato and contributors, 2024
+edintomato2 and contributors, 2024
 This project is licensed under GPLv3!
  "
 horizontal_alignment = 1
@@ -232,7 +225,7 @@ horizontal_alignment = 1
 [node name="EditorLog" type="RichTextLabel" parent="Sidebar/SidebarVertical"]
 layout_mode = 2
 size_flags_vertical = 3
-theme = ExtResource("2_i42am")
+theme = ExtResource("2_pfeim")
 text = "Welcome to Beret!
 "
 scroll_following = true
@@ -278,7 +271,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_force_pass_scroll_events = false
-theme = ExtResource("2_i42am")
+theme = ExtResource("2_pfeim")
 allow_search = false
 max_columns = 0
 same_column_width = true

@@ -10,12 +10,16 @@ config_version=5
 
 [application]
 
-config/name="Beret - FEZ Level Editor"
-config/version="0.0.1"
+config/name="Beret - A FEZ Level Editor"
+config/version="0.0.2"
 run/main_scene="res://Scenes/MainScene.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 boot_splash/show_image=false
 config/icon="res://beret_logo.png"
+
+[audio]
+
+buses/default_bus_layout="res://Defaults/default_bus_layout.tres"
 
 [autoload]
 
