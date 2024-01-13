@@ -1,10 +1,15 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://5wxvr808qkyw"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://5wxvr808qkyw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jyao1"]
 bg_color = Color(0, 0, 0, 0.196078)
 border_width_top = 2
 border_color = Color(0, 0, 0, 1)
 border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rx68y"]
+bg_color = Color(0, 0, 0, 0.196078)
+border_width_left = 2
+border_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mceqj"]
 content_margin_left = 6.0
@@ -14,13 +19,12 @@ bg_color = Color(0, 0, 0, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7tf7i"]
 bg_color = Color(0, 0, 0, 0.196078)
 border_width_left = 2
-border_width_top = 2
-border_width_bottom = 2
 border_color = Color(0, 0, 0, 1)
-border_blend = true
 
 [resource]
 HBoxContainer/constants/separation = 0
 ItemList/styles/panel = SubResource("StyleBoxFlat_jyao1")
+Label/styles/normal = SubResource("StyleBoxFlat_rx68y")
 MenuButton/styles/normal = SubResource("StyleBoxFlat_mceqj")
 RichTextLabel/styles/normal = SubResource("StyleBoxFlat_7tf7i")
+VSplitContainer/constants/separation = 0

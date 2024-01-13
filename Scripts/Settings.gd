@@ -12,7 +12,7 @@ var NPCDir
 var TSDir
 
 func _ready(): # Load saved data, if available.
-	var err = config.load("user://HARDHAT.cfg")
+	var err = config.load("user://Beret.cfg")
 	if err != OK: # If not, have the user set up save data.
 		var s = preload("res://Scenes/NoDirs.tscn")
 		get_tree().change_scene_to_packed(s)

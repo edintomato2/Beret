@@ -16,6 +16,10 @@ func tweenToPos(obj: Object, property: NodePath, direction: Variant, action, spe
 	allowMove = false
 	
 	var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
+	
+	if typeof(direction) == TYPE_VECTOR3: # Round position down.
+		direction = round(direction)
+		
 	tween.tween_property(obj, property, direction, speed)
 	emit_signal("hasMoved", action)
 	
@@ -40,6 +44,7 @@ func _process(_delta):
 	
 func _unhandled_input(_event):
 	if allowMove: # Movement control. Why does this have to be a bunch of if statements?
+		# Yes, this is reversed, but that's because of the position of the camera.
 		var forward = transform.basis.z; var right = -transform.basis.x
 		var _moveTo = Vector3.ZERO # Prevent cursor from going below (0, 0, 0)
 

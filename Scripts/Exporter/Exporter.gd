@@ -67,7 +67,7 @@ func _saveFEZLVL(path, filename):
 				"StartingPoint":
 					var id = obj.get_meta("Id")
 					var face = obj.get_meta("Face")
-					var spDict = { "Id": id, "Face": face}
+					var spDict = { "Id": [id[0], id[1], id[2] - 1], "Face": face}
 					
 					template["StartingPosition"] = spDict
 					pass

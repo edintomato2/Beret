@@ -30,11 +30,15 @@ func _ready():
 	pass
 
 func _on_load_dialog_file_selected(path):
-	for n in get_child_count(): # Clear out all objects.
-		get_child(n).queue_free()
+	killChildren()
 	
 	_mutex.lock(); _path = path; _mutex.unlock(); # Send file path to thread.
 	_sema.post() # Tell thread to start processing.
+	pass
+
+func killChildren(): # Please do not judge my function names.
+	for n in get_child_count(): # Clear out all objects.
+		get_child(n).queue_free()
 	pass
 
 func _loadFEZLVL():
@@ -57,7 +61,7 @@ func _loadFEZLVL():
 		if err == OK:
 			var lvlData = readLvl.data 
 			# Load trileset.
-			trileset = await _loadObj(Settings.TSDir + lvlData["TrileSetName"].to_lower() + ".fezts.json", 2)
+			trileset = await loadObj(Settings.TSDir + lvlData["TrileSetName"].to_lower() + ".fezts.json", 2)
 			
 			# Place fezlvl triles into scene.
 			var trilePlacements = lvlData["Triles"] # Extract emplacements, phi, and trile ID.
@@ -87,7 +91,7 @@ func _loadFEZLVL():
 		else: 
 			print("Error reading .fezlvl.")
 
-func _loadObj(filepath: String, type: int = 4):
+func loadObj(filepath: String, type: int = 4):
 	var cleanPath = filepath.get_basename()
 	match type:
 		2: # Load trileset as ArrayMesh, and trile names as Dictionary.
@@ -183,7 +187,7 @@ func placeAO(dir, ao):
 	var rot = ao["Rotation"]
 	var scale = ao["Scale"]
 	
-	var obj = await _loadObj(dir + objName + ".fezao.json")
+	var obj = await loadObj(dir + objName + ".fezao.json")
 	
 	obj.quaternion = Quaternion(rot[0], rot[1], rot[2], rot[3])
 	obj.scale = Vector3(scale[0], scale[1], scale[2])
@@ -210,6 +214,15 @@ func placeStart(dir, posArray):
 	gomez.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	gomez.scale = Vector3(5, 5, 5)
 	
+	var statBod = StaticBody3D.new() # Set up collisions for Cursor
+	var colBod = CollisionShape3D.new()
+	var colShape = SphereShape3D.new()
+	
+	colShape.radius = 0.05
+	colBod.shape = colShape
+	statBod.add_child(colBod)
+	gomez.add_child(statBod)
+	
 	# Figuring out where to place him
 	var posStr = posArray["Id"]
 	var face = posArray["Face"]
@@ -217,19 +230,21 @@ func placeStart(dir, posArray):
 	
 	match face: # Test with levels to find out where we should place Gomez!
 		"Front": adjust = Vector3.FORWARD
-		"Back":  adjust = Vector3.DOWN
+		"Back":  adjust = Vector3.BACK
 		"Left":  adjust = Vector3.LEFT
 		"Right": adjust = Vector3.RIGHT
 		"Top":   adjust = Vector3.UP
 		"Down":  adjust = Vector3.DOWN
 		
-	var pos = Vector3(posStr[0], posStr[1], posStr[2]) - adjust
+	var pos = Vector3(posStr[0], posStr[1], posStr[2]) + adjust
 	
 	gomez.position = pos
 	gomez.layers = 8
 	gomez.set_meta("Type", "StartingPoint")
 	gomez.set_meta("Id", posStr)
 	gomez.set_meta("Face", face)
+	gomez.set_meta("Name", "Gomez")
+	gomez.play("gif")
 	call_deferred("add_child", gomez)
 	return pos
 
