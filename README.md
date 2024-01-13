@@ -42,3 +42,4 @@ Screenshots
 
 Regardless, here are a few screenshots.
 ![Screenshot of level "OWL"](https://github.com/edinosma/Beret/blob/master/github/beret_screenshot.png?raw=true)
+![Screenshot of custom level "BERET"](https://github.com/edintomato2/Beret/blob/master/github/beret_logo_wall.png?raw=true)
