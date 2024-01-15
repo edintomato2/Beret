@@ -13,9 +13,9 @@ func _on_help_menu_pressed(id: int):
 	sfx.stream = soundOK; sfx.play()
 	match id:
 		0:
-			OS.shell_open("https://github.com/FEZModding/FEZRepacker/wiki")
+			OS.shell_open("https://fezmodding.github.io/wiki/")
 		1:
-			OS.shell_open("https://github.com/edintomato2/HARDHAT")
+			OS.shell_open("https://github.com/edintomato2/Beret")
 		3:
 			winAbout.visible = true
 

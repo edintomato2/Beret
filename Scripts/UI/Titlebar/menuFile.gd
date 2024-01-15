@@ -5,6 +5,7 @@ extends MenuButton
 @onready var _nwFile = $New
 
 @onready var _ldr = $"../../Loader"
+@onready var _ui = $"../.."
 
 @export var loadShortcut: Shortcut
 @export var saveShortcut: Shortcut
@@ -46,6 +47,7 @@ func _on_new_file_selected(path: String):
 	get_popup().set_item_disabled(1, false)
 	_ldr.killChildren() # Clear out all objects
 	var trileset = await _ldr.loadObj(cleanPath, 2)
+	_ui.playSound("loaded")
 	_ldr.trileset = trileset # Let the importer know we have loaded a new TS
 	_ldr.loadedTS.emit(trileset)
 	pass

@@ -82,5 +82,4 @@ speed_scale = 1.25
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -200, 0, 0)
 cull_mask = 1048574
 projection = 1
-current = true
 size = 20.0

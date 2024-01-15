@@ -14,6 +14,7 @@ var onObj = null
 
 @onready var _infoLabel: Label = $"VSplitContainer/Sidebar/SidebarVertical/Position"
 @onready var _objLabel: Label  = $"VSplitContainer/Sidebar/SidebarVertical/Object"
+@onready var _logLabel: RichTextLabel = $"VSplitContainer/Sidebar/SidebarVertical/EditorLog"
 
 @onready var _palettes: Control = $"VSplitContainer/Toolbar/Palettes"
 
@@ -52,6 +53,9 @@ func _physics_process(_delta):
 		
 
 func _on_cursor_has_moved(keyPress): # Sounds for movement.
+	playSound(keyPress)
+
+func playSound(keyPress):
 	match keyPress:
 		"move_up", "move_right", "move_up_layer":
 			_sfx.stream = soundUp; _sfx.play()
@@ -64,6 +68,9 @@ func _on_cursor_has_moved(keyPress): # Sounds for movement.
 		"fail":
 			_sfx.stream = soundCancel; _sfx.play()
 		"loaded":
+			_sfx.stream = soundOK;     _sfx.play()
+		"saved":
+			_logLabel.append_text("Level saved!")
 			_sfx.stream = soundOK;     _sfx.play()
 
 func _on_loader_new_cur_por(newPos):

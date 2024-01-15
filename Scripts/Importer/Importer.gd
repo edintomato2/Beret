@@ -220,23 +220,15 @@ func placeStart(dir, posArray):
 	
 	colShape.radius = 0.05
 	colBod.shape = colShape
-	statBod.add_child(colBod)
+	
+	statBod.call_deferred("add_child", colBod)
 	gomez.add_child(statBod)
 	
 	# Figuring out where to place him
 	var posStr = posArray["Id"]
 	var face = posArray["Face"]
-	var adjust: Vector3
-	
-	match face: # Test with levels to find out where we should place Gomez!
-		"Front": adjust = Vector3.FORWARD
-		"Back":  adjust = Vector3.BACK
-		"Left":  adjust = Vector3.LEFT
-		"Right": adjust = Vector3.RIGHT
-		"Top":   adjust = Vector3.UP
-		"Down":  adjust = Vector3.DOWN
 		
-	var pos = Vector3(posStr[0], posStr[1], posStr[2]) + adjust
+	var pos = Vector3(posStr[0], posStr[1], posStr[2])
 	
 	gomez.position = pos
 	gomez.layers = 8

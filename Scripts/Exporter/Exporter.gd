@@ -5,8 +5,7 @@ extends Node
 # overwrite with our data.
 
 @onready var _loader = $"../Loader"
-
-var lvlSize = [0, 0, 0]
+@onready var _ui = $".."
 
 # Standard definitions. This will get ugly!
 var _aoActor = { "Inactive": false, "ContainedTrile": "None", "AttachedGroup": null, "SpinView": "None", "SpinEvery": 0, "SpinOffset": 0, "OffCenter": false, "RotationCenter": [0, 0, 0], "VibrationPattern": [], "CodePattern": [], "Segment": { "Destination": [0, 0, 0], "Duration": 1, "WaitTimeOnStart": 0, "WaitTimeOnFinish": 0, "Acceleration": 0, "Deceleration": 0, "JitterFactor": 0, "Orientation": [0, 0, 0, 1], "CustomData": null }, "NextNode": null, "DestinationLevel": "", "TreasureMapName": "", "InvisibleSides": [], "TimeswitchWindBackSpeed": 0}
@@ -67,7 +66,7 @@ func _saveFEZLVL(path, filename):
 				"StartingPoint":
 					var id = obj.get_meta("Id")
 					var face = obj.get_meta("Face")
-					var spDict = { "Id": [id[0], id[1], id[2] - 1], "Face": face}
+					var spDict = { "Id": [id[0], id[1], id[2]], "Face": face}
 					
 					template["StartingPosition"] = spDict
 					pass
@@ -76,25 +75,57 @@ func _saveFEZLVL(path, filename):
 		template["TrileSetName"] = _loader.trileset[3].to_upper()
 		
 		# Find the level's size automatically by finding the most out-there object.
-		var maxX = _findLargest(template["Triles"], 0)
-		var maxY = _findLargest(template["Triles"], 1)
-		var maxZ = _findLargest(template["Triles"], 2)
-		template["Size"] = [maxX, maxY, maxZ]
+		## Take into account negative level sizes by applying an offset.
+		var offset: Array = _findSmallest(template["Triles"])
 		
-		print("Done writing file. Phew!")
+		## Apply offset to all trile positions and emplacements
+		for idx in template["Triles"].size():
+			template["Triles"][idx]["Emplacement"] = _offset(template["Triles"][idx]["Emplacement"], offset)
+			template["Triles"][idx]["Position"] = _offset(template["Triles"][idx]["Position"], offset)
+			pass
+		
+		## Apply offset to Gomez
+		var startPos = template.get("StartingPosition")
+		startPos["Id"] = _startOffset(startPos["Id"], offset)
+		
+		## Find the level size from here
+		var lvlSize = _findLargest(template["Triles"])
+		template["Size"] = lvlSize
 		
 		var writeLVL := JSON.stringify(template, "  ", false, false)
 		
 		var file = FileAccess.open(path + "/" + filename + ".fezlvl.json", FileAccess.WRITE)
 		file.store_string(writeLVL)
 		file.close()
+		print("Done writing file. Phew!")
+		_ui.playSound("saved")
 	pass
 pass
 
-func _findLargest(triles, idx: int):
-	var comparer: int = 1
-	for trile in triles:
-		if trile["Position"][idx] > comparer:
-			comparer = trile["Position"][idx]
-		pass
-	return comparer + 1 # Just in case we need some extra space!
+func _findLargest(triles):
+	var comparer := [1, 1, 1]
+	for idx in range(0,3): # For X, Y, and Z
+		for trile in triles:
+			if trile["Emplacement"][idx] > comparer[idx]:
+				comparer[idx] = trile["Emplacement"][idx]
+			pass
+	return comparer.map(func(n): return n + 1) # Just in case we need extra space!
+
+func _findSmallest(triles):
+	var comparer := [0, 0, 0]
+	for idx in range(0,3): # For X, Y, and Z
+		for trile in triles:
+			if trile["Emplacement"][idx] < comparer[idx]:
+				comparer[idx] = trile["Emplacement"][idx]
+			pass
+	return comparer
+
+func _offset(array: Array, offset: Array):
+	for idx in range(0,3): # For X, Y, and Z
+		array[idx] += (abs(offset[idx]))
+	return array
+	
+func _startOffset(startPos, offset: Array):
+	for pos in range(0,3):
+		startPos[pos] += (abs(offset[pos]))
+	return startPos
