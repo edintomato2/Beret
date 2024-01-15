@@ -64,8 +64,10 @@ func _loadFEZLVL():
 			trileset = await loadObj(Settings.TSDir + lvlData["TrileSetName"].to_lower() + ".fezts.json", 2)
 			
 			# Place fezlvl triles into scene.
-			var trilePlacements = lvlData["Triles"] # Extract emplacements, phi, and trile ID.
-			for trile in trilePlacements: # We should represent "Position" as a sort of delta btwn Emplacement and where the trile is rendered. 
+			## Extract emplacements, phi, and trile ID.
+			var trilePlacements = lvlData["Triles"]
+			
+			for trile in trilePlacements:
 				placeTrile(trileset, trile)
 				pass
 				 
@@ -98,19 +100,33 @@ func loadObj(filepath: String, type: int = 4):
 			var tsName = cleanPath.get_basename().get_file()
 			var mA = ObjParse.load_obj(cleanPath + ".obj") 
 			
-			var mat = StandardMaterial3D.new() # Make a new material for the object, set settings.
+			## Make a new material for the trile.
+			var mat = StandardMaterial3D.new()
 			var img = Image.load_from_file(cleanPath + ".png")
 			var tex = ImageTexture.create_from_image(img)
 			mat.albedo_texture = tex
 			mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 			
-			# Load in trile names.
+			## Load in trile names, set default trile rotation.
 			var readTS = JSON.new()
 			var err = readTS.parse(FileAccess.get_file_as_string(filepath))
 			if err == OK:
 				var tsData = readTS.data
 				var trileIDs = tsData["Triles"]
-				return [mA, mat, trileIDs, tsName]
+				var tsRot = 0
+				
+				for trile in trileIDs:
+					match trileIDs[trile]["Face"]:
+						"Left":
+							tsRot = -180
+						"Front":
+							tsRot = -90
+						"Right":
+							tsRot = -270
+						"Back":
+							tsRot = -180
+					pass
+				return [mA, mat, trileIDs, tsName, tsRot]
 			
 		_: # Load everything else as MeshInstance3D.
 			var m = MeshInstance3D.new() # Make a new mesh instance.
@@ -144,7 +160,12 @@ func placeTrile(ts: Array, info: Dictionary):
 	
 	var id = str(info["Id"])
 	var posTrile = info["Position"]
-	var rot = info["Phi"] * -90
+	
+	# Handle trile rotation
+	var trileRot = ts[4]
+	var phi = info["Phi"] * 90
+	
+	var rot = (-360 - trileRot) + phi
 	
 	var surfNum = mA.surface_find_by_name(id)
 	var albColor = Color(1, 1, 1, 1)
@@ -171,12 +192,23 @@ func placeTrile(ts: Array, info: Dictionary):
 		trile.set_surface_override_material(0, mat)
 		trile.position = pos
 		trile.rotation_degrees = Vector3(0, rot, 0)
-		trile.call_deferred("create_convex_collision", false, false)
+		
+		## Create collision so that the cursor knows which object we're under
+		var statBod = StaticBody3D.new()
+		var colBod = CollisionShape3D.new()
+		var colShape = BoxShape3D.new()
+		
+		colShape.size = Vector3(1, 1, 1)
+		colBod.shape = colShape
+		
+		statBod.call_deferred("add_child", colBod)
+		trile.add_child(statBod)
 		
 		trile.layers = 2
 		trile.set_meta("Type", "Trile")
 		trile.set_meta("Name", names[id]["Name"])
 		trile.set_meta("Id", id)
+		trile.set_meta("Face", trileRot)
 		
 		call_deferred("add_child", trile)
 		pass

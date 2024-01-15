@@ -1,4 +1,7 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://5wxvr808qkyw"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://5wxvr808qkyw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6gq1s"]
+draw_center = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jyao1"]
 bg_color = Color(0, 0, 0, 0.196078)
@@ -23,6 +26,7 @@ border_color = Color(0, 0, 0, 1)
 
 [resource]
 HBoxContainer/constants/separation = 0
+HSlider/styles/slider = SubResource("StyleBoxFlat_6gq1s")
 ItemList/styles/panel = SubResource("StyleBoxFlat_jyao1")
 Label/styles/normal = SubResource("StyleBoxFlat_rx68y")
 MenuButton/styles/normal = SubResource("StyleBoxFlat_mceqj")

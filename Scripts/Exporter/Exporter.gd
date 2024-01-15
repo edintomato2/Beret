@@ -32,10 +32,14 @@ func _saveFEZLVL(path, filename):
 				"Trile":
 					var pos = [obj.position.x, obj.position.y, obj.position.z]
 					var emp = [round(pos[0]), round(pos[1]), round(pos[2])]
-					var phi = abs(obj.rotation_degrees.y / 90)
+					
+					# Keep rotation to 0,3
+					var phiFace = obj.get_meta("Face")
+					var phi = 360 + (obj.rotation_degrees.y - phiFace)
+					phi = fmod(phi, 360) / 90
+					
 					var actset = null
 					
-			
 					var trileDict = { "Emplacement": emp,
 									"Position": pos,
 									"Phi": phi,

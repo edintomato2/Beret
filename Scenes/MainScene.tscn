@@ -1,9 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://q6hiwea1m8ok"]
+[gd_scene load_steps=5 format=3 uid="uid://q6hiwea1m8ok"]
 
 [ext_resource type="PackedScene" uid="uid://djsig0kkd1ved" path="res://Scenes/Cursor.tscn" id="1_qhvts"]
 [ext_resource type="PackedScene" uid="uid://cdwpy8hm6qseq" path="res://Scenes/UI.tscn" id="2_7lqbu"]
 [ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://Materials/DefaultEnv.tres" id="3_tf75n"]
-[ext_resource type="PackedScene" uid="uid://dtgqsmedef7w7" path="res://Scenes/Stopper.tscn" id="4_1q8sn"]
 [ext_resource type="Script" path="res://addons/simple-free-look-camera-4-cf0bc21bfd15940b18ec42e3c6cae1ad385284c4/camera.gd" id="5_ad71m"]
 
 [node name="Main" type="Node"]
@@ -14,9 +13,6 @@
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_tf75n")
-
-[node name="Stopper" parent="." instance=ExtResource("4_1q8sn")]
-visible = false
 
 [node name="DebugCam" type="Camera3D" parent="."]
 cull_mask = 1048574

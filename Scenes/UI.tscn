@@ -263,6 +263,11 @@ theme = SubResource("Theme_328gk")
 text = "[0, 0, 0]"
 horizontal_alignment = 1
 
+[node name="Facing" type="Label" parent="VSplitContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+text = "Facing: Left"
+horizontal_alignment = 1
+
 [node name="Object" type="Label" parent="VSplitContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
 mouse_filter = 1
@@ -307,6 +312,21 @@ cull_mask = 1
 projection = 1
 size = 10.0
 far = 20.0
+
+[node name="PhiControl" type="VBoxContainer" parent="VSplitContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VSplitContainer/Sidebar/SidebarVertical/PhiControl"]
+layout_mode = 2
+text = "Rotation: -0 deg"
+horizontal_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="VSplitContainer/Sidebar/SidebarVertical/PhiControl"]
+layout_mode = 2
+theme = ExtResource("2_pfeim")
+max_value = 3.0
+tick_count = 4
+ticks_on_borders = true
 
 [node name="Toolbar" type="HBoxContainer" parent="VSplitContainer"]
 clip_contents = true
@@ -409,6 +429,7 @@ script = ExtResource("12_4xdn3")
 [connection signal="file_selected" from="Titlebar/File/Save" to="Exporter" method="_on_save_file_selected"]
 [connection signal="file_selected" from="Titlebar/File/New" to="Titlebar/File" method="_on_new_file_selected"]
 [connection signal="close_requested" from="Titlebar/Help/About" to="Titlebar/Help" method="_on_about_close_requested"]
+[connection signal="value_changed" from="VSplitContainer/Sidebar/SidebarVertical/PhiControl/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="item_selected" from="VSplitContainer/Toolbar/ChoosePalette" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_choose_palette_item_selected"]
 [connection signal="levelJSON" from="Loader" to="Titlebar/File" method="_on_loader_level_json"]
 [connection signal="levelJSON" from="Loader" to="Titlebar/View" method="_on_loader_level_json"]

@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Beret - A FEZ Level Editor"
-config/version="0.0.2"
+config/version="0.1.0"
 run/main_scene="res://Scenes/MainScene.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 boot_splash/show_image=false
@@ -33,6 +33,7 @@ window/subwindows/embed_subwindows=false
 
 [editor]
 
+movie_writer/movie_file="D:/Programming/Fez/BeretExports/beret_movie.avi"
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
 

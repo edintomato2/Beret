@@ -12,16 +12,23 @@ var movement = false
 
 var onObj = null
 
+# Labels
 @onready var _infoLabel: Label = $"VSplitContainer/Sidebar/SidebarVertical/Position"
 @onready var _objLabel: Label  = $"VSplitContainer/Sidebar/SidebarVertical/Object"
+@onready var _faceLabel: Label = $"VSplitContainer/Sidebar/SidebarVertical/Facing"
 @onready var _logLabel: RichTextLabel = $"VSplitContainer/Sidebar/SidebarVertical/EditorLog"
 
+# Rotation control
+@onready var _phi: HSlider = $"VSplitContainer/Sidebar/SidebarVertical/PhiControl/HSlider"
+@onready var _phiLabel: Label = $"VSplitContainer/Sidebar/SidebarVertical/PhiControl/Label"
+
+# Palette control
 @onready var _palettes: Control = $"VSplitContainer/Toolbar/Palettes"
 
+# General nodes
 @onready var _loader: Node3D = $"Loader"
 @onready var _cursor: Node3D = $"../Cursor"
 @onready var _curArea: Area3D = $"../Cursor/Area3D"
-
 @onready var _sfx: AudioStreamPlayer = $"SFX"
 
 signal cursorPos(newPos: Vector3) # A relay from Loader.
@@ -34,7 +41,16 @@ func _notification(what):
 		get_tree().quit()
 
 func _process(_delta):
-	var pos = _cursor.global_position # Update Position label
+	# Update Facing label
+	var facing = abs(fmod(_cursor.rotation_degrees.y, 360) / 90)
+	match str(facing):
+		"0": _faceLabel.text = "Facing: Left"
+		"1": _faceLabel.text = "Facing: Front"
+		"2": _faceLabel.text = "Facing: Right"
+		"3": _faceLabel.text = "Facing: Back"
+		
+	# Update Position label
+	var pos = _cursor.global_position
 	var posStr = posFormat % [pos.x, pos.y, pos.z]
 	_infoLabel.set_text(posStr)
 	
@@ -52,7 +68,7 @@ func _physics_process(_delta):
 		_objLabel.set_text("None")
 		
 
-func _on_cursor_has_moved(keyPress): # Sounds for movement.
+func _on_cursor_has_moved(keyPress):
 	playSound(keyPress)
 
 func playSound(keyPress):
@@ -70,7 +86,7 @@ func playSound(keyPress):
 		"loaded":
 			_sfx.stream = soundOK;     _sfx.play()
 		"saved":
-			_logLabel.append_text("Level saved!")
+			_logLabel.append_text("Level saved!\n")
 			_sfx.stream = soundOK;     _sfx.play()
 
 func _on_loader_new_cur_por(newPos):
@@ -116,7 +132,7 @@ func plObj(obj, type: String):
 	match type:
 		"Trile":
 			# We should probably factor in camera rotation as the Phi value.
-			var info: Dictionary = {"Id" : obj, "Position" : _cursor.global_position, "Phi" : 0}
+			var info: Dictionary = {"Id" : obj, "Position" : _cursor.global_position, "Phi" : _phi.value}
 			_loader.placeTrile(_loader.trileset, info)
 		"AO":
 			pass
@@ -134,3 +150,6 @@ func getActivePalette(parent: Node):
 		if child.visible == true:
 			return child
 	return 1
+
+func _on_h_slider_value_changed(value):
+	_phiLabel.text = "Rotation: " + str(value * -90) + " deg"
