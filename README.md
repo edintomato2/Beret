@@ -11,9 +11,6 @@ Level viewing and editing
 3. Load a `.fezlvl.json` file from the File menu! (`.fezlvl.json`s are usually found in the levels directory)
 4. Alternatively, you can make a new level from scratch by pressing the "New Level" button instead. This will ask you to load a specific trileset for your level!
 
-> [!WARNING]
-> Trilesets with more than 256 triles ("Untitled", "Random") currently don't load correctly!
-
 Level testing
 ---
 Thanks to HAT v1.1.0, levels don't have to be recompiled into a `.pak` file!
@@ -34,6 +31,7 @@ Usage
 |X|Delete object (trile, art object, NPC...)|
 |Left Click|Place object|
 |Arrow Keys|Select from palette|
+|Shift + 2| 2D Mode|
 
 Screenshots
 ---
