@@ -96,7 +96,7 @@ func _loadFEZLVL():
 func loadObj(filepath: String, type: int = 4):
 	var cleanPath = filepath.get_basename()
 	match type:
-		2: # Load trileset as ArrayMesh, and trile names as Dictionary.
+		2: # Load trileset as Array, with each part of the array being an ArrayMesh. Trile names come out as a Dictionary.
 			var tsName = cleanPath.get_basename().get_file()
 			var mA = ObjParse.load_obj(cleanPath + ".obj") 
 			
@@ -130,9 +130,9 @@ func loadObj(filepath: String, type: int = 4):
 			
 		_: # Load everything else as MeshInstance3D.
 			var m = MeshInstance3D.new() # Make a new mesh instance.
-			var mA = ObjParse.load_obj(cleanPath + ".obj") # Load object from filesystem.
+			var meshDict = ObjParse.load_obj(cleanPath + ".obj") # Load object from filesystem.
 			
-			m.mesh = mA
+			m.mesh = meshDict.values()[0]
 			
 			# All mats will have the same material settings.
 			var mat = StandardMaterial3D.new() # Make a new material for the object, set settings.
@@ -146,15 +146,15 @@ func loadObj(filepath: String, type: int = 4):
 			for numMat in m.get_surface_override_material_count():
 				m.set_surface_override_material(numMat, mat)
 			m.layers = type # 8 for npcs, 4 for art objects, 2 for trilesets, 1 for UI.
-			# find a way to put AOs, triles, NPCs into the palette
+			
+			# Make a dirty collision so we can approx. what object the cursor is on.
 			m.call_deferred("create_convex_collision", false, false)
-			#m.create_convex_collision(false, false) # Make a dirty collision so we can approx. what object the cursor is on.
 			
 			# NPCs will be a billboard texture. May be expensive to render because they're transparent.
 			return m
 	
 func placeTrile(ts: Array, info: Dictionary):
-	var mA = ts[0]
+	var meshDict = ts[0]
 	var mat = ts[1]
 	var names = ts[2]
 	
@@ -167,29 +167,19 @@ func placeTrile(ts: Array, info: Dictionary):
 	
 	var rot = (-360 - trileRot) + phi
 	
-	var surfNum = mA.surface_find_by_name(id)
-	var albColor = Color(1, 1, 1, 1)
+	var trMesh = meshDict.get(id)
 	
-	if (id != "-1") and (surfNum == -1): # Missing trile. Checkerboard material in its place!
-		surfNum = 0; albColor = Color(0, 0, 0, 1)
-		pass
-	elif (id == "-1"): # "Hollow" trile. A completely black cube mesh.
-		surfNum = 0; albColor = Color(0, 0, 0, 1)
-		pass
-	else:
+	if trMesh != null:
 		# Extract the surface we need and make it its own mesh.
-		var prim = mA.surface_get_primitive_type(surfNum)
-		var arrays = mA.surface_get_arrays(surfNum)
 		var pos = Vector3(posTrile[0], posTrile[1], posTrile[2])
-		
-		var trMesh = ArrayMesh.new()
-		trMesh.add_surface_from_arrays(prim, arrays)
-		
-		mat.albedo_color = albColor
 		
 		var trile = MeshInstance3D.new()
 		trile.mesh = trMesh
-		trile.set_surface_override_material(0, mat)
+		
+		var mats = trile.get_surface_override_material_count()
+		if mats != 0:
+			trile.set_surface_override_material(0, mat)
+		
 		trile.position = pos
 		trile.rotation_degrees = Vector3(0, rot, 0)
 		

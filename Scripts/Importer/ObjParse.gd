@@ -17,7 +17,7 @@ const debug: bool = false
 # https://github.com/Ezcha/gd-obj/blob/master/LICENSE
 
 # Create mesh from obj and mtl paths
-static func load_obj(obj_path: String, mtl_path: String = "") -> Mesh:
+static func load_obj(obj_path: String, mtl_path: String = "") -> Dictionary:
 	var obj_str: String = _read_file_str(obj_path)
 	if (mtl_path == ""):
 		var mtl_filename: String = _get_mtl_filename(obj_str)
@@ -25,12 +25,12 @@ static func load_obj(obj_path: String, mtl_path: String = "") -> Mesh:
 	var mats: Dictionary = {}
 	if (mtl_path != ""):
 		mats = _create_mtl(_read_file_str(mtl_path), _get_mtl_tex(mtl_path))
-	if (obj_str.is_empty()): return null
+	if (obj_str.is_empty()): return {}
 	return _create_obj(obj_str, mats)
 
 # Create mesh from obj, materials. Materials should be { "matname": data }
-static func load_obj_from_buffer(obj_data: String, materials: Dictionary) -> Mesh:
-	return _create_obj(obj_data,materials)
+static func load_obj_from_buffer(obj_data: String, materials: Dictionary) -> Dictionary:
+	return _create_obj(obj_data, materials)
 
 # Create materials
 static func load_mtl_from_buffer(mtl_data: String, textures: Dictionary) -> Dictionary:
@@ -141,9 +141,9 @@ static func _get_texture(mtl_filepath, tex_filename) -> ImageTexture:
 		prints("Debug: texture is", str(tex))
 	return tex
 
-static func _create_obj(obj: String, mats: Dictionary) -> Mesh:
+static func _create_obj(obj: String, mats: Dictionary) -> Dictionary:
 	# Setup
-	var mesh: ArrayMesh = ArrayMesh.new()
+	var meshes: Dictionary = {} # Added by edintomato2
 	var vertices: PackedVector3Array = PackedVector3Array()
 	var normals: PackedVector3Array = PackedVector3Array()
 	var uvs: PackedVector2Array = PackedVector2Array()
@@ -173,7 +173,7 @@ static func _create_obj(obj: String, mats: Dictionary) -> Mesh:
 				var n_uv: Vector2 = Vector2(parts[1].to_float(), 1 - parts[2].to_float())
 				uvs.append(n_uv)
 			"o":
-				# Surface group
+				# Surface group (edit by edintomato2)
 				count_mtl += 1
 				mat_name = parts[1].strip_edges()
 				if (!faces.has(mat_name)):
@@ -239,6 +239,8 @@ static func _create_obj(obj: String, mats: Dictionary) -> Mesh:
 			prints("Creating surface for matgroup", matgroup, "with", str(faces[matgroup].size()), "faces")
 		
 		# Mesh Assembler
+		# Start edits by edintomato2
+		var mesh: ArrayMesh = ArrayMesh.new()
 		var st: SurfaceTool = SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
 		if (!mats.has(matgroup)):
@@ -269,14 +271,16 @@ static func _create_obj(obj: String, mats: Dictionary) -> Mesh:
 							fan_vt.append(uv)
 				st.add_triangle_fan(fan_v, fan_vt, PackedColorArray(), PackedVector2Array(), fan_vn, [])
 		mesh = st.commit(mesh)
+		meshes.merge({matgroup : mesh})
 	
-	for k in mesh.get_surface_count():
-		var mat: Material = mesh.surface_get_material(k)
-		mat_name = ""
-		for m in mats:
-			if (mats[m] == mat):
-				mat_name = m
-		mesh.surface_set_name(k, mat_name)
+	for mesh in meshes:
+		for k in meshes[mesh].get_surface_count():
+			var mat: Material = meshes[mesh].surface_get_material(k)
+			mat_name = ""
+			for m in mats:
+				if (mats[m] == mat):
+					mat_name = m
+			meshes[mesh].surface_set_name(k, mat_name)
 	
 	# Finish
-	return mesh
+	return meshes
