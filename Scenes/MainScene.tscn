@@ -15,6 +15,7 @@
 environment = ExtResource("3_tf75n")
 
 [node name="DebugCam" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 cull_mask = 1048574
 script = ExtResource("5_ad71m")
 

@@ -24,16 +24,14 @@ func _ready():
 
 func _on_file_menu_pressed(id: int):
 	match id:
-		0:
-			_fdLoad.visible = true
-		1:
-			_svFile.visible = true
-		2: # Saving, options
-			print("To do!")
+		0: _fdLoad.visible = true
+		1: _svFile.visible = true
+		2: # Reopen First-Time setup (for the time being)
+			var s = preload("res://Scenes/NoDirs.tscn")
+			get_tree().change_scene_to_packed(s)
 		4:
 			get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
-		5:
-			_nwFile.visible = true
+		5: _nwFile.visible = true
 
 
 func _on_loader_level_json(_lvlJSON, _trileNum, _aoNum, _npcNum):

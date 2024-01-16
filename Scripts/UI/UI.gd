@@ -42,12 +42,12 @@ func _notification(what):
 
 func _process(_delta):
 	# Update Facing label
-	var facing = abs(fmod(_cursor.rotation_degrees.y, 360) / 90)
+	var facing = fmod(_cursor.rotation_degrees.y, 360) / 90
 	match str(facing):
-		"0": _faceLabel.text = "Facing: Left"
-		"1": _faceLabel.text = "Facing: Front"
-		"2": _faceLabel.text = "Facing: Right"
-		"3": _faceLabel.text = "Facing: Back"
+		"0", "-0": _faceLabel.text = "Facing: Left"
+		"1", "-3": _faceLabel.text = "Facing: Front"
+		"2", "-2": _faceLabel.text = "Facing: Right"
+		"3", "-1": _faceLabel.text = "Facing: Back"
 		
 	# Update Position label
 	var pos = _cursor.global_position

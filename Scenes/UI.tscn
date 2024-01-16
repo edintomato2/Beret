@@ -254,6 +254,7 @@ mouse_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 0
 theme_override_constants/separation = 0
 
 [node name="Position" type="Label" parent="VSplitContainer/Sidebar/SidebarVertical"]
@@ -278,6 +279,7 @@ horizontal_alignment = 1
 [node name="EditorLog" type="RichTextLabel" parent="VSplitContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_force_pass_scroll_events = false
 theme = ExtResource("2_pfeim")
 text = "Welcome to Beret!
 "
@@ -323,6 +325,7 @@ horizontal_alignment = 1
 
 [node name="HSlider" type="HSlider" parent="VSplitContainer/Sidebar/SidebarVertical/PhiControl"]
 layout_mode = 2
+mouse_force_pass_scroll_events = false
 theme = ExtResource("2_pfeim")
 max_value = 3.0
 tick_count = 4
