@@ -51,7 +51,7 @@ func _saveFEZLVL(path, filename):
 					
 				"AO":
 					var aoName = obj.get_meta("Name")
-					var pos     = [obj.position.x, obj.position.y, obj.position.z]
+					var pos     = [obj.position.x + 0.5, obj.position.y + 0.5, obj.position.z + 0.5]
 					var rot     = [obj.quaternion.x, obj.quaternion.y, obj.quaternion.z, obj.quaternion.w]
 					var aoScale = [obj.scale.x, obj.scale.y, obj.scale.z]
 					var actset  = _aoActor

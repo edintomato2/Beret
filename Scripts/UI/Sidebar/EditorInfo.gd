@@ -1,8 +1,14 @@
 extends RichTextLabel
 
-func _on_loader_level_json(lvlJSON, trileNum, aoNum, npcNum):
-	var level = lvlJSON.get_file().get_basename().get_basename().to_upper()
-	add_text("Loaded level: " + level + "\n")
-	add_text("Loaded " + str(trileNum) + " triles.\n")
-	add_text("Loaded " + str(aoNum) + " art objects.\n")
-	add_text("Loaded " + str(npcNum) + " NPCs.\n")
+@onready var _ldr = $"/root/Main/UI/Loader"
+
+func _on_loader_loaded(obj):
+	match obj:
+		"fezlvl":
+			add_text("Loaded level: " + _ldr.fezlvl["Name"].to_upper() + "\n")
+		"Triles":
+			add_text("Loaded " + str(_ldr.fezlvl[obj].size()) + " triles.\n")
+		"ArtObjects":
+			add_text("Loaded " + str(_ldr.fezlvl[obj].size()) + " art objects.\n")
+		"NonPlayerCharacters":
+			add_text("Loaded " + str(_ldr.fezlvl[obj].size()) + " NPCs.\n")

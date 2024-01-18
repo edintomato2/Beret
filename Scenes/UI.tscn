@@ -1,9 +1,10 @@
-[gd_scene load_steps=29 format=3 uid="uid://cdwpy8hm6qseq"]
+[gd_scene load_steps=30 format=3 uid="uid://cdwpy8hm6qseq"]
 
 [ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_yufu8"]
 [ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://Defaults/default.tres" id="2_pfeim"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuFile.gd" id="3_mnd5b"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="4_5u3hn"]
+[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="4_gp4es"]
 [ext_resource type="Texture2D" uid="uid://cw063pifm8hls" path="res://beret_logo.png" id="5_tfvu3"]
 [ext_resource type="PackedScene" uid="uid://baepcmjcgsbk0" path="res://Objects/Compass.glb" id="6_exilt"]
 [ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="7_jfdyk"]
@@ -161,7 +162,7 @@ shortcut = SubResource("Shortcut_5p5ho")
 text = "View"
 flat = false
 switch_on_hover = true
-item_count = 6
+item_count = 9
 popup/item_0/text = "Ortho Cam"
 popup/item_0/checkable = 1
 popup/item_0/checked = true
@@ -169,15 +170,29 @@ popup/item_0/id = 5
 popup/item_1/text = "Free Cam"
 popup/item_1/checkable = 1
 popup/item_1/id = 4
-popup/item_2/text = "Hide layers..."
+popup/item_2/text = "Visible Layers"
 popup/item_2/id = 1
-popup/item_3/text = ""
-popup/item_3/id = 10
-popup/item_3/separator = true
-popup/item_4/text = "Debug terminal"
-popup/item_4/id = 2
-popup/item_5/text = "Raw FEZLVL.JSON"
-popup/item_5/id = 3
+popup/item_2/separator = true
+popup/item_3/text = "Art Objects"
+popup/item_3/checkable = 1
+popup/item_3/checked = true
+popup/item_3/id = 6
+popup/item_4/text = "NPCs"
+popup/item_4/checkable = 1
+popup/item_4/checked = true
+popup/item_4/id = 8
+popup/item_5/text = "Triles"
+popup/item_5/checkable = 1
+popup/item_5/checked = true
+popup/item_5/id = 7
+popup/item_6/text = ""
+popup/item_6/id = 10
+popup/item_6/separator = true
+popup/item_7/text = "Debug terminal"
+popup/item_7/id = 2
+popup/item_8/text = "Raw FEZLVL.JSON"
+popup/item_8/id = 3
+script = ExtResource("4_gp4es")
 
 [node name="Help" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
@@ -434,8 +449,9 @@ script = ExtResource("12_4xdn3")
 [connection signal="close_requested" from="Titlebar/Help/About" to="Titlebar/Help" method="_on_about_close_requested"]
 [connection signal="value_changed" from="VSplitContainer/Sidebar/SidebarVertical/PhiControl/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="item_selected" from="VSplitContainer/Toolbar/ChoosePalette" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_choose_palette_item_selected"]
-[connection signal="levelJSON" from="Loader" to="Titlebar/File" method="_on_loader_level_json"]
-[connection signal="levelJSON" from="Loader" to="Titlebar/View" method="_on_loader_level_json"]
-[connection signal="levelJSON" from="Loader" to="VSplitContainer/Sidebar/SidebarVertical/EditorLog" method="_on_loader_level_json"]
-[connection signal="loadedTS" from="Loader" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_loader_loaded_ts"]
-[connection signal="newCurPor" from="Loader" to="." method="_on_loader_new_cur_por"]
+[connection signal="item_selected" from="VSplitContainer/Toolbar/Palettes/NPCs" to="VSplitContainer/Toolbar/Palettes/NPCs" method="_on_item_selected"]
+[connection signal="loaded" from="Loader" to="." method="_on_loader_loaded"]
+[connection signal="loaded" from="Loader" to="Titlebar/File" method="_on_loader_loaded"]
+[connection signal="loaded" from="Loader" to="Titlebar/View" method="_on_loader_loaded"]
+[connection signal="loaded" from="Loader" to="VSplitContainer/Sidebar/SidebarVertical/EditorLog" method="_on_loader_loaded"]
+[connection signal="loaded" from="Loader" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_loader_loaded"]

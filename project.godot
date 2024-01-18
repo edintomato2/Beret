@@ -163,6 +163,9 @@ open_level={
 3d_render/layer_2="Triles"
 3d_render/layer_3="AOs"
 3d_render/layer_4="NPCs"
+3d_physics/layer_2="Triles"
+3d_physics/layer_3="AOs"
+3d_physics/layer_4="NPCs"
 
 [physics]
 

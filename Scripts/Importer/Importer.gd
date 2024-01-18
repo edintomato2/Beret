@@ -9,7 +9,10 @@ extends Node
 # - NPCs: where they start, where they move, what they say. Textures in "character animations".
 # - Scripts: We need to do a lot of work on how scripting works in FEZ and what can be changed. For now, I'm leaving it out!
 
-var trileset
+# Globals, if other scripts need to refer to these.
+## These defaults are pretty long! Don't worry about it!
+var fezlvl: Dictionary
+var fezts: Array
 
 var _thread: Thread # Threading. To get data into a thread, use a Mutex!
 var _sema: Semaphore
@@ -17,23 +20,33 @@ var _mutex: Mutex
 var _path: String
 var _threadFlag = false
 
-signal newCurPor(newPos: Vector3)
-signal loadedTS(trileset: Array)
-signal levelJSON(lvlJSON: String, trileNum: int, aoNum: int, npcNum: int)
+signal loaded(obj: String)
 
 func _ready():
 	_thread = Thread.new() # Prepare threading.
 	_sema = Semaphore.new()
 	_mutex = Mutex.new()
 	
-	_thread.start(_loadFEZLVL) # Start thread in bkg.
+	#_thread.start(_loadFEZLVL) # Start thread in bkg.
 	pass
 
 func _on_load_dialog_file_selected(path):
 	killChildren()
 	
+	loadLVL(path)
+	loadTS(fezlvl["TrileSetName"])
+	
+	# Implement multithreading here!
+	placeTriles(fezlvl["Triles"])
+	placeAOs(fezlvl["ArtObjects"])
+	placeNPCs(fezlvl["NonPlayerCharacters"])
+	#placeBkgPlanes(fezlvl["BackgroundPlanes"])
+	#placeSky(fezlvl["SkyName"])
+	placeStart(fezlvl["StartingPosition"])
+	
 	_mutex.lock(); _path = path; _mutex.unlock(); # Send file path to thread.
 	_sema.post() # Tell thread to start processing.
+	emit_signal("loaded", "level")
 	pass
 
 func killChildren(): # Please do not judge my function names.
@@ -41,202 +54,166 @@ func killChildren(): # Please do not judge my function names.
 		get_child(n).queue_free()
 	pass
 
-func _loadFEZLVL():
-	while true:
-		_sema.wait() # Wait for signal from main thread to start processing.
-		
-		_mutex.lock() # Do we stop?
-		var stopThread = _threadFlag
-		_mutex.unlock()
-		
-		if stopThread: break 
-		
-		_mutex.lock() # Get data, make sure it doesn't change!
-		var path = _path
-		_mutex.unlock() 
-		
-		print("Found level: " + path.get_file())
-		var readLvl = JSON.new()
-		var err = readLvl.parse(FileAccess.get_file_as_string(path))
-		if err == OK:
-			var lvlData = readLvl.data 
-			# Load trileset.
-			trileset = await loadObj(Settings.TSDir + lvlData["TrileSetName"].to_lower() + ".fezts.json", 2)
-			
-			# Place fezlvl triles into scene.
-			## Extract emplacements, phi, and trile ID.
-			var trilePlacements = lvlData["Triles"]
-			
-			for trile in trilePlacements:
-				placeTrile(trileset, trile)
-				pass
-				 
-			# Place art objects.
-			var artObjs = lvlData["ArtObjects"]
-			for ao in artObjs:
-				placeAO(Settings.AODir, artObjs[ao])
-			
-			# Place NPCs.
-			var npcs = lvlData["NonPlayerCharacters"]
-			for npc in npcs:
-				placeNPC(Settings.NPCDir, npcs[npc])
-				
-			call_deferred("emit_signal", "levelJSON", path, trilePlacements.size(), artObjs.size(), npcs.size())
-			
-			# Place Gomez, move the cursor there.
-			var startPos = lvlData["StartingPosition"]
-			var curPos = placeStart(Settings.NPCDir, startPos)
-			call_deferred("emit_signal", "newCurPor", curPos)
-			
-			# Notify the Palette we've loaded a new trileset.
-			call_deferred("emit_signal", "loadedTS", trileset)
-		else: 
-			print("Error reading .fezlvl.")
+func loadLVL(path: String): # Read fezlvl.json, return the JSON if valid.
+	var readLvl = JSON.new()
+	var err = readLvl.parse(FileAccess.get_file_as_string(path))
+	if err != OK:
+		print(readLvl.get_error_message()); return err
+	
+	fezlvl = readLvl.data
+	emit_signal("loaded", "fezlvl")
+	return OK
 
-func loadObj(filepath: String, type: int = 4):
-	var cleanPath = filepath.get_basename()
-	match type:
-		2: # Load trileset as Array, with each part of the array being an ArrayMesh. Trile names come out as a Dictionary.
-			var tsName = cleanPath.get_basename().get_file()
-			var mA = ObjParse.load_obj(cleanPath + ".obj") 
-			
-			## Make a new material for the trile.
-			var mat = StandardMaterial3D.new()
-			var img = Image.load_from_file(cleanPath + ".png")
-			var tex = ImageTexture.create_from_image(img)
-			mat.albedo_texture = tex
-			mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-			
-			## Load in trile names, set default trile rotation.
-			var readTS = JSON.new()
-			var err = readTS.parse(FileAccess.get_file_as_string(filepath))
-			if err == OK:
-				var tsData = readTS.data
-				var trileIDs = tsData["Triles"]
-				var tsRot = 0
-				
-				for trile in trileIDs:
-					match trileIDs[trile]["Face"]:
-						"Left":
-							tsRot = -180
-						"Front":
-							tsRot = -90
-						"Right":
-							tsRot = -270
-						"Back":
-							tsRot = -180
-					pass
-				return [mA, mat, trileIDs, tsName, tsRot]
-			
-		_: # Load everything else as MeshInstance3D.
-			var m = MeshInstance3D.new() # Make a new mesh instance.
-			var meshDict = ObjParse.load_obj(cleanPath + ".obj") # Load object from filesystem.
-			
-			m.mesh = meshDict.values()[0]
-			
-			# All mats will have the same material settings.
-			var mat = StandardMaterial3D.new() # Make a new material for the object, set settings.
-			var img = Image.load_from_file(cleanPath + ".png")
-			var tex = ImageTexture.create_from_image(img)
-			mat.albedo_texture = tex
-			mat.set_distance_fade(BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER)
-			mat.set_distance_fade_max_distance(10)
-			mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-			
-			for numMat in m.get_surface_override_material_count():
-				m.set_surface_override_material(numMat, mat)
-			m.layers = type # 8 for npcs, 4 for art objects, 2 for trilesets, 1 for UI.
-			
-			# Make a dirty collision so we can approx. what object the cursor is on.
-			m.call_deferred("create_convex_collision", false, false)
-			
-			# NPCs will be a billboard texture. May be expensive to render because they're transparent.
-			return m
+func loadTS(tsName: String): # Load in trileset.
+	## Get clean path name.
+	var path = Settings.TSDir + tsName.to_lower() + ".fezts"
 	
-func placeTrile(ts: Array, info: Dictionary):
-	var meshDict = ts[0]
-	var mat = ts[1]
-	var names = ts[2]
+	## Load every trile in a trileset as a Dictionary, with their ID being linked to their mesh.
+	var meshDict = ObjParse.load_obj(path + ".obj")
 	
-	var id = str(info["Id"])
-	var posTrile = info["Position"]
+	var mat = StandardMaterial3D.new()
+	var img = Image.load_from_file(path + ".png")
+	var tex = ImageTexture.create_from_image(img)
+	mat.albedo_texture = tex
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	
-	# Handle trile rotation
-	var trileRot = ts[4]
-	var phi = info["Phi"] * 90
+	## Load in fezts.json, which contains trile info.
+	var readTS = JSON.new()
+	var err = readTS.parse(FileAccess.get_file_as_string(path + ".json"))
+	if err != OK:
+		push_error(readTS.get_error_message()); return err
 	
-	var rot = (-360 - trileRot) + phi
-	
-	var trMesh = meshDict.get(id)
-	
-	if trMesh != null:
-		# Extract the surface we need and make it its own mesh.
-		var pos = Vector3(posTrile[0], posTrile[1], posTrile[2])
+	fezts = [meshDict, mat, readTS.data]
+	emit_signal("loaded", "fezts")
+	return OK
+
+func placeTriles(triles: Array): # Place triles listed in array.
+	for trileInst in triles:
+		var id = str(trileInst["Id"])
+		var trileInfo = fezts[2]["Triles"].get(id)
 		
-		var trile = MeshInstance3D.new()
-		trile.mesh = trMesh
+		 ## If the trile doesn't exist, don't bother rendering.
+		if trileInfo != null:
+			
+			## Get default trile rotation.
+			var face = 0
+			match trileInfo["Face"]:
+				"Left":
+					face = -180
+				"Front":
+					face = -90
+				"Right":
+					face = -270
+				"Back":
+					face = -180
+					
+			var yRot = (-360 - face) + (trileInst["Phi"] * 90) ## Somewhat complex formula...
+			
+			## We have everything we need now. Let's set up the trile.
+			var trile = MeshInstance3D.new()
+			trile.mesh = fezts[0].get(id)
+			
+			### Handle special cases where a trile mesh doesn't exist (usually collisions)
+			var mats = trile.get_surface_override_material_count() 
+			if mats != 0:
+				trile.set_surface_override_material(0, fezts[1])
+			
+			trile.position = Vector3(trileInst["Position"][0], trileInst["Position"][1], trileInst["Position"][2])
+			trile.rotation_degrees = Vector3(0, yRot, 0)
+			
+			### Create dirty collision so that we can interact with objects, set the layers
+			var statBod = StaticBody3D.new()
+			var colBod = CollisionShape3D.new()
+			var colShape = BoxShape3D.new()
+			
+			colBod.shape = colShape
+			
+			statBod.collision_layer = 2
+			statBod.call_deferred("add_child", colBod)
+			trile.add_child(statBod)
+			
+			### Set trile metadata. May not need this as we have both FEZLVL and FEZTS exposed.
+			trile.layers = 2
+			trile.set_meta("Type", "Trile")
+			trile.set_meta("Name", trileInfo["Name"])
+			trile.set_meta("Id", id)
+			trile.set_meta("Face", face)
+			
+			call_deferred("add_child", trile)
+	emit_signal("loaded", "Triles")
+
+func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
+	for i in aos:
+		## Load in each AO.
+		var path = Settings.AODir + aos[i]["Name"].to_lower() + ".fezao.json"
+		var inst = _loadObj(path, 4)
 		
-		var mats = trile.get_surface_override_material_count()
-		if mats != 0:
-			trile.set_surface_override_material(0, mat)
+		## Set instance properties.
+		inst.quaternion = Quaternion(aos[i]["Rotation"][0], aos[i]["Rotation"][1],\
+									aos[i]["Rotation"][2], aos[i]["Rotation"][3])
 		
-		trile.position = pos
-		trile.rotation_degrees = Vector3(0, rot, 0)
+		inst.scale = Vector3(aos[i]["Scale"][0], aos[i]["Scale"][1], aos[i]["Scale"][2])
+		## Godot places objects by the center, Trixel places objects by their corners.
+		## This offset translates Trixel to Godot.
+		inst.position = Vector3(aos[i]["Position"][0] - 0.5, aos[i]["Position"][1] - 0.5, aos[i]["Position"][2] - 0.5)
 		
-		## Create collision so that the cursor knows which object we're under
+		## TODO: ActorSetting data?
+		inst.set_meta("Name", aos[i]["Name"].to_lower())
+		inst.set_meta("Type", "AO")
+		
+		call_deferred("add_child", inst)
+	emit_signal("loaded", "ArtObjects")
+
+func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
+	for i in npcs:
+		## Get idle animation, or last animation if N/A.
+		var filename: String
+		if npcs[i]["Actions"].has("Idle"): filename = "idle.gif"
+		else:
+			filename = npcs[i]["Actions"].keys()[-1].to_lower() + ".gif"
+		
+		## Set up instance and texture.
+		var inst = AnimatedSprite3D.new()
+		var tex = GifManager.sprite_frames_from_file(Settings.NPCDir + "/" + npcs[i]["Name"].to_lower() + "/" + filename)
+		
+		inst.billboard     = BaseMaterial3D.BILLBOARD_FIXED_Y
+		inst.sprite_frames = tex
+		inst.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		inst.scale = Vector3(5, 5, 5) ### TODO: This may need adjustment.
+		
+		## Set up collisions for Cursor
 		var statBod = StaticBody3D.new()
 		var colBod = CollisionShape3D.new()
-		var colShape = BoxShape3D.new()
+		var colShape = SphereShape3D.new()
 		
-		colShape.size = Vector3(1, 1, 1)
+		statBod.collision_layer = 8
+		colShape.radius = 0.05
 		colBod.shape = colShape
 		
 		statBod.call_deferred("add_child", colBod)
-		trile.add_child(statBod)
+		inst.add_child(statBod)
 		
-		trile.layers = 2
-		trile.set_meta("Type", "Trile")
-		trile.set_meta("Name", names[id]["Name"])
-		trile.set_meta("Id", id)
-		trile.set_meta("Face", trileRot)
+		inst.position = Vector3(npcs[i]["Position"][0], npcs[i]["Position"][1], npcs[i]["Position"][2])
+		inst.layers = 8
 		
-		call_deferred("add_child", trile)
-		pass
-		
-func placeAO(dir, ao):
-	var objName = ao["Name"].to_lower()
-	var pos = ao["Position"]
-	var rot = ao["Rotation"]
-	var scale = ao["Scale"]
-	
-	var obj = await loadObj(dir + objName + ".fezao.json")
-	
-	obj.quaternion = Quaternion(rot[0], rot[1], rot[2], rot[3])
-	obj.scale = Vector3(scale[0], scale[1], scale[2])
-	# Godot places objects by the center. Trixel places objects by their corners.
-	obj.position = Vector3(pos[0] - 0.5, pos[1] - 0.5, pos[2] - 0.5)
-	
-	# Add in ActorSetting data later.
-	obj.set_meta("Name", objName)
-	obj.set_meta("Type", "AO")
-	
-	call_deferred("add_child", obj)
-	pass
-	
-func placeNPC(_dir, _npc):
-	# To do! 
-	pass
-	
-func placeStart(dir, posArray):
-	# Gomez is a simple billboard AnimatedSprite3D.
+		inst.set_meta("Type", "NPC")
+		inst.set_meta("Name", npcs[i]["Name"].capitalize())
+		inst.play("gif")
+		call_deferred("add_child", inst)
+	emit_signal("loaded", "NonPlayerCharacters")
+
+func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own function.
+	## Set up his mesh and material.
 	var gomez = AnimatedSprite3D.new()
-	var tex = GifManager.sprite_frames_from_file(dir + "gomez/idlewink.gif")
+	var tex = GifManager.sprite_frames_from_file(Settings.NPCDir + "gomez/idlewink.gif")
+	
 	gomez.billboard     = BaseMaterial3D.BILLBOARD_FIXED_Y
 	gomez.sprite_frames = tex
 	gomez.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	gomez.scale = Vector3(5, 5, 5)
 	
-	var statBod = StaticBody3D.new() # Set up collisions for Cursor
+	## Set up simple collisions for the cursor
+	var statBod = StaticBody3D.new()
 	var colBod = CollisionShape3D.new()
 	var colShape = SphereShape3D.new()
 	
@@ -246,21 +223,56 @@ func placeStart(dir, posArray):
 	statBod.call_deferred("add_child", colBod)
 	gomez.add_child(statBod)
 	
-	# Figuring out where to place him
-	var posStr = posArray["Id"]
-	var face = posArray["Face"]
-		
-	var pos = Vector3(posStr[0], posStr[1], posStr[2])
-	
-	gomez.position = pos
+	## Let my boy out into the world!
+	gomez.position = Vector3(dict["Id"][0], dict["Id"][1], dict["Id"][2])
 	gomez.layers = 8
-	gomez.set_meta("Type", "StartingPoint")
-	gomez.set_meta("Id", posStr)
-	gomez.set_meta("Face", face)
+	
+	gomez.set_meta("Type", "StartingPosition")
+	gomez.set_meta("Id", dict["Id"])
+	gomez.set_meta("Face", dict["Face"])
 	gomez.set_meta("Name", "Gomez")
 	gomez.play("gif")
 	call_deferred("add_child", gomez)
-	return pos
+	emit_signal("loaded", "StartingPosition")
+
+func _loadObj(filepath: String, type: int): # Internal object loader.
+	## TODO: Handler for if filepath doesn't exist
+	var cleanPath = filepath.get_basename()
+	var m = MeshInstance3D.new() # Make a new mesh instance.
+	var meshDict = ObjParse.load_obj(cleanPath + ".obj") # Load object from filesystem.
+	
+	m.mesh = meshDict.values()[0]
+	
+	# All mats will have the same material settings.
+	var mat = StandardMaterial3D.new() # Make a new material for the object, set settings.
+	var img = Image.load_from_file(cleanPath + ".png")
+	var tex = ImageTexture.create_from_image(img)
+	mat.albedo_texture = tex
+	mat.set_distance_fade(BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER)
+	mat.set_distance_fade_max_distance(10)
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	
+	for numMat in m.get_surface_override_material_count():
+		m.set_surface_override_material(numMat, mat)
+	m.layers = type # 8 for npcs, 4 for art objects, 2 for trilesets, 1 for UI.
+	
+	## Make a dirty collision based on AABB so we can approx. what object the cursor is on.
+	var ab = m.get_aabb()
+	var cent = ab.get_center()
+	
+	var statBod = StaticBody3D.new()
+	var colBod = CollisionShape3D.new()
+	var colShape = BoxShape3D.new()
+	
+	colShape.size = ab.size
+	colBod.shape = colShape
+	
+	statBod.collision_layer = 4
+	statBod.position = cent
+	
+	statBod.call_deferred("add_child", colBod)
+	m.add_child(statBod)
+	return m
 
 func _exit_tree():
 	_mutex.lock() # Exit thread gracefully.

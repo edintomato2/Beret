@@ -58,12 +58,13 @@ _data = {
 script = ExtResource("1_gsw3j")
 
 [node name="Area3D" type="Area3D" parent="."]
+collision_mask = 15
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("SphereShape3D_87ky0")
 
 [node name="Box" type="MeshInstance3D" parent="."]
-layers = 2
+layers = 512
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_351w7")
 skeleton = NodePath("")

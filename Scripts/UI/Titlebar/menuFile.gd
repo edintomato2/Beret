@@ -33,19 +33,15 @@ func _on_file_menu_pressed(id: int):
 			get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
 		5: _nwFile.visible = true
 
-
-func _on_loader_level_json(_lvlJSON, _trileNum, _aoNum, _npcNum):
-	# Once a level is loaded, let the user save.
-	get_popup().set_item_disabled(1, false)
-	pass
+func _on_loader_loaded(obj): # Once a level is loaded, let the user save.
+	if obj == "fezlvl":
+		get_popup().set_item_disabled(1, false)
 
 func _on_new_file_selected(path: String):
-	var cleanPath = path.get_basename() + ".json"
+	var cleanPath = path.get_basename().get_basename().get_file()
 	# Have the user choose a trileset, and let the user save.
 	get_popup().set_item_disabled(1, false)
-	_ldr.killChildren() # Clear out all objects
-	var trileset = await _ldr.loadObj(cleanPath, 2)
+	_ldr.killChildren() ## Clear out all objects
+	await _ldr.loadTS(cleanPath) ## Wait for the new trileset to load
 	_ui.playSound("loaded")
-	_ldr.trileset = trileset # Let the importer know we have loaded a new TS
-	_ldr.loadedTS.emit(trileset)
 	pass

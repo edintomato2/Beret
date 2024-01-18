@@ -2,15 +2,14 @@ extends ItemList
 
 const TRILE_SIZE = 18 # Width and height of trile textures, in pixels.
 @onready var _Colors: OptionButton = $"../../ChoosePalette" # "Colors", because this is a palette!
+@onready var _ldr: Node3D = $"/root/Main/UI/Loader"
 
-var curTS = null
-
-func _on_loader_loaded_ts(trileset):
-	curTS = trileset
-	# Enable all "colors"; default to "Triles".
-	for i in _Colors.item_count:
-		_Colors.set_item_disabled(i, false)
-	reloadTS(trileset)
+func _on_loader_loaded(obj):
+	if obj == "fezts":
+		# Enable all "colors"; default to "Triles".
+		for i in _Colors.item_count:
+			_Colors.set_item_disabled(i, false)
+		reloadTS(_ldr.fezts)
 
 func _on_choose_palette_item_selected(index): # Hide palettes except for the one we chose.
 	var showPalette = index
@@ -22,10 +21,10 @@ func _on_choose_palette_item_selected(index): # Hide palettes except for the one
 			get_parent().get_child(palette).visible = false
 
 func reloadTS(trileset): # (Re)load trileset.
-	clear() # Empty out list, in case it's full.
+	clear() ## Empty out list, in case it's full.
 	
-	var tex: Texture2D = trileset[1].albedo_texture # Get texture
-	var info: Dictionary = trileset[2] # Extract atlas offset and trile name from here!
+	var tex: Texture2D = trileset[1].albedo_texture
+	var trileInfo: Dictionary = trileset[2]["Triles"]
 	
 	var w = tex.get_width()
 	var h = tex.get_height()
@@ -34,17 +33,20 @@ func reloadTS(trileset): # (Re)load trileset.
 	# width and height. We'll implement the same thing here to find both the trile texture and its
 	# representative name.
 	
-	for trile in info:
-		var offsetX = floor(info[trile]["AtlasOffset"][0] * w)
-		var offsetY = floor(info[trile]["AtlasOffset"][1] * h)
+	for i in trileInfo:
+		## Calculate texture offset
+		var offsetX = floor(trileInfo[i]["AtlasOffset"][0] * w)
+		var offsetY = floor(trileInfo[i]["AtlasOffset"][1] * h)
 		var atl = AtlasTexture.new()
 		
+		## Set up texture
 		atl.atlas = tex
-		atl.region = Rect2(offsetX, offsetY, TRILE_SIZE, TRILE_SIZE) # Get the texture at position x and y
-		atl.filter_clip = true # Don't let the textures bleed into each other!
+		atl.region = Rect2(offsetX, offsetY, TRILE_SIZE, TRILE_SIZE)
+		atl.filter_clip = true
 		
+		## Set metadata as ID and name as tooltip.
 		var idx = add_icon_item(atl, true)
-		set_item_metadata(idx, trile) # Set trile ID as metadata.
-		set_item_tooltip(idx, info[trile]["Name"]) # Set trile name as tooltip.
+		set_item_metadata(idx, i) 
+		set_item_tooltip(idx, trileInfo[i]["Name"])
 		pass
 	pass

@@ -46,7 +46,6 @@ func _unhandled_input(_event):
 	if allowMove: # Movement control. Why does this have to be a bunch of if statements?
 		# Yes, this is reversed, but that's because of the position of the camera.
 		var forward = transform.basis.z; var right = -transform.basis.x
-		var _moveTo = Vector3.ZERO # Prevent cursor from going below (0, 0, 0)
 
 ### Camera Movement
 		if Input.is_action_pressed("move_lt", true):
@@ -93,7 +92,7 @@ func _unhandled_input(_event):
 
 # New cursor position
 func _on_ui_cursor_pos(newPos):
-	gomezPos = newPos
+	gomezPos = Vector3(newPos["Id"][0], newPos["Id"][1], newPos["Id"][2])
 	emit_signal("hasMoved", "loaded")
-	global_position = newPos
+	global_position = gomezPos
 	pass # Replace with function body.

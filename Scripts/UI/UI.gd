@@ -48,7 +48,7 @@ func _process(_delta):
 		"1", "-3": _faceLabel.text = "Facing: Front"
 		"2", "-2": _faceLabel.text = "Facing: Right"
 		"3", "-1": _faceLabel.text = "Facing: Back"
-		
+	
 	# Update Position label
 	var pos = _cursor.global_position
 	var posStr = posFormat % [pos.x, pos.y, pos.z]
@@ -66,7 +66,6 @@ func _physics_process(_delta):
 	else:
 		onObj = null
 		_objLabel.set_text("None")
-		
 
 func _on_cursor_has_moved(keyPress):
 	playSound(keyPress)
@@ -89,12 +88,7 @@ func playSound(keyPress):
 			_logLabel.append_text("Level saved!\n")
 			_sfx.stream = soundOK;     _sfx.play()
 
-func _on_loader_new_cur_por(newPos):
-	emit_signal("cursorPos", newPos)
-	pass
-
-# Allow placing/removing of objects
-func _unhandled_input(event): 
+func _unhandled_input(event): # Allow placing/removing of objects
 	# First, let's see what the active (visible) palette is
 	var active: ItemList = getActivePalette(_palettes)
 	var selected = active.get_selected_items()
@@ -104,7 +98,7 @@ func _unhandled_input(event):
 	if !(selected.size() == 0): # If something is selected,
 		objID = active.get_item_metadata(selected[0])
 		
-		if event.is_action_pressed("place_object", true):
+		if event.is_action_pressed("place_object", true) and _cursor.allowMove:
 			match objType:
 				"Triles":
 					if !objID.is_empty() and (onObj == null): # and if nothing's there
@@ -120,7 +114,8 @@ func _unhandled_input(event):
 					
 			_curArea.monitoring = false; _curArea.monitoring = true # Force the area to update
 			
-	if event.is_action_pressed("remove_object", true) and !(onObj == null): # Remove valid objects
+	if event.is_action_pressed("remove_object", true) and !(onObj == null) and _cursor.allowMove:
+		# Remove valid objects
 		await rmObj(onObj)
 		
 func rmObj(obj):
@@ -131,16 +126,20 @@ func rmObj(obj):
 func plObj(obj, type: String):
 	match type:
 		"Trile":
-			# We should probably factor in camera rotation as the Phi value.
 			var info: Dictionary = {"Id" : obj, "Position" : _cursor.global_position, "Phi" : _phi.value}
-			_loader.placeTrile(_loader.trileset, info)
+			_loader.placeTriles([info])
 		"AO":
+			## TODO: Place ArtObjects.
 			pass
 		"NPC":
 			if obj == "StartingPoint":
 				# It looks like the Trixel engine only has sepcific positions for Gomez to spawn at.
 				var info: Dictionary = {"Id": _cursor.global_position, "Face": "Back"}
-				_loader.placeStart(Settings.NPCDir, info)
+				_loader.placeStart(info)
+			else:
+				## TODO: Placing NPCs. This could be complicated, as NPCs are defined with movements
+				## inside level files, and NOT in metadata.feznpc.json.
+				pass
 	return OK
 
 func getActivePalette(parent: Node):
@@ -153,3 +152,10 @@ func getActivePalette(parent: Node):
 
 func _on_h_slider_value_changed(value):
 	_phiLabel.text = "Rotation: " + str(value * -90) + " deg"
+
+func _on_loader_loaded(obj):
+	match obj:
+		"StartingPosition":
+			emit_signal("cursorPos", _loader.fezlvl[obj])
+			pass
+	pass # Replace with function body.
