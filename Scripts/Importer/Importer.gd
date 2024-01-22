@@ -40,7 +40,7 @@ func _on_load_dialog_file_selected(path):
 	placeTriles(fezlvl["Triles"])
 	placeAOs(fezlvl["ArtObjects"])
 	placeNPCs(fezlvl["NonPlayerCharacters"])
-	#placeBkgPlanes(fezlvl["BackgroundPlanes"])
+	placeBkgPlanes(fezlvl["BackgroundPlanes"])
 	#placeSky(fezlvl["SkyName"])
 	placeStart(fezlvl["StartingPosition"])
 	
@@ -94,20 +94,8 @@ func placeTriles(triles: Array): # Place triles listed in array.
 		
 		 ## If the trile doesn't exist, don't bother rendering.
 		if trileInfo != null:
-			
-			## Get default trile rotation.
-			var face = 0
-			match trileInfo["Face"]:
-				"Left":
-					face = -180
-				"Front":
-					face = -90
-				"Right":
-					face = -270
-				"Back":
-					face = -180
-					
-			var yRot = (-360 - face) + (trileInst["Phi"] * 90) ## Somewhat complex formula...
+			## Default facing rotation is always -180 deg.
+			var yRot = -180 + (trileInst["Phi"] * 90)
 			
 			## We have everything we need now. Let's set up the trile.
 			var trile = MeshInstance3D.new()
@@ -137,7 +125,6 @@ func placeTriles(triles: Array): # Place triles listed in array.
 			trile.set_meta("Type", "Trile")
 			trile.set_meta("Name", trileInfo["Name"])
 			trile.set_meta("Id", id)
-			trile.set_meta("Face", face)
 			
 			call_deferred("add_child", trile)
 	emit_signal("loaded", "Triles")
@@ -201,6 +188,35 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 		inst.play("gif")
 		call_deferred("add_child", inst)
 	emit_signal("loaded", "NonPlayerCharacters")
+
+func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a dict.
+	for i in bkgplns:
+		## TODO: Find a way to handle gifs.
+		var path = Settings.BKGDir + bkgplns[i]["TextureName"].to_lower() + ".png"
+		var inst := MeshInstance3D.new()
+		inst.mesh = PlaneMesh.new()
+		
+		var tex = ImageTexture.create_from_image(Image.load_from_file(path))
+		var mat = StandardMaterial3D.new()
+		
+		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		mat.albedo_texture = tex
+		
+		
+		inst.position = _arr2vec(bkgplns[i]["Position"]) - Vector3(0.5, 0.5, 0.5)
+		var test = _arr2quat(bkgplns[i]["Rotation"])
+		inst.quaternion = _arr2quat(bkgplns[i]["Rotation"])
+		inst.set_surface_override_material(0, mat)
+		inst.layers = 4
+		#statBod.collision_layer = 4
+		
+		## Do some funny stuff to the bkgpln, as seen in the wiki.
+		### I suppose the Trixel engine renders each bkgpln as a thin cube,
+		### with a defined width, height, and depth? Very strange...
+		inst.rotation_degrees.x = 90
+		inst.scale = Vector3(bkgplns[i]["Size"][0], bkgplns[i]["Size"][2], bkgplns[i]["Size"][1]) / 2
+		
+		call_deferred("add_child", inst)
 
 func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own function.
 	## Set up his mesh and material.
@@ -267,7 +283,7 @@ func _loadObj(filepath: String, type: int): # Internal object loader.
 	colShape.size = ab.size
 	colBod.shape = colShape
 	
-	statBod.collision_layer = 4
+	statBod.collision_layer = type
 	statBod.position = cent
 	
 	statBod.call_deferred("add_child", colBod)
@@ -283,3 +299,9 @@ func _exit_tree():
 	
 	_thread.wait_to_finish()
 	pass
+
+func _arr2vec(arr: Array):
+	return Vector3(arr[0], arr[1], arr[2])
+	
+func _arr2quat(arr: Array):
+	return Quaternion(arr[0], arr[1], arr[2], arr[3])

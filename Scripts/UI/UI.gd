@@ -89,36 +89,59 @@ func playSound(keyPress):
 			_sfx.stream = soundOK;     _sfx.play()
 
 func _unhandled_input(event): # Allow placing/removing of objects
-	# First, let's see what the active (visible) palette is
+	## First, let's see what the active (visible) palette is
 	var active: ItemList = getActivePalette(_palettes)
 	var selected = active.get_selected_items()
 	var objID = null
-	var objType = active.get_name() # The name of the palette will decide what we're placing.
+	var objType = active.get_name() ## The name of the palette will decide what we're placing.
 	
-	if !(selected.size() == 0): # If something is selected,
+	if !(selected.size() == 0): ## If something is selected,
 		objID = active.get_item_metadata(selected[0])
 		
 		if event.is_action_pressed("place_object", true) and _cursor.allowMove:
 			match objType:
 				"Triles":
-					if !objID.is_empty() and (onObj == null): # and if nothing's there
+					if !objID.is_empty() and (onObj == null): ## and if nothing's there
 						await plObj(objID, "Trile")
-					elif !objID.is_empty() and !(onObj == null): # or if a trile is already occupying that spot
-						await rmObj(onObj) # Delete it, and change it to the new trile.
+					elif !objID.is_empty() and !(onObj == null): ## or if a trile is already occupying that spot
+						await rmObj(onObj) ### Delete it, and change it to the new trile.
 						await plObj(objID, "Trile")
 				"AOs":
+					## TODO: Handle placement of triles.
 					pass
 				"NPCs":
 					await plObj(objID, "NPC")
 					pass
 					
-			_curArea.monitoring = false; _curArea.monitoring = true # Force the area to update
+			_curArea.monitoring = false; _curArea.monitoring = true ## Force the area to update
 			
 	if event.is_action_pressed("remove_object", true) and !(onObj == null) and _cursor.allowMove:
-		# Remove valid objects
+		## Remove valid objects
 		await rmObj(onObj)
 		
 func rmObj(obj):
+	print(obj.layers)
+	var pos = [_cursor.global_position.x, _cursor.global_position.y, _cursor.global_position.z]
+	match obj.layers:
+		2:
+			## Get trile position, remove it from the fezlvl file if cursor position matches.
+			for trile in _loader.fezlvl["Triles"]:
+				if trile["Position"] == pos:
+					_loader.fezlvl["Triles"].erase(trile)
+		4:
+			## Get AO position, see if its similar to ao in file, remove it from file.
+			var objPos = obj.global_position
+			for ao in _loader.fezlvl["ArtObjects"]:
+				var lvlPos = Vector3(_loader.fezlvl["ArtObjects"][ao]["Position"][0] - 0.5, \
+									_loader.fezlvl["ArtObjects"][ao]["Position"][1] - 0.5, \
+									_loader.fezlvl["ArtObjects"][ao]["Position"][2] - 0.5)
+				if objPos.is_equal_approx(lvlPos):
+					_loader.fezlvl["ArtObjects"].erase(ao)
+				pass
+		8:
+			## TODO: Handle NPC removal.
+			pass 
+	
 	obj.queue_free()
 	onObj = null
 	return OK
@@ -126,15 +149,19 @@ func rmObj(obj):
 func plObj(obj, type: String):
 	match type:
 		"Trile":
-			var info: Dictionary = {"Id" : obj, "Position" : _cursor.global_position, "Phi" : _phi.value}
+			var info: Dictionary = {"Id" : obj,
+									"Emplacement" : _vec2arr(round(_cursor.global_position)),
+									"Position" : _vec2arr(_cursor.global_position),
+									"Phi" : _phi.value}
+			_loader.fezlvl["Triles"].append(info)
 			_loader.placeTriles([info])
 		"AO":
 			## TODO: Place ArtObjects.
 			pass
 		"NPC":
-			if obj == "StartingPoint":
-				# It looks like the Trixel engine only has sepcific positions for Gomez to spawn at.
-				var info: Dictionary = {"Id": _cursor.global_position, "Face": "Back"}
+			if obj == "gomez":
+				var info: Dictionary = {"Id": _vec2arr(_cursor.global_position), "Face": "Back"}
+				_loader.fezlvl["StartingPosition"].merge(info, true)
 				_loader.placeStart(info)
 			else:
 				## TODO: Placing NPCs. This could be complicated, as NPCs are defined with movements
@@ -159,3 +186,6 @@ func _on_loader_loaded(obj):
 			emit_signal("cursorPos", _loader.fezlvl[obj])
 			pass
 	pass # Replace with function body.
+
+func _vec2arr(vector: Vector3):
+	return [vector.x, vector.y, vector.z]

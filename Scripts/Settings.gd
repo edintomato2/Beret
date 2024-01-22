@@ -10,6 +10,7 @@ var AODir
 var LVLDir
 var NPCDir
 var TSDir
+var BKGDir
 
 func _ready(): # Load saved data, if available.
 	var err = config.load("user://Beret.cfg")
@@ -26,4 +27,5 @@ func reloadSettings():
 	LVLDir = config.get_value("defaultDirs", "LVLDir")
 	NPCDir = config.get_value("defaultDirs", "NPCDir")
 	TSDir = config.get_value("defaultDirs", "TSDir")
+	BKGDir = config.get_value("defaultDirs", "BKGDir")
 	pass
