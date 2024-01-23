@@ -13,14 +13,14 @@ var movement = false
 var onObj = null
 
 # Labels
-@onready var _infoLabel: Label = $"VSplitContainer/Sidebar/SidebarVertical/Position"
-@onready var _objLabel: Label  = $"VSplitContainer/Sidebar/SidebarVertical/Object"
-@onready var _faceLabel: Label = $"VSplitContainer/Sidebar/SidebarVertical/Facing"
-@onready var _logLabel: RichTextLabel = $"VSplitContainer/Sidebar/SidebarVertical/EditorLog"
+@onready var _infoLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Position"
+@onready var _objLabel: Label  = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Object"
+@onready var _faceLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Facing"
+@onready var _logLabel: RichTextLabel = $"VSplitContainer/HBoxContainer/EditorLog"
 
 # Rotation control
-@onready var _phi: HSlider = $"VSplitContainer/Sidebar/SidebarVertical/PhiControl/HSlider"
-@onready var _phiLabel: Label = $"VSplitContainer/Sidebar/SidebarVertical/PhiControl/Label"
+@onready var _phi: HSlider = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl/HSlider"
+@onready var _phiLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl/Label"
 
 # Palette control
 @onready var _palettes: Control = $"VSplitContainer/Toolbar/Palettes"

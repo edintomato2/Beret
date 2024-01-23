@@ -5,10 +5,10 @@
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuFile.gd" id="3_mnd5b"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="4_5u3hn"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="4_gp4es"]
+[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuEdit.gd" id="4_p2wyv"]
+[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://Scenes/Set_paths_window.tscn" id="5_mhs4a"]
 [ext_resource type="Texture2D" uid="uid://cw063pifm8hls" path="res://beret_logo.png" id="5_tfvu3"]
-[ext_resource type="PackedScene" uid="uid://baepcmjcgsbk0" path="res://Objects/Compass.glb" id="6_exilt"]
 [ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="7_jfdyk"]
-[ext_resource type="Script" path="res://Scripts/UI/Compass.gd" id="7_lgwbb"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/Triles.gd" id="9_4swbr"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/NPCs.gd" id="10_2driq"]
 [ext_resource type="Script" path="res://Scripts/Importer/Importer.gd" id="11_b3xhm"]
@@ -99,7 +99,7 @@ shortcut = SubResource("Shortcut_aqtus")
 text = "File"
 flat = false
 switch_on_hover = true
-item_count = 6
+item_count = 5
 popup/item_0/text = "Load Level"
 popup/item_0/id = 0
 popup/item_1/text = "Save Level"
@@ -107,13 +107,11 @@ popup/item_1/id = 1
 popup/item_1/disabled = true
 popup/item_2/text = "New Level"
 popup/item_2/id = 5
-popup/item_3/text = "Options"
-popup/item_3/id = 2
-popup/item_4/text = ""
-popup/item_4/id = 3
-popup/item_4/separator = true
-popup/item_5/text = "Quit"
-popup/item_5/id = 4
+popup/item_3/text = ""
+popup/item_3/id = 3
+popup/item_3/separator = true
+popup/item_4/text = "Quit"
+popup/item_4/id = 4
 script = ExtResource("3_mnd5b")
 loadShortcut = SubResource("Shortcut_8hi2n")
 saveShortcut = SubResource("Shortcut_c4g0v")
@@ -155,6 +153,13 @@ layout_mode = 2
 text = "Edit"
 flat = false
 switch_on_hover = true
+item_count = 1
+popup/item_0/text = "Asset Directories..."
+popup/item_0/id = 0
+script = ExtResource("4_p2wyv")
+
+[node name="SetPaths" parent="Titlebar/Edit" instance=ExtResource("5_mhs4a")]
+visible = false
 
 [node name="View" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
@@ -254,46 +259,15 @@ layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("2_pfeim")
 
-[node name="Sidebar" type="HBoxContainer" parent="VSplitContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 15.0
 
-[node name="Spacer" type="Control" parent="VSplitContainer/Sidebar"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 5.3
-mouse_filter = 1
-
-[node name="SidebarVertical" type="VBoxContainer" parent="VSplitContainer/Sidebar"]
+[node name="EditorLog" type="RichTextLabel" parent="VSplitContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-mouse_filter = 0
-theme_override_constants/separation = 0
-
-[node name="Position" type="Label" parent="VSplitContainer/Sidebar/SidebarVertical"]
-layout_mode = 2
 mouse_filter = 1
-theme = SubResource("Theme_328gk")
-text = "[0, 0, 0]"
-horizontal_alignment = 1
-
-[node name="Facing" type="Label" parent="VSplitContainer/Sidebar/SidebarVertical"]
-layout_mode = 2
-text = "Facing: Left"
-horizontal_alignment = 1
-
-[node name="Object" type="Label" parent="VSplitContainer/Sidebar/SidebarVertical"]
-layout_mode = 2
-mouse_filter = 1
-theme = ExtResource("2_pfeim")
-text = "None"
-horizontal_alignment = 1
-
-[node name="EditorLog" type="RichTextLabel" parent="VSplitContainer/Sidebar/SidebarVertical"]
-layout_mode = 2
-size_flags_vertical = 3
 mouse_force_pass_scroll_events = false
 theme = ExtResource("2_pfeim")
 text = "Welcome to Beret!
@@ -302,43 +276,46 @@ scroll_following = true
 threaded = true
 script = ExtResource("7_jfdyk")
 
-[node name="CompassView" type="SubViewportContainer" parent="VSplitContainer/Sidebar/SidebarVertical"]
-visible = false
+[node name="Sidebar" type="HBoxContainer" parent="VSplitContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.5
-stretch = true
 
-[node name="Compass" type="SubViewport" parent="VSplitContainer/Sidebar/SidebarVertical/CompassView"]
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(2, 2)
-render_target_update_mode = 0
+[node name="SidebarVertical" type="VBoxContainer" parent="VSplitContainer/HBoxContainer/Sidebar"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
+theme_override_constants/separation = 0
 
-[node name="Compass" parent="VSplitContainer/Sidebar/SidebarVertical/CompassView/Compass" instance=ExtResource("6_exilt")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
-visible = false
-script = ExtResource("7_lgwbb")
+[node name="Position" type="Label" parent="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+mouse_filter = 1
+theme = SubResource("Theme_328gk")
+text = "[0, 0, 0]"
+horizontal_alignment = 1
 
-[node name="CompPivot" type="Node3D" parent="VSplitContainer/Sidebar/SidebarVertical/CompassView/Compass"]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
+[node name="Facing" type="Label" parent="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+text = "Facing: Left"
+horizontal_alignment = 1
 
-[node name="CompassCam" type="Camera3D" parent="VSplitContainer/Sidebar/SidebarVertical/CompassView/Compass/CompPivot"]
-transform = Transform3D(0.707107, -0.380969, 0.595704, 0, 0.842453, 0.538771, -0.707107, -0.380969, 0.595704, 6.79999, 6.79999, 6.79999)
-cull_mask = 1
-projection = 1
-size = 10.0
-far = 20.0
+[node name="Object" type="Label" parent="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+mouse_filter = 1
+theme = ExtResource("2_pfeim")
+text = "None"
+horizontal_alignment = 1
 
-[node name="PhiControl" type="VBoxContainer" parent="VSplitContainer/Sidebar/SidebarVertical"]
+[node name="PhiControl" type="VBoxContainer" parent="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VSplitContainer/Sidebar/SidebarVertical/PhiControl"]
+[node name="Label" type="Label" parent="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl"]
 layout_mode = 2
 text = "Rotation: -0 deg"
 horizontal_alignment = 1
 
-[node name="HSlider" type="HSlider" parent="VSplitContainer/Sidebar/SidebarVertical/PhiControl"]
+[node name="HSlider" type="HSlider" parent="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl"]
 layout_mode = 2
 mouse_force_pass_scroll_events = false
 theme = ExtResource("2_pfeim")
@@ -346,11 +323,13 @@ max_value = 3.0
 tick_count = 4
 ticks_on_borders = true
 
-[node name="Toolbar" type="HBoxContainer" parent="VSplitContainer"]
-clip_contents = true
-custom_minimum_size = Vector2(0, 1)
+[node name="Inspector" type="Tree" parent="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="Toolbar" type="HBoxContainer" parent="VSplitContainer"]
+clip_contents = true
+layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="ChoosePalette" type="OptionButton" parent="VSplitContainer/Toolbar"]
@@ -441,17 +420,15 @@ process_thread_group_order = 0
 process_thread_messages = 0
 script = ExtResource("12_4xdn3")
 
-[connection signal="canceled" from="Titlebar/File/Load" to="." method="_on_load_dialog_canceled"]
-[connection signal="confirmed" from="Titlebar/File/Load" to="." method="_on_load_dialog_confirmed"]
 [connection signal="file_selected" from="Titlebar/File/Load" to="Loader" method="_on_load_dialog_file_selected"]
 [connection signal="file_selected" from="Titlebar/File/Save" to="Exporter" method="_on_save_file_selected"]
 [connection signal="file_selected" from="Titlebar/File/New" to="Titlebar/File" method="_on_new_file_selected"]
 [connection signal="close_requested" from="Titlebar/Help/About" to="Titlebar/Help" method="_on_about_close_requested"]
-[connection signal="value_changed" from="VSplitContainer/Sidebar/SidebarVertical/PhiControl/HSlider" to="." method="_on_h_slider_value_changed"]
+[connection signal="value_changed" from="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="item_selected" from="VSplitContainer/Toolbar/ChoosePalette" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_choose_palette_item_selected"]
 [connection signal="item_selected" from="VSplitContainer/Toolbar/Palettes/NPCs" to="VSplitContainer/Toolbar/Palettes/NPCs" method="_on_item_selected"]
 [connection signal="loaded" from="Loader" to="." method="_on_loader_loaded"]
 [connection signal="loaded" from="Loader" to="Titlebar/File" method="_on_loader_loaded"]
 [connection signal="loaded" from="Loader" to="Titlebar/View" method="_on_loader_loaded"]
-[connection signal="loaded" from="Loader" to="VSplitContainer/Sidebar/SidebarVertical/EditorLog" method="_on_loader_loaded"]
+[connection signal="loaded" from="Loader" to="VSplitContainer/HBoxContainer/EditorLog" method="_on_loader_loaded"]
 [connection signal="loaded" from="Loader" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_loader_loaded"]

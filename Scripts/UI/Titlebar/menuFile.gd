@@ -16,19 +16,13 @@ func _ready():
 	self.get_popup().id_pressed.connect(_on_file_menu_pressed)
 	get_popup().set_item_shortcut(0, loadShortcut, true)
 	get_popup().set_item_shortcut(1, saveShortcut, true)
-	get_popup().set_item_shortcut(5, quitShortcut, true)
+	get_popup().set_item_shortcut(4, quitShortcut, true)
 	get_popup().set_item_shortcut(2, newShortcut, true)
-	
-	_fdLoad.root_subfolder = Settings.LVLDir
-	_nwFile.root_subfolder = Settings.TSDir
 
 func _on_file_menu_pressed(id: int):
 	match id:
 		0: _fdLoad.visible = true
 		1: _svFile.visible = true
-		2: # Reopen First-Time setup (for the time being)
-			var s = preload("res://Scenes/NoDirs.tscn")
-			get_tree().change_scene_to_packed(s)
 		4:
 			get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
 		5: _nwFile.visible = true

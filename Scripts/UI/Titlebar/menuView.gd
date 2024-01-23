@@ -30,5 +30,6 @@ func _on_pressed(id: int):
 
 func _on_loader_loaded(obj):
 	if obj == "fezlvl":
-		_curLvl = Settings.LVLDir + _ldr.fezlvl["Name"].to_lower() + ".fezlvl.json"
+		_curLvl = Settings.dict["AssetDirs"][Settings.idx]\
+				  + "levels/" + _ldr.fezlvl["Name"].to_lower() + ".fezlvl.json"
 	pass # Replace with function body.

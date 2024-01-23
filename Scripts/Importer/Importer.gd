@@ -26,8 +26,6 @@ func _ready():
 	_thread = Thread.new() # Prepare threading.
 	_sema = Semaphore.new()
 	_mutex = Mutex.new()
-	
-	#_thread.start(_loadFEZLVL) # Start thread in bkg.
 	pass
 
 func _on_load_dialog_file_selected(path):
@@ -41,6 +39,7 @@ func _on_load_dialog_file_selected(path):
 	placeAOs(fezlvl["ArtObjects"])
 	placeNPCs(fezlvl["NonPlayerCharacters"])
 	placeBkgPlanes(fezlvl["BackgroundPlanes"])
+	placeVols(fezlvl["Volumes"])
 	#placeSky(fezlvl["SkyName"])
 	placeStart(fezlvl["StartingPosition"])
 	
@@ -66,7 +65,8 @@ func loadLVL(path: String): # Read fezlvl.json, return the JSON if valid.
 
 func loadTS(tsName: String): # Load in trileset.
 	## Get clean path name.
-	var path = Settings.TSDir + tsName.to_lower() + ".fezts"
+	var dir = Settings.dict["AssetDirs"][Settings.idx] + "trile sets\\"
+	var path = dir + tsName.to_lower() + ".fezts"
 	
 	## Load every trile in a trileset as a Dictionary, with their ID being linked to their mesh.
 	var meshDict = ObjParse.load_obj(path + ".obj")
@@ -132,7 +132,8 @@ func placeTriles(triles: Array): # Place triles listed in array.
 func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 	for i in aos:
 		## Load in each AO.
-		var path = Settings.AODir + aos[i]["Name"].to_lower() + ".fezao.json"
+		var dir = Settings.dict["AssetDirs"][Settings.idx] + "art objects\\"
+		var path = dir + aos[i]["Name"].to_lower() + ".fezao.json"
 		var inst = _loadObj(path, 4)
 		
 		## Set instance properties.
@@ -152,6 +153,7 @@ func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 	emit_signal("loaded", "ArtObjects")
 
 func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
+	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations\\"
 	for i in npcs:
 		## Get idle animation, or last animation if N/A.
 		var filename: String
@@ -161,7 +163,8 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 		
 		## Set up instance and texture.
 		var inst = AnimatedSprite3D.new()
-		var tex = GifManager.sprite_frames_from_file(Settings.NPCDir + "/" + npcs[i]["Name"].to_lower() + "/" + filename)
+		
+		var tex = GifManager.sprite_frames_from_file(dir + npcs[i]["Name"].to_lower() + "/" + filename)
 		
 		inst.billboard     = BaseMaterial3D.BILLBOARD_FIXED_Y
 		inst.sprite_frames = tex
@@ -192,7 +195,8 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a dict.
 	for i in bkgplns:
 		## TODO: Find a way to handle gifs.
-		var path = Settings.BKGDir + bkgplns[i]["TextureName"].to_lower() + ".png"
+		var dir = Settings.dict["AssetDirs"][Settings.idx] + "background planes\\"
+		var path = dir + bkgplns[i]["TextureName"].to_lower() + ".png"
 		var inst := MeshInstance3D.new()
 		inst.mesh = PlaneMesh.new()
 		
@@ -202,12 +206,10 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 		mat.albedo_texture = tex
 		
-		
 		inst.position = _arr2vec(bkgplns[i]["Position"]) - Vector3(0.5, 0.5, 0.5)
-		var test = _arr2quat(bkgplns[i]["Rotation"])
 		inst.quaternion = _arr2quat(bkgplns[i]["Rotation"])
 		inst.set_surface_override_material(0, mat)
-		inst.layers = 4
+		inst.layers = 16
 		#statBod.collision_layer = 4
 		
 		## Do some funny stuff to the bkgpln, as seen in the wiki.
@@ -218,10 +220,15 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		
 		call_deferred("add_child", inst)
 
+func placeVols(vols: Dictionary): # Place volumes in dict.
+	print(vols)
+	pass
+
 func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own function.
 	## Set up his mesh and material.
 	var gomez = AnimatedSprite3D.new()
-	var tex = GifManager.sprite_frames_from_file(Settings.NPCDir + "gomez/idlewink.gif")
+	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations\\"
+	var tex = GifManager.sprite_frames_from_file(dir + "gomez/idlewink.gif")
 	
 	gomez.billboard     = BaseMaterial3D.BILLBOARD_FIXED_Y
 	gomez.sprite_frames = tex
