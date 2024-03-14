@@ -1,6 +1,6 @@
 extends ItemList
 
-func _ready():
+func _on_loader_loaded(_obj):
 	# NPCs character animations usually have an "idle" animation. However,
 	# a select few NPCs don't. If we aren't able to find one, let's use whatever the first
 	# animation there is for the NPC. 
@@ -30,7 +30,6 @@ func _ready():
 			set_item_tooltip(iconIdx, filename.capitalize()) # Set name as tooltip.
 			
 		filename = dir.get_next()
-
 
 func _on_item_selected(index):
 	print(get_item_metadata(index))

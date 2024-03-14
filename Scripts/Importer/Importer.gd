@@ -17,7 +17,6 @@ var fezts: Array
 var _thread: Thread # Threading. To get data into a thread, use a Mutex!
 var _sema: Semaphore
 var _mutex: Mutex
-var _path: String
 var _threadFlag = false
 
 signal loaded(obj: String)
@@ -43,8 +42,6 @@ func _on_load_dialog_file_selected(path):
 	#placeSky(fezlvl["SkyName"])
 	placeStart(fezlvl["StartingPosition"])
 	
-	_mutex.lock(); _path = path; _mutex.unlock(); # Send file path to thread.
-	_sema.post() # Tell thread to start processing.
 	emit_signal("loaded", "level")
 	pass
 
@@ -65,7 +62,7 @@ func loadLVL(path: String): # Read fezlvl.json, return the JSON if valid.
 
 func loadTS(tsName: String): # Load in trileset.
 	## Get clean path name.
-	var dir = Settings.dict["AssetDirs"][Settings.idx] + "trile sets\\"
+	var dir = Settings.dict["AssetDirs"][Settings.idx] + "trile sets/"
 	var path = dir + tsName.to_lower() + ".fezts"
 	
 	## Load every trile in a trileset as a Dictionary, with their ID being linked to their mesh.
@@ -76,6 +73,8 @@ func loadTS(tsName: String): # Load in trileset.
 	var tex = ImageTexture.create_from_image(img)
 	mat.albedo_texture = tex
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	mat.set_distance_fade(BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER)
+	mat.set_distance_fade_max_distance(3)
 	
 	## Load in fezts.json, which contains trile info.
 	var readTS = JSON.new()
@@ -132,7 +131,7 @@ func placeTriles(triles: Array): # Place triles listed in array.
 func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 	for i in aos:
 		## Load in each AO.
-		var dir = Settings.dict["AssetDirs"][Settings.idx] + "art objects\\"
+		var dir = Settings.dict["AssetDirs"][Settings.idx] + "art objects/"
 		var path = dir + aos[i]["Name"].to_lower() + ".fezao.json"
 		var inst = _loadObj(path, 4)
 		
@@ -153,13 +152,12 @@ func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 	emit_signal("loaded", "ArtObjects")
 
 func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
-	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations\\"
+	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations/"
 	for i in npcs:
 		## Get idle animation, or last animation if N/A.
 		var filename: String
 		if npcs[i]["Actions"].has("Idle"): filename = "idle.gif"
-		else:
-			filename = npcs[i]["Actions"].keys()[-1].to_lower() + ".gif"
+		else: filename = npcs[i]["Actions"].keys()[-1].to_lower() + ".gif"
 		
 		## Set up instance and texture.
 		var inst = AnimatedSprite3D.new()
@@ -194,40 +192,71 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 
 func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a dict.
 	for i in bkgplns:
-		## TODO: Find a way to handle gifs.
-		var dir = Settings.dict["AssetDirs"][Settings.idx] + "background planes\\"
+		# TODO: Handle subdirs.
+		var dir = Settings.dict["AssetDirs"][Settings.idx] + "background planes/"
 		var path = dir + bkgplns[i]["TextureName"].to_lower() + ".png"
+		var tex
 		var inst := MeshInstance3D.new()
 		inst.mesh = PlaneMesh.new()
-		
-		var tex = ImageTexture.create_from_image(Image.load_from_file(path))
 		var mat = StandardMaterial3D.new()
 		
-		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		mat.albedo_texture = tex
+		if !FileAccess.file_exists(path): ## File is most likely a gif and not a png.
+			path = dir + bkgplns[i]["TextureName"].to_lower() + ".gif"
+			tex = GifManager.sprite_frames_from_file(path)
+				### If we still have a problem... give up!
+			if tex != null:
+				mat.albedo_texture = tex.get_frame_texture("gif", 0)
+		else:
+			tex = ImageTexture.create_from_image(Image.load_from_file(path))
+			mat.albedo_texture = tex
 		
-		inst.position = _arr2vec(bkgplns[i]["Position"]) - Vector3(0.5, 0.5, 0.5)
+		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.set_distance_fade(BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER)
+		mat.set_distance_fade_max_distance(3)
+		
+		inst.position = _arr2vec(bkgplns[i]["Position"]) - Vector3(0.5, 0.499, 0.5)
 		inst.quaternion = _arr2quat(bkgplns[i]["Rotation"])
-		inst.set_surface_override_material(0, mat)
 		inst.layers = 16
-		#statBod.collision_layer = 4
+		inst.set_surface_override_material(0, mat)
+		
+		## Make collision for cursor interaction
+		var ab = inst.get_aabb()
+		var cent = ab.get_center()
+		
+		var statBod = StaticBody3D.new()
+		var colBod = CollisionShape3D.new()
+		var colShape = BoxShape3D.new()
+		
+		colShape.size = ab.size
+		colBod.shape = colShape
+		
+		statBod.collision_layer = 16
+		statBod.position = cent
+		
+		statBod.call_deferred("add_child", colBod)
+		inst.add_child(statBod)
 		
 		## Do some funny stuff to the bkgpln, as seen in the wiki.
 		### I suppose the Trixel engine renders each bkgpln as a thin cube,
 		### with a defined width, height, and depth? Very strange...
-		inst.rotation_degrees.x = 90
-		inst.scale = Vector3(bkgplns[i]["Size"][0], bkgplns[i]["Size"][2], bkgplns[i]["Size"][1]) / 2
+		inst.rotation_degrees.x += 90
 		
+		inst.scale = Vector3(bkgplns[i]["Size"][0] / 2, bkgplns[i]["Size"][2], bkgplns[i]["Size"][1] / 2)
+
+		## TODO: Looks like both "Size" and "Scale" have a play in rendering the texture... How?
+
+		inst.set_meta("Name", bkgplns[i]["TextureName"].to_lower())
 		call_deferred("add_child", inst)
 
 func placeVols(vols: Dictionary): # Place volumes in dict.
-	print(vols)
+	#print(vols)
 	pass
 
 func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own function.
 	## Set up his mesh and material.
 	var gomez = AnimatedSprite3D.new()
-	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations\\"
+	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations/"
 	var tex = GifManager.sprite_frames_from_file(dir + "gomez/idlewink.gif")
 	
 	gomez.billboard     = BaseMaterial3D.BILLBOARD_FIXED_Y
@@ -272,7 +301,7 @@ func _loadObj(filepath: String, type: int): # Internal object loader.
 	var tex = ImageTexture.create_from_image(img)
 	mat.albedo_texture = tex
 	mat.set_distance_fade(BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER)
-	mat.set_distance_fade_max_distance(10)
+	mat.set_distance_fade_max_distance(3)
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	
 	for numMat in m.get_surface_override_material_count():

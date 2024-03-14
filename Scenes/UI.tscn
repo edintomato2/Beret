@@ -432,3 +432,4 @@ script = ExtResource("12_4xdn3")
 [connection signal="loaded" from="Loader" to="Titlebar/View" method="_on_loader_loaded"]
 [connection signal="loaded" from="Loader" to="VSplitContainer/HBoxContainer/EditorLog" method="_on_loader_loaded"]
 [connection signal="loaded" from="Loader" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_loader_loaded"]
+[connection signal="loaded" from="Loader" to="VSplitContainer/Toolbar/Palettes/NPCs" method="_on_loader_loaded"]

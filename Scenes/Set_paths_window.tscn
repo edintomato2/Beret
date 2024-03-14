@@ -44,7 +44,7 @@ layout_mode = 2
 text = "Add Folder..."
 
 [node name="AddDirs" type="FileDialog" parent="Control/CenterContainer/VBoxContainer/HBoxContainer/CenterContainer/Buttons/Add"]
-title = "Add a Directory"
+title = "Open a Directory"
 initial_position = 2
 ok_button_text = "Select Current Folder"
 dialog_hide_on_ok = true

@@ -1,8 +1,9 @@
 extends Node3D
 
-@onready var localCam: Camera3D = $"Pivot/Camera"
-@onready var pivot: Node3D = $"Pivot"
-@onready var cursorBox: MeshInstance3D = $"Box"
+@onready var localCam: Camera3D = $"Handler/Pivot/Ortho"
+
+@onready var pivot: Node3D = $"Handler/Pivot"
+@onready var cursorBox: MeshInstance3D = $"Handler/Box"
 
 signal hasMoved(keyPress)
 
@@ -39,7 +40,7 @@ func _ready():
 	pass
 	
 func _process(_delta):
-	localCam.look_at(position) # Have the camera always looking at the cursor.
+	#localCam.look_at(position) # Have the camera always looking at the cursor.
 	pass
 	
 func _unhandled_input(_event):
@@ -67,28 +68,11 @@ func _unhandled_input(_event):
 			else:
 				mode3D = true
 				tweenToPos(pivot, "rotation_degrees", Vector3(0, -45, -45), "cam_zoom_out", Settings.animationSpeed)
-
-### Cursor Movement. There must be a better way.
-		if Input.is_action_pressed("move_forward", true):
-			tweenToPos(self, "position:y", position.y + Settings.movementSpeed, "move_up", cursorSpeed)
-			
-		if Input.is_action_pressed("move_backward", true):
-			tweenToPos(self, "position:y", position.y - Settings.movementSpeed, "move_down", cursorSpeed)
-			
-		if Input.is_action_pressed("move_up_layer", true):
-			tweenToPos(self, "position", position + (Settings.movementSpeed * right), "move_up_layer", cursorSpeed)
-			
-		if Input.is_action_pressed("move_down_layer", true):
-			tweenToPos(self, "position", position - (Settings.movementSpeed * right), "move_down_layer", cursorSpeed)
-			
-		if Input.is_action_pressed("move_right", true):
-			tweenToPos(self, "position", position + (forward * Settings.movementSpeed), "move_right", cursorSpeed)
-			
-		if Input.is_action_pressed("move_left", true):
-			tweenToPos(self, "position", position - (forward * Settings.movementSpeed), "move_left", cursorSpeed)
-			
-		if Input.is_action_pressed("move_gomez", true):
-			tweenToPos(self, "global_position", gomezPos, "loaded", cursorSpeed)
+				
+	### Cursor Movement. There must be a better way.
+			if Input.is_action_pressed("move_gomez", true):
+				tweenToPos(self, "global_position", gomezPos, "loaded", cursorSpeed)
+				
 
 # New cursor position
 func _on_ui_cursor_pos(newPos):

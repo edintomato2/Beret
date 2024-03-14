@@ -28,7 +28,7 @@ var onObj = null
 # General nodes
 @onready var _loader: Node3D = $"Loader"
 @onready var _cursor: Node3D = $"../Cursor"
-@onready var _curArea: Area3D = $"../Cursor/Area3D"
+@onready var _curArea: Area3D = $"../Cursor/Handler/Area3D"
 @onready var _sfx: AudioStreamPlayer = $"SFX"
 
 signal cursorPos(newPos: Vector3) # A relay from Loader.
@@ -120,7 +120,6 @@ func _unhandled_input(event): # Allow placing/removing of objects
 		await rmObj(onObj)
 		
 func rmObj(obj):
-	print(obj.layers)
 	var pos = [_cursor.global_position.x, _cursor.global_position.y, _cursor.global_position.z]
 	match obj.layers:
 		2:

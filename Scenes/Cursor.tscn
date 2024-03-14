@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://djsig0kkd1ved"]
 
-[ext_resource type="Script" path="res://Scripts/Cursor.gd" id="1_gsw3j"]
+[ext_resource type="Script" path="res://Scripts/CamControls.gd" id="1_q7upa"]
 [ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://Materials/UI.tres" id="2_0tkj2"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_87ky0"]
@@ -55,32 +55,40 @@ _data = {
 }
 
 [node name="Cursor" type="Node3D"]
-script = ExtResource("1_gsw3j")
 
-[node name="Area3D" type="Area3D" parent="."]
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="Ortho" type="Camera3D" parent="Pivot"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -200, 0, 0)
+projection = 1
+size = 20.0
+
+[node name="Camera3D" type="Camera3D" parent="Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
+projection = 1
+current = true
+fov = 50.0
+size = 20.0
+script = ExtResource("1_q7upa")
+
+[node name="Handler" type="Node3D" parent="."]
+
+[node name="Area3D" type="Area3D" parent="Handler"]
 collision_mask = 15
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Handler/Area3D"]
 shape = SubResource("SphereShape3D_87ky0")
 
-[node name="Box" type="MeshInstance3D" parent="."]
+[node name="Box" type="MeshInstance3D" parent="Handler"]
 layers = 512
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_351w7")
 skeleton = NodePath("")
 surface_material_override/0 = ExtResource("2_0tkj2")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Box"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Handler/Box"]
 libraries = {
 "": SubResource("AnimationLibrary_slj4o")
 }
 autoplay = "CursorBreath"
 speed_scale = 1.25
-
-[node name="Pivot" type="Node3D" parent="."]
-
-[node name="Camera" type="Camera3D" parent="Pivot"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -200, 0, 0)
-cull_mask = 1048574
-projection = 1
-size = 20.0

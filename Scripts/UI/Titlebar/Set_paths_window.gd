@@ -1,7 +1,5 @@
 extends Window
 
-@onready var _add: Button = $"Control/CenterContainer/VBoxContainer/HBoxContainer/CenterContainer/Buttons/Add"
-@onready var _rm: Button  = $"Control/CenterContainer/VBoxContainer/HBoxContainer/CenterContainer/Buttons/Remove"
 @onready var _ls: Tree    = $"Control/CenterContainer/VBoxContainer/HBoxContainer/DirList"
 @onready var _windowAdd: FileDialog = $"Control/CenterContainer/VBoxContainer/HBoxContainer/CenterContainer/Buttons/Add/AddDirs"
 
@@ -31,7 +29,7 @@ func _on_remove_pressed() -> void: # Remove dir from list and Settings.
 
 func _on_add_dirs_dir_selected(dir: String) -> void:
 	if !_dirs.has(dir): ## If we don't have this dir, save it and place it in the Tree.
-		_dirs.append(dir + "\\")
+		_dirs.append(dir + "/")
 		_listDirs(_root, dir)
 		Settings.saveSettings()
 
