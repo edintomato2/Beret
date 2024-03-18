@@ -14,3 +14,4 @@
 environment = ExtResource("3_tf75n")
 
 [connection signal="cursorPos" from="UI" to="Cursor" method="_on_ui_cursor_pos"]
+[connection signal="objPicked" from="Cursor" to="UI" method="_on_cursor_obj_picked"]

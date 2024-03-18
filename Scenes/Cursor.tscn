@@ -55,13 +55,9 @@ _data = {
 }
 
 [node name="Cursor" type="Node3D"]
+script = ExtResource("1_q7upa")
 
 [node name="Pivot" type="Node3D" parent="."]
-
-[node name="Ortho" type="Camera3D" parent="Pivot"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -200, 0, 0)
-projection = 1
-size = 20.0
 
 [node name="Camera3D" type="Camera3D" parent="Pivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
@@ -69,12 +65,11 @@ projection = 1
 current = true
 fov = 50.0
 size = 20.0
-script = ExtResource("1_q7upa")
 
 [node name="Handler" type="Node3D" parent="."]
 
 [node name="Area3D" type="Area3D" parent="Handler"]
-collision_mask = 15
+collision_mask = 31
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Handler/Area3D"]
 shape = SubResource("SphereShape3D_87ky0")

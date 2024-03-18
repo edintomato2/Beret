@@ -53,19 +53,6 @@ func _process(_delta):
 	var pos = _cursor.global_position
 	var posStr = posFormat % [pos.x, pos.y, pos.z]
 	_infoLabel.set_text(posStr)
-	
-func _physics_process(_delta):
-	# Update Object label
-	if _curArea.has_overlapping_bodies():
-		var bodies = _curArea.get_overlapping_bodies()
-		if !(bodies.size() == 0): # Prevent trying to get a nil value
-			onObj = bodies[0].get_parent() # Maybe we should list all objects? AOs could inhabit the same space...
-		
-			var objName = onObj.get_meta("Name")
-			_objLabel.set_text(str(objName))
-	else:
-		onObj = null
-		_objLabel.set_text("None")
 
 func _on_cursor_has_moved(keyPress):
 	playSound(keyPress)
@@ -188,3 +175,7 @@ func _on_loader_loaded(obj):
 
 func _vec2arr(vector: Vector3):
 	return [vector.x, vector.y, vector.z]
+
+func _on_cursor_obj_picked(object: Variant) -> void:
+	var objName = object.get_meta("Name")
+	_objLabel.set_text(str(objName))
