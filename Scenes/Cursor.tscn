@@ -3,9 +3,6 @@
 [ext_resource type="Script" path="res://Scripts/CamControls.gd" id="1_q7upa"]
 [ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://Materials/UI.tres" id="2_0tkj2"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_87ky0"]
-radius = 0.3
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5nyl"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_ip15m"]
@@ -54,6 +51,9 @@ _data = {
 "CursorBreath": SubResource("Animation_e1hvu")
 }
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_twr4l"]
+size = Vector3(1, 0.7, 1)
+
 [node name="Cursor" type="Node3D"]
 script = ExtResource("1_q7upa")
 
@@ -68,13 +68,8 @@ size = 20.0
 
 [node name="Handler" type="Node3D" parent="."]
 
-[node name="Area3D" type="Area3D" parent="Handler"]
-collision_mask = 31
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Handler/Area3D"]
-shape = SubResource("SphereShape3D_87ky0")
-
 [node name="Box" type="MeshInstance3D" parent="Handler"]
+visible = false
 layers = 512
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_351w7")
@@ -87,3 +82,11 @@ libraries = {
 }
 autoplay = "CursorBreath"
 speed_scale = 1.25
+
+[node name="SelectCorner" type="Node3D" parent="Handler"]
+
+[node name="Area" type="Area3D" parent="Handler"]
+collision_mask = 31
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Handler/Area"]
+shape = SubResource("BoxShape3D_twr4l")

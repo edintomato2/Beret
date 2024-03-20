@@ -113,7 +113,12 @@ func placeTriles(triles: Array): # Place triles listed in array.
 			var colBod = CollisionShape3D.new()
 			var colShape = BoxShape3D.new()
 			
+			var ab = trile.get_aabb()
+			var cent = ab.get_center()
+			
+			colShape.size = ab.size
 			colBod.shape = colShape
+			statBod.position = cent
 			
 			statBod.collision_layer = 2
 			statBod.call_deferred("add_child", colBod)

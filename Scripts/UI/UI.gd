@@ -11,6 +11,7 @@ var posFormat = "[%d, %d, %d]" # Position formatting.
 var movement = false
 
 var onObj = null
+var selectedObjs = []
 
 # Labels
 @onready var _infoLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Position"
@@ -28,7 +29,8 @@ var onObj = null
 # General nodes
 @onready var _loader: Node3D = $"Loader"
 @onready var _cursor: Node3D = $"../Cursor"
-@onready var _curArea: Area3D = $"../Cursor/Handler/Area3D"
+@onready var _pivot: Node3D = $"../Cursor/Pivot"
+@onready var _curArea: Area3D = $"../Cursor/Handler/Area"
 @onready var _sfx: AudioStreamPlayer = $"SFX"
 
 signal cursorPos(newPos: Vector3) # A relay from Loader.
@@ -42,17 +44,12 @@ func _notification(what):
 
 func _process(_delta):
 	# Update Facing label
-	var facing = fmod(_cursor.rotation_degrees.y, 360) / 90
+	var facing = fmod(_pivot.rotation_degrees.y, 360) / 90
 	match str(facing):
-		"0", "-0": _faceLabel.text = "Facing: Left"
-		"1", "-3": _faceLabel.text = "Facing: Front"
-		"2", "-2": _faceLabel.text = "Facing: Right"
-		"3", "-1": _faceLabel.text = "Facing: Back"
-	
-	# Update Position label
-	var pos = _cursor.global_position
-	var posStr = posFormat % [pos.x, pos.y, pos.z]
-	_infoLabel.set_text(posStr)
+		"0", "-0": _faceLabel.text = "Facing: Front"
+		"1", "-3": _faceLabel.text = "Facing: Right"
+		"2", "-2": _faceLabel.text = "Facing: Back"
+		"3", "-1": _faceLabel.text = "Facing: Left"
 
 func _on_cursor_has_moved(keyPress):
 	playSound(keyPress)
@@ -176,6 +173,19 @@ func _on_loader_loaded(obj):
 func _vec2arr(vector: Vector3):
 	return [vector.x, vector.y, vector.z]
 
-func _on_cursor_obj_picked(object: Variant) -> void:
-	var objName = object.get_meta("Name")
-	_objLabel.set_text(str(objName))
+func _on_cursor_obj_picked(object) -> void:
+	var pos := Vector3.ZERO
+	var dispName: String
+	
+	match typeof(object):
+		TYPE_OBJECT:
+			dispName = object.get_meta("Name")
+			pos = object.global_position
+		TYPE_VECTOR3:
+			dispName = "None"
+			pos = object
+	
+	var posStr = posFormat % [pos.x, pos.y, pos.z]
+	
+	_infoLabel.set_text(posStr)
+	_objLabel .set_text(dispName)

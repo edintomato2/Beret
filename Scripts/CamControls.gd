@@ -9,13 +9,15 @@ extends Node3D
 # Object info
 @onready var _camera = $"Pivot/Camera3D"
 @onready var _pivot = $"Pivot"
-@onready var _box = $"Handler/Box"
+@onready var _corner = $"Handler/SelectCorner"
+@onready var _area = $"Handler/Area"
 
 # Mouse state
 var _total_pitch = 0.0
 
 # Movement state
 var _rotating = false
+var _oldSelection = []
 
 # Keyboard state
 var _lt = 0
@@ -26,6 +28,14 @@ var _zoomOut = 0
 # Signals
 signal objPicked(object)
 
+# Constants
+var rayLength := 35
+var hiMat := StandardMaterial3D.new()
+
+func _ready() -> void:
+	hiMat.albedo_color = Color(1, 0.675, 0.416, 1)
+	hiMat.blend_mode = BaseMaterial3D.BLEND_MODE_MUL
+
 func _unhandled_input(event: InputEvent) -> void:
 	# Camera movement
 	if event is InputEventMouseMotion:
@@ -35,7 +45,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	_zoom(1.1)
 	
 	# Key input
-	if Input.is_action_pressed("cam_select", true): _select()
+	if Input.is_action_pressed("cam_select"): _select()
 	_flip()
 	_ltrt()
 
@@ -132,7 +142,7 @@ func _ltrt() -> void: # Rotate left and right
 	
 	if !_rotating and _lt or _rt:
 		_rotating = true
-		var curRot = _camera.get_parent().rotation_degrees.y
+		var curRot = _pivot.rotation_degrees.y
 		var tween = get_tree().create_tween()
 	
 		tween.set_ease(Tween.EASE_OUT)
@@ -153,7 +163,7 @@ func _select() -> void: # Select objects (by dragging or single clicking)
 	var space_state = get_world_3d().direct_space_state
 	var mousepos = get_viewport().get_mouse_position()
 	var origin = _camera.project_ray_origin(mousepos)
-	var end = origin + _camera.project_ray_normal(mousepos) * 1000
+	var end = origin + _camera.project_ray_normal(mousepos) * rayLength
 	var query = PhysicsRayQueryParameters3D.create(origin, end)
 	query.collide_with_areas = true
 	query.collision_mask = 0xFFFFFFFE # Everything but the UI layer!
@@ -162,14 +172,44 @@ func _select() -> void: # Select objects (by dragging or single clicking)
 	
 	if result != {}: # Start selection (if valid)
 		var obj = result.collider.get_parent() # Get clicked object
-		emit_signal("objPicked", obj) # Report back to UI.gdscript about what we selected
-		_box.global_position = obj.global_position
-		# If dragging, extend bounding box from first object to un-dragged object
+		if !Input.is_action_pressed("cam_selectMulti"): # If we're just selecting, move the cursor there
+			_corner.global_position = obj.global_position
+			_area.global_position   = obj.global_position
+			_area.scale = Vector3(1, 1, 1)
+			_change_objs_color([obj])
+			emit_signal("objPicked", obj)
+		else: # If shift + dragging, extend bounding box from first object to un-dragged object
+			var midpoint = _corner.global_position.lerp(obj.global_position, 0.5)
+			_area.global_position = midpoint
+			_area.scale = _normalizeScale(abs(_corner.global_position - obj.global_position))
+			_change_objs_color(_area.get_overlapping_bodies().map(func(child): return child.get_parent() )) # Get all meshes
+	else: # We didn't select anything; move the box to the end of the ray
+		_corner.global_position = floor(end)
+		_change_objs_color([])
+		emit_signal("objPicked", end)
+		pass
 
-func _setView() -> void:
-	if Input.is_action_pressed("cam_resetView", true):
-		_camera.get_parent().rotation_degrees = Vector3.ZERO
-		_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+func _change_objs_color(objects: Array) -> void: # When an object is picked, let it start pulsing orange
+	# Check if the old selection has objects not part of the new selection
+	var unselected := _diffArray(_oldSelection, objects)
+	for obj in unselected: ## If they aren't part of the new selection, remove the highlight
+		obj.material_overlay = null
 		
-	if Input.is_action_pressed("cam_ortho", true): _camera.projection = Camera3D.PROJECTION_ORTHOGONAL
-	if Input.is_action_pressed("cam_persp", true): _camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+	if !objects.is_empty():
+		for obj in objects: # Highlight the new selection
+			obj.material_overlay = hiMat
+			
+		_oldSelection = objects # Update the old selection for next time
+
+func _diffArray(a1: Array, a2: Array) -> Array:
+	var inA1 := []
+	for v in a1:
+		if not (v in a2):
+			inA1.append(v)
+	return inA1
+
+func _normalizeScale(diff: Vector3) -> Vector3:
+	if diff.x == 0: diff.x = 1
+	if diff.y == 0: diff.y = 1
+	if diff.z == 0: diff.z = 1
+	return diff
