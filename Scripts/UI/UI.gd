@@ -45,7 +45,7 @@ func _notification(what):
 func _process(_delta):
 	# Update Facing label
 	var facing = fmod(_pivot.rotation_degrees.y, 360) / 90
-	match str(facing):
+	match str(round(facing)):
 		"0", "-0": _faceLabel.text = "Facing: Front"
 		"1", "-3": _faceLabel.text = "Facing: Right"
 		"2", "-2": _faceLabel.text = "Facing: Back"
@@ -69,7 +69,6 @@ func playSound(keyPress):
 		"loaded":
 			_sfx.stream = soundOK;     _sfx.play()
 		"saved":
-			_logLabel.append_text("Level saved!\n")
 			_sfx.stream = soundOK;     _sfx.play()
 
 func _unhandled_input(event): # Allow placing/removing of objects
@@ -88,7 +87,6 @@ func _unhandled_input(event): # Allow placing/removing of objects
 					if !objID.is_empty() and (onObj == null): ## and if nothing's there
 						await plObj(objID, "Trile")
 					elif !objID.is_empty() and !(onObj == null): ## or if a trile is already occupying that spot
-						await rmObj(onObj) ### Delete it, and change it to the new trile.
 						await plObj(objID, "Trile")
 				"AOs":
 					## TODO: Handle placement of triles.
@@ -98,37 +96,7 @@ func _unhandled_input(event): # Allow placing/removing of objects
 					pass
 					
 			_curArea.monitoring = false; _curArea.monitoring = true ## Force the area to update
-			
-	if event.is_action_pressed("remove_object", true) and !(onObj == null) and _cursor.allowMove:
-		## Remove valid objects
-		await rmObj(onObj)
-		
-func rmObj(obj):
-	var pos = [_cursor.global_position.x, _cursor.global_position.y, _cursor.global_position.z]
-	match obj.layers:
-		2:
-			## Get trile position, remove it from the fezlvl file if cursor position matches.
-			for trile in _loader.fezlvl["Triles"]:
-				if trile["Position"] == pos:
-					_loader.fezlvl["Triles"].erase(trile)
-		4:
-			## Get AO position, see if its similar to ao in file, remove it from file.
-			var objPos = obj.global_position
-			for ao in _loader.fezlvl["ArtObjects"]:
-				var lvlPos = Vector3(_loader.fezlvl["ArtObjects"][ao]["Position"][0] - 0.5, \
-									_loader.fezlvl["ArtObjects"][ao]["Position"][1] - 0.5, \
-									_loader.fezlvl["ArtObjects"][ao]["Position"][2] - 0.5)
-				if objPos.is_equal_approx(lvlPos):
-					_loader.fezlvl["ArtObjects"].erase(ao)
-				pass
-		8:
-			## TODO: Handle NPC removal.
-			pass 
-	
-	obj.queue_free()
-	onObj = null
-	return OK
-	
+
 func plObj(obj, type: String):
 	match type:
 		"Trile":
@@ -168,7 +136,6 @@ func _on_loader_loaded(obj):
 		"StartingPosition":
 			emit_signal("cursorPos", _loader.fezlvl[obj])
 			pass
-	pass # Replace with function body.
 
 func _vec2arr(vector: Vector3):
 	return [vector.x, vector.y, vector.z]

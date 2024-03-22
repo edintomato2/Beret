@@ -131,6 +131,7 @@ func placeTriles(triles: Array): # Place triles listed in array.
 			trile.set_meta("Id", id)
 			
 			call_deferred("add_child", trile)
+	print("Loaded triles!")
 	emit_signal("loaded", "Triles")
 
 func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
@@ -154,6 +155,7 @@ func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 		inst.set_meta("Type", "AO")
 		
 		call_deferred("add_child", inst)
+	print("Loaded AOs!")
 	emit_signal("loaded", "ArtObjects")
 
 func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
@@ -193,6 +195,7 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 		inst.set_meta("Name", npcs[i]["Name"].capitalize())
 		inst.play("gif")
 		call_deferred("add_child", inst)
+	print("Loaded NPCs!")
 	emit_signal("loaded", "NonPlayerCharacters")
 
 func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a dict.
@@ -252,9 +255,11 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		## TODO: Looks like both "Size" and "Scale" have a play in rendering the texture... How?
 
 		inst.set_meta("Name", bkgplns[i]["TextureName"].to_lower())
+		inst.set_meta("Type", "BackgroundPlanes")
 		call_deferred("add_child", inst)
+	print("Loaded Background Planes!")
 
-func placeVols(vols: Dictionary): # Place volumes in dict.
+func placeVols(_vols: Dictionary): # Place volumes in dict.
 	#print(vols)
 	pass
 
@@ -290,6 +295,7 @@ func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own f
 	gomez.set_meta("Name", "Gomez")
 	gomez.play("gif")
 	call_deferred("add_child", gomez)
+	print("Loaded Gomez's Starting Position!")
 	emit_signal("loaded", "StartingPosition")
 
 func _loadObj(filepath: String, type: int): # Internal object loader.

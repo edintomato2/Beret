@@ -27,6 +27,7 @@ var _zoomOut = 0
 
 # Signals
 signal objPicked(object)
+var selectedObjects := []
 
 # Constants
 var rayLength := 35
@@ -46,6 +47,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	
 	# Key input
 	if Input.is_action_pressed("cam_select"): _select()
+	_keyControls()
 	_flip()
 	_ltrt()
 
@@ -58,11 +60,11 @@ func _3dOrbit(mousePos: Vector2) -> void: # Rotate around pivot
 	var pitch = _mouse_position.y
 	
 	# Prevents looking up/down too far
-	pitch = clamp(pitch, -90 - _total_pitch, 90 - _total_pitch)
+	#pitch = clamp(pitch, -90 - _total_pitch, 90 - _total_pitch)
 	_total_pitch += pitch
 
-	_camera.get_parent().rotate_y(deg_to_rad(-yaw))
-	_camera.get_parent().rotate_object_local(Vector3(1,0,0), deg_to_rad(-pitch))
+	_pivot.rotate_y(deg_to_rad(-yaw))
+	_pivot.rotate_object_local(Vector3(1,0,0), deg_to_rad(-pitch))
 
 func _pan_camera(mouseVel: Vector2) -> void: # Pans the camera around
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -71,7 +73,7 @@ func _pan_camera(mouseVel: Vector2) -> void: # Pans the camera around
 	var yDir = _camera.transform.basis.y * mouseVel.y
 	var xDir = _camera.transform.basis.x * -mouseVel.x
 	#var _sens = (sensitivity / get_size()) # TODO: The greater the zoom, the slower the panning speed
-	_camera.get_parent().translate_object_local((xDir + yDir) * sensitivity)
+	_pivot.translate_object_local((xDir + yDir) * sensitivity)
 
 func _zoom(modifier: float) -> void: # Zoom in and out
 	_zoomIn = 1 if Input.is_action_just_pressed("cam_zoom_in", true) else 0
@@ -135,10 +137,8 @@ func _flip() -> void: # Flip the camera's perspective around
 	pass
 
 func _ltrt() -> void: # Rotate left and right
-	_lt = 1 if Input.is_action_just_pressed("move_lt", true) else 0 # Rotate right
-	_rt = 1 if Input.is_action_just_pressed("move_rt", true) else 0 # Rotate left
-	
-	if Input.is_action_just_pressed("move_goto"): _camera.get_parent().position = Vector3.ZERO 
+	_lt = 1 if Input.is_action_just_pressed("cam_lt", true) else 0 # Rotate right
+	_rt = 1 if Input.is_action_just_pressed("cam_rt", true) else 0 # Rotate left
 	
 	if !_rotating and _lt or _rt:
 		_rotating = true
@@ -176,24 +176,25 @@ func _select() -> void: # Select objects (by dragging or single clicking)
 			_corner.global_position = obj.global_position
 			_area.global_position   = obj.global_position
 			_area.scale = Vector3(1, 1, 1)
-			_change_objs_color([obj])
+			selectedObjects = [obj]
 			emit_signal("objPicked", obj)
 		else: # If shift + dragging, extend bounding box from first object to un-dragged object
 			var midpoint = _corner.global_position.lerp(obj.global_position, 0.5)
 			_area.global_position = midpoint
 			_area.scale = _normalizeScale(abs(_corner.global_position - obj.global_position))
-			_change_objs_color(_area.get_overlapping_bodies().map(func(child): return child.get_parent() )) # Get all meshes
+			selectedObjects = _area.get_overlapping_bodies().map(func(child): return child.get_parent()) # Get all meshes
 	else: # We didn't select anything; move the box to the end of the ray
 		_corner.global_position = floor(end)
-		_change_objs_color([])
+		selectedObjects = []
 		emit_signal("objPicked", end)
 		pass
+	_change_objs_color(selectedObjects)
 
 func _change_objs_color(objects: Array) -> void: # When an object is picked, let it start pulsing orange
 	# Check if the old selection has objects not part of the new selection
 	var unselected := _diffArray(_oldSelection, objects)
 	for obj in unselected: ## If they aren't part of the new selection, remove the highlight
-		obj.material_overlay = null
+		if is_instance_valid(obj): obj.material_overlay = null
 		
 	if !objects.is_empty():
 		for obj in objects: # Highlight the new selection
@@ -213,3 +214,18 @@ func _normalizeScale(diff: Vector3) -> Vector3:
 	if diff.y == 0: diff.y = 1
 	if diff.z == 0: diff.z = 1
 	return diff
+
+func _rightClickControl() -> void: # Control what right-clicking does
+	
+	pass
+
+func _keyControls() -> void: # Keyboard controls
+	if Input.is_action_just_pressed("cursor_goto"): _camera.get_parent().position = Vector3.ZERO 
+	if Input.is_action_just_pressed("cursor_delete") and !selectedObjects.is_empty(): rmObj(selectedObjects)
+
+func _vec2arr(vector: Vector3) -> Array:
+	return [vector.x, vector.y, vector.z]
+
+func rmObj(arr: Array) -> void: # Delete objects
+	for o in arr: o.queue_free()
+	selectedObjects = []

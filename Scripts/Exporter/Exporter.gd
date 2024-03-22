@@ -6,6 +6,7 @@ extends Node
 
 @onready var _loader = $"../Loader"
 @onready var _ui = $".."
+signal levelSaved(filename: String)
 
 # Standard definitions. This will get ugly!
 var _aoActor = { "Inactive": false, "ContainedTrile": "None", "AttachedGroup": null, "SpinView": "None", "SpinEvery": 0, "SpinOffset": 0, "OffCenter": false, "RotationCenter": [0, 0, 0], "VibrationPattern": [], "CodePattern": [], "Segment": { "Destination": [0, 0, 0], "Duration": 1, "WaitTimeOnStart": 0, "WaitTimeOnFinish": 0, "Acceleration": 0, "Deceleration": 0, "JitterFactor": 0, "Orientation": [0, 0, 0, 1], "CustomData": null }, "NextNode": null, "DestinationLevel": "", "TreasureMapName": "", "InvisibleSides": [], "TimeswitchWindBackSpeed": 0}
@@ -16,13 +17,14 @@ func _on_save_file_selected(path: String):
 	var cleanPath = adjPath.get_base_dir()
 	
 	_saveFEZLVL(cleanPath, filename)
-	pass # Replace with function body.
 
-func _saveFEZLVL(path, filename):
+func _saveFEZLVL(path: String, filename: String) -> void: # Save the level to a FEZLVL file
 	var readTemp = JSON.new()
 	var err = readTemp.parse(FileAccess.get_file_as_string("res://Scripts/Exporter/template.fezlvl.json"))
 	if err == OK:
 		var template = readTemp.data
+		var offset = _findOffset(_loader.get_children())
+		var size =   _findSize(_loader.get_children())
 		# Get all of Loader's children.
 		for n in _loader.get_child_count():
 			var obj = _loader.get_child(n)
@@ -30,13 +32,11 @@ func _saveFEZLVL(path, filename):
 			
 			match type:
 				"Trile":
-					var pos = [obj.position.x, obj.position.y, obj.position.z]
+					var pos = _vec2arr(obj.global_position + offset)
 					var emp = [round(pos[0]), round(pos[1]), round(pos[2])]
 					
 					# Keep rotation to 0,3
-					var phiFace = obj.get_meta("Face")
-					var phi = 360 + (obj.rotation_degrees.y - phiFace)
-					phi = fmod(phi, 360) / 90
+					var phi = (obj.rotation_degrees.y - 180) / 90
 					
 					var actset = null
 					
@@ -51,9 +51,9 @@ func _saveFEZLVL(path, filename):
 					
 				"AO":
 					var aoName = obj.get_meta("Name")
-					var pos     = [obj.position.x + 0.5, obj.position.y + 0.5, obj.position.z + 0.5]
+					var pos     = _vec2arr(obj.global_position + Vector3(0.5, 0.5, 0.5) + offset)
 					var rot     = [obj.quaternion.x, obj.quaternion.y, obj.quaternion.z, obj.quaternion.w]
-					var aoScale = [obj.scale.x, obj.scale.y, obj.scale.z]
+					var aoScale = _vec2arr(obj.scale)
 					var actset  = _aoActor
 					
 					var aoDict = { "Name": aoName.to_upper(),
@@ -68,68 +68,46 @@ func _saveFEZLVL(path, filename):
 					pass
 					
 				"StartingPoint":
-					var id = obj.get_meta("Id")
+					var id = _startOffset(obj.get_meta("Id"), _vec2arr(offset))
 					var face = obj.get_meta("Face")
 					var spDict = { "Id": [id[0], id[1], id[2]], "Face": face}
 					
 					template["StartingPosition"] = spDict
 					pass
-		pass
+		
 		template["Name"] = filename.to_upper() 
-		template["TrileSetName"] = _loader.trileset[3].to_upper()
-		
-		# Find the level's size automatically by finding the most out-there object.
-		## Take into account negative level sizes by applying an offset.
-		var offset: Array = _findSmallest(template["Triles"])
-		
-		## Apply offset to all trile positions and emplacements
-		for idx in template["Triles"].size():
-			template["Triles"][idx]["Emplacement"] = _offset(template["Triles"][idx]["Emplacement"], offset)
-			template["Triles"][idx]["Position"] = _offset(template["Triles"][idx]["Position"], offset)
-			pass
-		
-		## Apply offset to Gomez
-		var startPos = template.get("StartingPosition")
-		startPos["Id"] = _startOffset(startPos["Id"], offset)
-		
-		## Find the level size from here
-		var lvlSize = _findLargest(template["Triles"])
-		template["Size"] = lvlSize
+		template["TrileSetName"] = _loader.fezlvl["TrileSetName"].to_upper()
+		template["Size"] = size
 		
 		var writeLVL := JSON.stringify(template, "  ", false, false)
 		
 		var file = FileAccess.open(path + "/" + filename + ".fezlvl.json", FileAccess.WRITE)
 		file.store_string(writeLVL)
 		file.close()
-		print("Done writing file. Phew!")
+		emit_signal("levelSaved", template["Name"])
+		print("Done saving level. Phew!")
 		_ui.playSound("saved")
 	pass
 pass
 
-func _findLargest(triles):
-	var comparer := [1, 1, 1]
-	for idx in range(0,3): # For X, Y, and Z
-		for trile in triles:
-			if trile["Emplacement"][idx] > comparer[idx]:
-				comparer[idx] = trile["Emplacement"][idx]
-			pass
-	return comparer.map(func(n): return n + 1) # Just in case we need extra space!
+func _findOffset(arr: Array[Node]) -> Vector3: # Find the level offset
+	var offset = Vector3.ZERO
+	for i in range(0,3): # X, Y, Z
+		for o in arr:
+			if o.global_position[i] < offset[i]: offset[i] = o.global_position[i]
+	return offset
 
-func _findSmallest(triles):
-	var comparer := [0, 0, 0]
-	for idx in range(0,3): # For X, Y, and Z
-		for trile in triles:
-			if trile["Emplacement"][idx] < comparer[idx]:
-				comparer[idx] = trile["Emplacement"][idx]
-			pass
-	return comparer
+func _findSize(arr: Array[Node]) -> Vector3: # Find the level size
+	var size = Vector3.ONE
+	for i in range(0,3): # X, Y, Z
+		for o in arr:
+			if o.global_position[i] > size[i]: size[i] = o.global_position[i]
+	return size.round()
 
-func _offset(array: Array, offset: Array):
-	for idx in range(0,3): # For X, Y, and Z
-		array[idx] += (abs(offset[idx]))
-	return array
-	
-func _startOffset(startPos, offset: Array):
+func _startOffset(startPos, offset: Array): # Offset start position
 	for pos in range(0,3):
 		startPos[pos] += (abs(offset[pos]))
 	return startPos
+
+func _vec2arr(vector: Vector3) -> Array:
+	return [vector.x, vector.y, vector.z]

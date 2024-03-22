@@ -424,6 +424,7 @@ script = ExtResource("12_4xdn3")
 [connection signal="file_selected" from="Titlebar/File/Save" to="Exporter" method="_on_save_file_selected"]
 [connection signal="file_selected" from="Titlebar/File/New" to="Titlebar/File" method="_on_new_file_selected"]
 [connection signal="close_requested" from="Titlebar/Help/About" to="Titlebar/Help" method="_on_about_close_requested"]
+[connection signal="draw" from="VSplitContainer/HBoxContainer/EditorLog" to="VSplitContainer/HBoxContainer/EditorLog" method="_on_draw"]
 [connection signal="value_changed" from="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="item_selected" from="VSplitContainer/Toolbar/ChoosePalette" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_choose_palette_item_selected"]
 [connection signal="item_selected" from="VSplitContainer/Toolbar/Palettes/NPCs" to="VSplitContainer/Toolbar/Palettes/NPCs" method="_on_item_selected"]
@@ -433,3 +434,4 @@ script = ExtResource("12_4xdn3")
 [connection signal="loaded" from="Loader" to="VSplitContainer/HBoxContainer/EditorLog" method="_on_loader_loaded"]
 [connection signal="loaded" from="Loader" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_loader_loaded"]
 [connection signal="loaded" from="Loader" to="VSplitContainer/Toolbar/Palettes/NPCs" method="_on_loader_loaded"]
+[connection signal="levelSaved" from="Exporter" to="VSplitContainer/HBoxContainer/EditorLog" method="_on_exporter_level_saved"]

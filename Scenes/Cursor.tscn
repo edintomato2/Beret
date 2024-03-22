@@ -68,22 +68,22 @@ size = 20.0
 
 [node name="Handler" type="Node3D" parent="."]
 
-[node name="Box" type="MeshInstance3D" parent="Handler"]
-visible = false
+[node name="SelectCorner" type="Node3D" parent="Handler"]
+
+[node name="Box" type="MeshInstance3D" parent="Handler/SelectCorner"]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 layers = 512
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_351w7")
 skeleton = NodePath("")
 surface_material_override/0 = ExtResource("2_0tkj2")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Handler/Box"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Handler/SelectCorner/Box"]
 libraries = {
 "": SubResource("AnimationLibrary_slj4o")
 }
 autoplay = "CursorBreath"
 speed_scale = 1.25
-
-[node name="SelectCorner" type="Node3D" parent="Handler"]
 
 [node name="Area" type="Area3D" parent="Handler"]
 collision_mask = 31

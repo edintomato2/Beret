@@ -8,7 +8,7 @@ func _ready() -> void: # Add timer as child to this node. Make it so it doesn't 
 	_timer.one_shot = true;
 	_textChanged()
 
-func _on_loader_loaded(obj) -> void:
+func _on_loader_loaded(obj: String) -> void:
 	modulate = Color.WHITE
 	match obj:
 		"fezlvl":
@@ -19,7 +19,6 @@ func _on_loader_loaded(obj) -> void:
 			add_text("Loaded " + str(_ldr.fezlvl[obj].size()) + " art objects.\n")
 		"NonPlayerCharacters":
 			add_text("Loaded " + str(_ldr.fezlvl[obj].size()) + " NPCs.\n")
-	_textChanged()
 
 func _textChanged() -> void: # Wait 3 seconds before fading out text. Fading out takes 5 seconds.
 	_timer.start(3)
@@ -29,3 +28,7 @@ func _textChanged() -> void: # Wait 3 seconds before fading out text. Fading out
 	tween.tween_property(self, "modulate", Color.TRANSPARENT, 5)
 	await tween.finished
 	self.clear()
+
+func _on_exporter_level_saved(filename: String) -> void:
+	add_text("Saved level: " + filename + "\n")
+	_textChanged()
