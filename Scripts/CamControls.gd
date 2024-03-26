@@ -50,6 +50,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	_keyControls()
 	_flip()
 	_ltrt()
+	_camera_face_snap()
 
 func _3dOrbit(mousePos: Vector2) -> void: # Rotate around pivot
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -157,6 +158,28 @@ func _ltrt() -> void: # Rotate left and right
 		
 		await tween.finished
 		_rotating = false
+
+func _camera_face_snap() -> void:
+	var _snap = Input.is_action_just_pressed("cam_face_snap", true)
+	if !_rotating and _snap:
+		_rotating = true
+		var snap_rot = Vector3.ZERO
+		snap_rot.y = snappedf(_pivot.rotation_degrees.y, 90)
+		var tween = get_tree().create_tween()
+
+		tween.set_ease(Tween.EASE_OUT)
+		tween.set_trans(Tween.TRANS_SINE)
+
+		tween.tween_property(
+			_pivot,
+			"rotation_degrees",
+			snap_rot,
+			rotation_duration
+		)
+
+		await tween.finished
+		_rotating = false
+
 
 func _select() -> void: # Select objects (by dragging or single clicking)
 	# Make a raycast (yes I copied this from the wiki)
