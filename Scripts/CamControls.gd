@@ -159,8 +159,9 @@ func _ltrt() -> void: # Rotate left and right
 		await tween.finished
 		_rotating = false
 
-func _camera_face_snap() -> void:
+func _camera_face_snap() -> void: # Snap camera to nearest orthogonal face
 	var _snap = Input.is_action_just_pressed("cam_face_snap", true)
+	
 	if !_rotating and _snap:
 		_rotating = true
 		var snap_rot = Vector3.ZERO
