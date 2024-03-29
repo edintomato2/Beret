@@ -49,7 +49,7 @@ layout_mode = 2
 size_flags_vertical = 6
 bbcode_enabled = true
 text = "[center][b]You do not have any unpacked directories set![/b]
-Please sent them below.
+Please set them below.
 These options can be changed later via the \"File > Options\" menu.[/center]"
 fit_content = true
 scroll_active = false
