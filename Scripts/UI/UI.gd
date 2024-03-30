@@ -17,7 +17,6 @@ var selectedObjs = []
 @onready var _infoLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Position"
 @onready var _objLabel: Label  = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Object"
 @onready var _faceLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Facing"
-@onready var _logLabel: RichTextLabel = $"VSplitContainer/HBoxContainer/EditorLog"
 
 # Rotation control
 @onready var _phi: HSlider = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl/HSlider"
@@ -27,13 +26,11 @@ var selectedObjs = []
 @onready var _palettes: Control = $"VSplitContainer/Toolbar/Palettes"
 
 # General nodes
-@onready var _loader: Node3D = $"Loader"
+@onready var _loader: Node = %Loader
 @onready var _cursor: Node3D = $"../Cursor"
 @onready var _pivot: Node3D = $"../Cursor/Pivot"
-@onready var _curArea: Area3D = $"../Cursor/Handler/Area"
+@onready var _select: Node3D = $"../Cursor/Handler/SelectCorner" 
 @onready var _sfx: AudioStreamPlayer = $"SFX"
-
-signal cursorPos(newPos: Vector3) # A relay from Loader.
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST: # Handle closing the window.
@@ -71,40 +68,40 @@ func playSound(keyPress):
 		"saved":
 			_sfx.stream = soundOK;     _sfx.play()
 
-func _unhandled_input(event): # Allow placing/removing of objects
+func reqPlace() -> void: # Handle requests to place objects
 	## First, let's see what the active (visible) palette is
 	var active: ItemList = getActivePalette(_palettes)
-	var selected = active.get_selected_items()
-	var objID = null
-	var objType = active.get_name() ## The name of the palette will decide what we're placing.
+	var selected: PackedInt32Array = active.get_selected_items()
+	if selected.size() == 0: return ## If nothing is selected, exit
 	
-	if !(selected.size() == 0): ## If something is selected,
-		objID = active.get_item_metadata(selected[0])
-		
-		if event.is_action_pressed("place_object", true) and _cursor.allowMove:
-			match objType:
-				"Triles":
-					if !objID.is_empty() and (onObj == null): ## and if nothing's there
-						await plObj(objID, "Trile")
-					elif !objID.is_empty() and !(onObj == null): ## or if a trile is already occupying that spot
-						await plObj(objID, "Trile")
-				"AOs":
-					## TODO: Handle placement of triles.
-					pass
-				"NPCs":
-					await plObj(objID, "NPC")
-					pass
-					
-			_curArea.monitoring = false; _curArea.monitoring = true ## Force the area to update
+	## Enable quiet mode on the loader
+	_loader.silent = true
+	
+	## The name of the palette will decide what we're placing.
+	var objType = active.get_name()
+	var objID = active.get_item_metadata(selected[0])
+	
+	match objType:
+		"Triles":
+			## If nothing's on the current trile, place a new trile there
+			if _cursor.selectedObjects.is_empty(): _plObj(objID, "Trile")
+			else: ## If a trile is already occupying that spot, remove it and place the new one
+				await _cursor.rmObj(_cursor.selectedObjects)
+				_plObj(objID, "Trile")
+		"AOs":
+			## TODO: Handle placement of AOs.
+			pass
+		"NPCs":
+			_plObj(objID, "NPC")
+			pass
 
-func plObj(obj, type: String):
+func _plObj(obj, type: String) -> void:
 	match type:
 		"Trile":
 			var info: Dictionary = {"Id" : obj,
-									"Emplacement" : _vec2arr(round(_cursor.global_position)),
-									"Position" : _vec2arr(_cursor.global_position),
+									"Emplacement" : _vec2arr(round(_select.global_position)),
+									"Position" : _vec2arr(_select.global_position),
 									"Phi" : _phi.value}
-			_loader.fezlvl["Triles"].append(info)
 			_loader.placeTriles([info])
 		"AO":
 			## TODO: Place ArtObjects.
@@ -118,7 +115,6 @@ func plObj(obj, type: String):
 				## TODO: Placing NPCs. This could be complicated, as NPCs are defined with movements
 				## inside level files, and NOT in metadata.feznpc.json.
 				pass
-	return OK
 
 func getActivePalette(parent: Node):
 	var children = parent.get_child_count()
@@ -128,14 +124,13 @@ func getActivePalette(parent: Node):
 			return child
 	return 1
 
+func getSelectedItem():
+	var active: ItemList = getActivePalette(_palettes)
+	var selected = active.get_selected_items()
+	return [active, selected]
+
 func _on_h_slider_value_changed(value):
 	_phiLabel.text = "Rotation: " + str(value * -90) + " deg"
-
-func _on_loader_loaded(obj):
-	match obj:
-		"StartingPosition":
-			emit_signal("cursorPos", _loader.fezlvl[obj])
-			pass
 
 func _vec2arr(vector: Vector3):
 	return [vector.x, vector.y, vector.z]

@@ -1,8 +1,8 @@
 extends MenuButton
 
 @onready var _curCam: Camera3D = $"/root/Main/Cursor/Pivot/Camera3D"
-@onready var _curCol: Area3D = $"/root/Main/Cursor/Handler/Area"
-@onready var _ldr: Node3D = $"/root/Main/UI/Loader"
+@onready var _curCol: Area3D = $"/root/Main/Cursor/Area"
+@onready var _ldr: Node = $"/root/Main/Loader"
 
 var _curLvl: String = ""
 

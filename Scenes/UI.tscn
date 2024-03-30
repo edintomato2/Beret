@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://cdwpy8hm6qseq"]
+[gd_scene load_steps=28 format=3 uid="uid://cdwpy8hm6qseq"]
 
 [ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_yufu8"]
 [ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://Defaults/default.tres" id="2_pfeim"]
@@ -11,8 +11,6 @@
 [ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="7_jfdyk"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/Triles.gd" id="9_4swbr"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/NPCs.gd" id="10_2driq"]
-[ext_resource type="Script" path="res://Scripts/Importer/Importer.gd" id="11_b3xhm"]
-[ext_resource type="Script" path="res://Scripts/Exporter/Exporter.gd" id="12_4xdn3"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kofio"]
 device = -1
@@ -408,30 +406,8 @@ script = ExtResource("10_2driq")
 
 [node name="SFX" type="AudioStreamPlayer" parent="."]
 
-[node name="Loader" type="Node3D" parent="."]
-process_thread_group = 2
-process_thread_group_order = 0
-process_thread_messages = 0
-script = ExtResource("11_b3xhm")
-
-[node name="Exporter" type="Node" parent="."]
-process_thread_group = 2
-process_thread_group_order = 0
-process_thread_messages = 0
-script = ExtResource("12_4xdn3")
-
-[connection signal="file_selected" from="Titlebar/File/Load" to="Loader" method="_on_load_dialog_file_selected"]
-[connection signal="file_selected" from="Titlebar/File/Save" to="Exporter" method="_on_save_file_selected"]
 [connection signal="file_selected" from="Titlebar/File/New" to="Titlebar/File" method="_on_new_file_selected"]
 [connection signal="close_requested" from="Titlebar/Help/About" to="Titlebar/Help" method="_on_about_close_requested"]
-[connection signal="draw" from="VSplitContainer/HBoxContainer/EditorLog" to="VSplitContainer/HBoxContainer/EditorLog" method="_on_draw"]
 [connection signal="value_changed" from="VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="item_selected" from="VSplitContainer/Toolbar/ChoosePalette" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_choose_palette_item_selected"]
 [connection signal="item_selected" from="VSplitContainer/Toolbar/Palettes/NPCs" to="VSplitContainer/Toolbar/Palettes/NPCs" method="_on_item_selected"]
-[connection signal="loaded" from="Loader" to="." method="_on_loader_loaded"]
-[connection signal="loaded" from="Loader" to="Titlebar/File" method="_on_loader_loaded"]
-[connection signal="loaded" from="Loader" to="Titlebar/View" method="_on_loader_loaded"]
-[connection signal="loaded" from="Loader" to="VSplitContainer/HBoxContainer/EditorLog" method="_on_loader_loaded"]
-[connection signal="loaded" from="Loader" to="VSplitContainer/Toolbar/Palettes/Triles" method="_on_loader_loaded"]
-[connection signal="loaded" from="Loader" to="VSplitContainer/Toolbar/Palettes/NPCs" method="_on_loader_loaded"]
-[connection signal="levelSaved" from="Exporter" to="VSplitContainer/HBoxContainer/EditorLog" method="_on_exporter_level_saved"]

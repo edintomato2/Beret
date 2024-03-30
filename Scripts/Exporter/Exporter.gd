@@ -5,7 +5,7 @@ extends Node
 # overwrite with our data.
 
 @onready var _loader = $"../Loader"
-@onready var _ui = $".."
+@onready var _ui = $"../UI"
 signal levelSaved(filename: String)
 
 # Standard definitions. This will get ugly!

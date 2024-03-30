@@ -4,7 +4,7 @@ extends MenuButton
 @onready var _svFile = $Save
 @onready var _nwFile = $New
 
-@onready var _ldr = $"../../Loader"
+@onready var _ldr = $"/root/Main/Loader"
 @onready var _ui = $"../.."
 
 @export var loadShortcut: Shortcut
@@ -18,6 +18,8 @@ func _ready():
 	get_popup().set_item_shortcut(1, saveShortcut, true)
 	get_popup().set_item_shortcut(4, quitShortcut, true)
 	get_popup().set_item_shortcut(2, newShortcut, true)
+	
+	_ldr.loaded.connect(_on_loader_loaded)
 
 func _on_file_menu_pressed(id: int):
 	match id:

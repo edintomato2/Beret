@@ -2,7 +2,10 @@ extends ItemList
 
 const TRILE_SIZE = 18 # Width and height of trile textures, in pixels.
 @onready var _Colors: OptionButton = $"../../ChoosePalette" # "Colors", because this is a palette!
-@onready var _ldr: Node3D = $"/root/Main/UI/Loader"
+@onready var _ldr: Node = $"/root/Main/Loader"
+
+func _ready() -> void:
+	_ldr.loaded.connect(_on_loader_loaded.bind())
 
 func _on_loader_loaded(obj):
 	if obj == "fezts":

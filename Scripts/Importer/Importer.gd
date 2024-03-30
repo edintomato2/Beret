@@ -21,10 +21,17 @@ var _threadFlag = false
 
 signal loaded(obj: String)
 
+@onready var _fileLoad: FileDialog = $"/root/Main/UI/Titlebar/File/Load"
+
+@export var silent: bool = false:
+	get: return silent
+	set(value): silent = value
+
 func _ready():
 	_thread = Thread.new() # Prepare threading.
 	_sema = Semaphore.new()
 	_mutex = Mutex.new()
+	_fileLoad.file_selected.connect(_on_load_dialog_file_selected.bind())
 	pass
 
 func _on_load_dialog_file_selected(path):
@@ -57,8 +64,7 @@ func loadLVL(path: String): # Read fezlvl.json, return the JSON if valid.
 		print(readLvl.get_error_message()); return err
 	
 	fezlvl = readLvl.data
-	emit_signal("loaded", "fezlvl")
-	return OK
+	if !silent: emit_signal("loaded", "fezlvl")
 
 func loadTS(tsName: String): # Load in trileset.
 	## Get clean path name.
@@ -83,8 +89,7 @@ func loadTS(tsName: String): # Load in trileset.
 		push_error(readTS.get_error_message()); return err
 	
 	fezts = [meshDict, mat, readTS.data]
-	emit_signal("loaded", "fezts")
-	return OK
+	if !silent: emit_signal("loaded", "fezts")
 
 func placeTriles(triles: Array): # Place triles listed in array.
 	for trileInst in triles:
@@ -131,8 +136,9 @@ func placeTriles(triles: Array): # Place triles listed in array.
 			trile.set_meta("Id", id)
 			
 			call_deferred("add_child", trile)
-	print("Loaded triles!")
-	emit_signal("loaded", "Triles")
+	if !silent:
+		print("Loaded triles!")
+		emit_signal("loaded", "Triles")
 
 func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 	for i in aos:
@@ -155,8 +161,10 @@ func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 		inst.set_meta("Type", "AO")
 		
 		call_deferred("add_child", inst)
-	print("Loaded AOs!")
-	emit_signal("loaded", "ArtObjects")
+		
+	if !silent:
+		print("Loaded AOs!")
+		emit_signal("loaded", "ArtObjects")
 
 func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations/"
@@ -195,8 +203,10 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 		inst.set_meta("Name", npcs[i]["Name"].capitalize())
 		inst.play("gif")
 		call_deferred("add_child", inst)
-	print("Loaded NPCs!")
-	emit_signal("loaded", "NonPlayerCharacters")
+		
+	if !silent:
+		print("Loaded NPCs!")
+		emit_signal("loaded", "NonPlayerCharacters")
 
 func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a dict.
 	for i in bkgplns:
@@ -257,7 +267,9 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		inst.set_meta("Name", bkgplns[i]["TextureName"].to_lower())
 		inst.set_meta("Type", "BackgroundPlanes")
 		call_deferred("add_child", inst)
-	print("Loaded Background Planes!")
+		
+	if !silent:
+		print("Loaded Background Planes!")
 
 func placeVols(_vols: Dictionary): # Place volumes in dict.
 	#print(vols)
@@ -295,8 +307,10 @@ func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own f
 	gomez.set_meta("Name", "Gomez")
 	gomez.play("gif")
 	call_deferred("add_child", gomez)
-	print("Loaded Gomez's Starting Position!")
-	emit_signal("loaded", "StartingPosition")
+	
+	if !silent:
+		print("Loaded Gomez's Starting Position!")
+		emit_signal("loaded", "StartingPosition")
 
 func _loadObj(filepath: String, type: int): # Internal object loader.
 	## TODO: Handler for if filepath doesn't exist

@@ -1,8 +1,8 @@
 [gd_scene load_steps=10 format=3 uid="uid://djsig0kkd1ved"]
 
-[ext_resource type="Script" path="res://Scripts/Cursor/CamControls.gd" id="1_tetl8"]
+[ext_resource type="Script" path="res://Scripts/CamControls.gd" id="1_q7upa"]
 [ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://Materials/UI.tres" id="2_0tkj2"]
-[ext_resource type="Script" path="res://Scripts/Cursor/SelectBox.gd" id="3_ttrki"]
+[ext_resource type="Script" path="res://Scripts/RectDrawer.gd" id="3_nd0y6"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5nyl"]
 
@@ -55,7 +55,7 @@ _data = {
 [sub_resource type="BoxShape3D" id="BoxShape3D_twr4l"]
 
 [node name="Cursor" type="Node3D"]
-script = ExtResource("1_tetl8")
+script = ExtResource("1_q7upa")
 
 [node name="Pivot" type="Node3D" parent="."]
 
@@ -85,7 +85,13 @@ libraries = {
 autoplay = "CursorBreath"
 speed_scale = 1.25
 
-[node name="SelectBox" type="Control" parent="."]
+[node name="Area" type="Area3D" parent="Handler"]
+collision_mask = 31
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Handler/Area"]
+shape = SubResource("BoxShape3D_twr4l")
+
+[node name="Control" type="Control" parent="."]
 z_index = -1
 layout_mode = 3
 anchors_preset = 15
@@ -94,13 +100,4 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-script = ExtResource("3_ttrki")
-borderColor = Color(0.792157, 0.431373, 0, 1)
-fillColor = Color(0.792157, 0.431373, 0, 0.572549)
-
-[node name="Area" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 29)
-collision_mask = 31
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area"]
-shape = SubResource("BoxShape3D_twr4l")
+script = ExtResource("3_nd0y6")

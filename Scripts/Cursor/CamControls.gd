@@ -10,7 +10,9 @@ extends Node3D
 @onready var _camera = $"Pivot/Camera3D"
 @onready var _pivot = $"Pivot"
 @onready var _corner = $"Handler/SelectCorner"
-@onready var _area = $"Handler/Area"
+@onready var _area = $"Area"
+@onready var _boxSelect = $"SelectBox"
+@onready var _ui = $"../UI"
 
 # Mouse state
 var _total_pitch = 0.0
@@ -27,11 +29,16 @@ var _zoomOut = 0
 
 # Signals
 signal objPicked(object)
-var selectedObjects := []
+signal selectionChanged(startPos: Vector2, drag: bool)
 
 # Constants
-var rayLength := 35
+var rayLength := 100
 var hiMat := StandardMaterial3D.new()
+
+# General Vars
+var selected := []
+var drag_start: Vector2
+var selecting := true
 
 func _ready() -> void:
 	hiMat.albedo_color = Color(1, 0.675, 0.416, 1)
@@ -46,10 +53,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	_zoom(1.1)
 	
 	# Key input
-	if Input.is_action_pressed("cam_select"): _select()
+	_select2(event)
+	#_select()
 	_keyControls()
 	_flip()
-	_ltrt()
+	#_ltrt()
 	_camera_face_snap()
 
 func _3dOrbit(mousePos: Vector2) -> void: # Rotate around pivot
@@ -181,7 +189,6 @@ func _camera_face_snap() -> void: # Snap camera to nearest orthogonal face
 		await tween.finished
 		_rotating = false
 
-
 func _select() -> void: # Select objects (by dragging or single clicking)
 	# Make a raycast (yes I copied this from the wiki)
 	var space_state = get_world_3d().direct_space_state
@@ -200,40 +207,70 @@ func _select() -> void: # Select objects (by dragging or single clicking)
 			_corner.global_position = obj.global_position
 			_area.global_position   = obj.global_position
 			_area.scale = Vector3(1, 1, 1)
-			selectedObjects = [obj]
+			selected = [obj.get_child(0)]
 			emit_signal("objPicked", obj)
 		else: # If shift + dragging, extend bounding box from first object to un-dragged object
 			var midpoint = _corner.global_position.lerp(obj.global_position, 0.5)
 			_area.global_position = midpoint
 			_area.scale = _normalizeScale(abs(_corner.global_position - obj.global_position))
-			selectedObjects = _area.get_overlapping_bodies().map(func(child): return child.get_parent()) # Get all meshes
+			selected = _area.get_overlapping_bodies() # Get all meshes
 	else: # We didn't select anything; move the box to the end of the ray
 		_corner.global_position = floor(end)
-		selectedObjects = []
+		selected = []
 		emit_signal("objPicked", end)
 		pass
-	_change_objs_color(selectedObjects)
+	_change_objs_color(selected)
+
+func _select2(event: InputEvent) -> void: # Drag to select objects, or just simply click to select
+	## This part is dedicate to drawing the selection box on the screen
+	if Input.is_action_just_pressed("cam_select", true):
+		drag_start = event.position
+		
+	if Input.is_action_pressed("cam_select", true) and drag_start != event.position:
+		_boxSelect.start = drag_start
+		_boxSelect.end = event.position
+		_boxSelect.queue_redraw()
+		_boxSelect.visible = true
+		_moveArea(event.position)
+	else:
+		_boxSelect.visible = false
+		
+func _moveArea(mousePos: Vector2) -> void:
+	## This section is dedicated to actually selecting objects by changing the position and size of the area
+		### Turn both 2D positions into actual 3D coordinates in accordance to the camera's basis,
+		var start = _camera.project_position(drag_start, 0)
+		var end = _camera.project_position(mousePos, 0)
+		
+		### then calculate the new size of the selection area.
+		print(abs(end - start))
+		_area.scale = _normalizeScale(abs(end - start))
+		_area.scale.z = rayLength
+		_area.rotation = _camera.rotation
+		_area.global_position = (end + start) / 2
+		
+		selected = _area.get_overlapping_bodies()
+		_change_objs_color(selected)
 
 func _change_objs_color(objects: Array) -> void: # When an object is picked, let it start pulsing orange
 	# Check if the old selection has objects not part of the new selection
 	var unselected := _diffArray(_oldSelection, objects)
 	for obj in unselected: ## If they aren't part of the new selection, remove the highlight
-		if is_instance_valid(obj): obj.material_overlay = null
+		if is_instance_valid(obj): obj.get_parent().material_overlay = null
 		
 	if !objects.is_empty():
 		for obj in objects: # Highlight the new selection
-			obj.material_overlay = hiMat
+			obj.get_parent().material_overlay = hiMat
 			
 		_oldSelection = objects # Update the old selection for next time
 
-func _diffArray(a1: Array, a2: Array) -> Array:
+func _diffArray(a1: Array, a2: Array) -> Array: # Find the difference between arrays
 	var inA1 := []
 	for v in a1:
 		if not (v in a2):
 			inA1.append(v)
 	return inA1
 
-func _normalizeScale(diff: Vector3) -> Vector3:
+func _normalizeScale(diff: Vector3) -> Vector3: # Used for bounding box scaling
 	if diff.x == 0: diff.x = 1
 	if diff.y == 0: diff.y = 1
 	if diff.z == 0: diff.z = 1
@@ -245,11 +282,13 @@ func _rightClickControl() -> void: # Control what right-clicking does
 
 func _keyControls() -> void: # Keyboard controls
 	if Input.is_action_just_pressed("cursor_goto"): _camera.get_parent().position = Vector3.ZERO 
-	if Input.is_action_just_pressed("cursor_delete") and !selectedObjects.is_empty(): rmObj(selectedObjects)
+	if Input.is_action_just_pressed("cursor_delete") and !selected.is_empty(): rmObj(selected)
+	if Input.is_action_just_pressed("place_object", true) and !selecting: _ui.reqPlace()
+	if Input.is_action_just_pressed("cam_selectMode", true): selecting = !selecting
 
-func _vec2arr(vector: Vector3) -> Array:
+func _vec2arr(vector: Vector3) -> Array: # Convert vectors into arrays
 	return [vector.x, vector.y, vector.z]
 
 func rmObj(arr: Array) -> void: # Delete objects
-	for o in arr: o.queue_free()
-	selectedObjects = []
+	for o in arr: o.get_parent().queue_free()
+	selected = []

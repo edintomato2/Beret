@@ -1,11 +1,12 @@
 extends RichTextLabel
 
-@onready var _ldr = $"/root/Main/UI/Loader"
+@onready var _ldr = $"/root/Main/Loader"
 var _timer = Timer.new()
 
 func _ready() -> void: # Add timer as child to this node. Make it so it doesn't constantly run.
 	add_child(_timer)
 	_timer.one_shot = true;
+	_ldr.loaded.connect(_on_loader_loaded.bind())
 	_textChanged()
 
 func _on_loader_loaded(obj: String) -> void:
