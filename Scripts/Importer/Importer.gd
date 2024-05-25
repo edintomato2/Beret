@@ -271,8 +271,8 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 	if !silent:
 		print("Loaded Background Planes!")
 
-func placeVols(_vols: Dictionary): # Place volumes in dict.
-	#print(vols)
+func placeVols(vols: Dictionary): # Place volumes in dict.
+	print(vols)
 	pass
 
 func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own function.

@@ -25,11 +25,14 @@ var selectedObjs = []
 # Palette control
 @onready var _palettes: Control = $"VSplitContainer/Toolbar/Palettes"
 
+# Context menu
+@onready var _context: PopupMenu = $"ContextMenu"
+
 # General nodes
 @onready var _loader: Node = %Loader
-@onready var _cursor: Node3D = $"../Cursor"
-@onready var _pivot: Node3D = $"../Cursor/Pivot"
-@onready var _select: Node3D = $"../Cursor/Handler/SelectCorner" 
+@onready var _cursor: Node3D = $"Cursor"
+@onready var _pivot: Node3D = $"Cursor/Pivot"
+@onready var _select: Node3D = $"Cursor/Box" 
 @onready var _sfx: AudioStreamPlayer = $"SFX"
 
 func _notification(what):
@@ -47,6 +50,15 @@ func _process(_delta):
 		"1", "-3": _faceLabel.text = "Facing: Right"
 		"2", "-2": _faceLabel.text = "Facing: Back"
 		"3", "-1": _faceLabel.text = "Facing: Left"
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("cursor_edit"): _show_context(event.global_position)
+	pass
+
+func _show_context(pos: Vector2) -> void: # Show the context menu at mouse position.
+	_context.position = pos
+	_context.visible = true
+	pass
 
 func _on_cursor_has_moved(keyPress):
 	playSound(keyPress)
