@@ -27,6 +27,8 @@ signal loaded(obj: String)
 	get: return silent
 	set(value): silent = value
 
+@export var volColor = Color(0.792, 0.431, 1, 0.5)
+
 func _ready():
 	_thread = Thread.new() # Prepare threading.
 	_sema = Semaphore.new()
@@ -34,7 +36,8 @@ func _ready():
 	_fileLoad.file_selected.connect(_on_load_dialog_file_selected.bind())
 	pass
 
-func _on_load_dialog_file_selected(path):
+func _on_load_dialog_file_selected(path) -> void:
+	silent = false
 	killChildren()
 	
 	loadLVL(path)
@@ -50,21 +53,23 @@ func _on_load_dialog_file_selected(path):
 	placeStart(fezlvl["StartingPosition"])
 	
 	emit_signal("loaded", "level")
+	silent = true
 	pass
 
-func killChildren(): # Please do not judge my function names.
+func killChildren() -> void: # Please do not judge my function names.
 	for n in get_child_count(): # Clear out all objects.
 		get_child(n).queue_free()
 	pass
 
-func loadLVL(path: String): # Read fezlvl.json, return the JSON if valid.
+func loadLVL(path: String) -> Error: # Read fezlvl.json, return the JSON if valid.
 	var readLvl = JSON.new()
 	var err = readLvl.parse(FileAccess.get_file_as_string(path))
 	if err != OK:
-		print(readLvl.get_error_message()); return err
+		print(readLvl.get_error_message())
 	
 	fezlvl = readLvl.data
 	if !silent: emit_signal("loaded", "fezlvl")
+	return err
 
 func loadTS(tsName: String): # Load in trileset.
 	## Get clean path name.
@@ -272,7 +277,34 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		print("Loaded Background Planes!")
 
 func placeVols(vols: Dictionary): # Place volumes in dict.
-	print(vols)
+	## First, define how our volumes will look.
+	var volCube := BoxMesh.new()
+	var volMat := StandardMaterial3D.new()
+	
+	volMat.albedo_color = volColor
+	volMat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	volCube.material = volMat
+	
+	for v in vols:
+		## Customize the volume mesh.
+		var volModel := MeshInstance3D.new()
+		volModel.mesh = volCube
+		volModel.set_layer_mask_value(1, false)
+		volModel.set_layer_mask_value(6, true)
+		
+		# Now, let's get the size of the volume and where to place it.
+		var current: Dictionary = vols[v]
+		var to: Vector3 = _arr2vec(current["To"])
+		var from: Vector3 = _arr2vec(current["From"])
+		
+		print(vols[v])
+		
+		volModel.position = ((to + from) / 2) - Vector3(0.5, 0.5, 0.5) # Midpoint - offset
+		volModel.scale = abs(to - from) # Abs. Difference
+		volModel.set_meta("Type", "Volume")
+		volModel.set_meta("Id", v)
+		
+		call_deferred("add_child", volModel)
 	pass
 
 func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own function.

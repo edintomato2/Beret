@@ -5,6 +5,7 @@ extends Node3D
 @export var max_zoom := 50.0
 @export var zoom_duration := 0.01
 @export var rotation_duration := 0.2
+@export var gotoPos := Vector3(6, 6, 7)
 
 # Object info
 @onready var _camera = $"Pivot/Camera3D"
@@ -12,13 +13,14 @@ extends Node3D
 @onready var _area = $"Area"
 @onready var _boxSelect = $"../SelectBox"
 @onready var _box = $"Box"
+@onready var _ui = $"../../UI"
+@onready var _loader = %Loader
 
 # Mouse state
 var _total_pitch = 0.0
 
 # Movement state
 var _rotating = false
-var _oldSelection = []
 
 # Keyboard state
 var _lt = 0
@@ -28,7 +30,6 @@ var _zoomOut = 0
 
 # Signals
 signal objPicked(object)
-signal reqPlacement(pos: Vector3)
 signal selectionChanged(startPos: Vector2, drag: bool)
 
 # Constants
@@ -45,6 +46,12 @@ func _ready() -> void:
 	hiMat.albedo_color = Color(1, 0.675, 0.416, 1)
 	hiMat.blend_mode = BaseMaterial3D.BLEND_MODE_MUL
 
+func _process(delta: float) -> void:
+	## Move the box to the camera's pivot point, aligned to the grid
+	var pivPos = _pivot.global_position
+	_box.global_position = round(pivPos)
+	pass
+
 func _unhandled_input(event: InputEvent) -> void:
 	# Camera movement
 	if event is InputEventMouseMotion:
@@ -54,11 +61,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	_zoom(1.1)
 	
 	# Key input
-	_select2(event)
-	_keyControls()
+	if Input.is_action_just_pressed("cursor_goto", true): smooth_go_to(gotoPos, 1)
+	if Input.is_action_just_pressed("cursor_delete", true) and !selected.is_empty(): rm_obj(selected)
+	if Input.is_action_just_pressed("cursor_place", true) and selected.is_empty(): pl_obj(_ui.getSelectedItem())
+	if Input.is_action_just_pressed("cam_face_snap", true): _camera_face_snap()
+	
+	_move_cursor()
+	_select()
 	_flip()
-	#_ltrt()
-	_camera_face_snap()
+	_ltrt()
 
 func _3dOrbit(mousePos: Vector2) -> void: # Rotate around pivot
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -136,7 +147,7 @@ func _flip() -> void: # Flip the camera's perspective around
 			await tween.finished
 		_rotating = false
 	
-	if Input.is_action_pressed("cam_switchView", true):
+	if Input.is_action_just_pressed("cam_switchView", true):
 		match _camera.projection:
 			Camera3D.PROJECTION_ORTHOGONAL:
 				_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
@@ -149,7 +160,7 @@ func _ltrt() -> void: # Rotate left and right
 	_lt = 1 if Input.is_action_just_pressed("cam_lt", true) else 0 # Rotate right
 	_rt = 1 if Input.is_action_just_pressed("cam_rt", true) else 0 # Rotate left
 	
-	if !_rotating and _lt or _rt:
+	if !_rotating and (_lt or _rt):
 		_rotating = true
 		var curRot = _pivot.rotation_degrees.y
 		var tween = get_tree().create_tween()
@@ -168,9 +179,7 @@ func _ltrt() -> void: # Rotate left and right
 		_rotating = false
 
 func _camera_face_snap() -> void: # Snap camera to nearest orthogonal face
-	var _snap = Input.is_action_just_pressed("cam_face_snap", true)
-	
-	if !_rotating and _snap:
+	if !_rotating:
 		_rotating = true
 		var snap_rot = Vector3.ZERO
 		snap_rot.y = snappedf(_pivot.rotation_degrees.y, 90)
@@ -189,21 +198,22 @@ func _camera_face_snap() -> void: # Snap camera to nearest orthogonal face
 		await tween.finished
 		_rotating = false
 
-func _select2(event: InputEvent) -> void: # Drag to select objects, or just simply click to select
+func _select() -> void: # Drag to select objects, or just simply click to select
 	## This part is dedicate to drawing the selection box on the screen
 	if Input.is_action_just_pressed("cam_select", true):
-		drag_start = event.position
+		drag_start = get_viewport().get_mouse_position()
 		
-	if Input.is_action_pressed("cam_select", true) and drag_start != event.position:
+	if Input.is_action_pressed("cam_select", true) and drag_start != get_viewport().get_mouse_position():
+		_change_objs_color(selected, true)
 		_boxSelect.start = drag_start
-		_boxSelect.end = event.position
+		_boxSelect.end = get_viewport().get_mouse_position()
 		_boxSelect.queue_redraw()
 		_boxSelect.visible = true
-		_moveArea()
+		_move_area()
 	else:
 		_boxSelect.visible = false
 		
-func _moveArea() -> void:
+func _move_area() -> void: # Move the selection area
 	## This section is dedicated to actually selecting objects by changing the position and size of the area
 		### Turn both 2D positions into actual 3D coordinates in accordance to the camera's basis,
 		var camBasis: Transform3D = _camera.global_transform
@@ -222,38 +232,78 @@ func _moveArea() -> void:
 		selected = _area.get_overlapping_bodies()
 		_change_objs_color(selected)
 
-func _change_objs_color(objects: Array) -> void: # When an object is picked, let it start pulsing orange
-	# Check if the old selection has objects not part of the new selection
-	var unselected := _diffArray(_oldSelection, objects)
-	for obj in unselected: ## If they aren't part of the new selection, remove the highlight
-		if is_instance_valid(obj): obj.get_parent().material_overlay = null
-		
+func _move_cursor() -> void: # Move the cursor around with WASD
+	## Yes, this is stupidly complex. I blame Godot!
+	var right = 1 if Input.is_action_pressed("cursor_right", true) else 0
+	var left = 1 if Input.is_action_pressed("cursor_left", true) else 0
+	var up = 1 if Input.is_action_pressed("cursor_up", true) else 0
+	var down = 1 if Input.is_action_pressed("cursor_down", true) else 0
+	var back = 1 if Input.is_action_pressed("cursor_backwards", true) else 0
+	var front = 1 if Input.is_action_pressed("cursor_forwards", true) else 0
+	
+	var moveTo := Vector3((right - left), (up - down), (back - front)) # x, y, z
+	var pivBasis = _pivot.transform
+	
+	smooth_go_to(_pivot.global_position + (pivBasis.basis * moveTo), 0.2)
+	pass
+
+func _change_objs_color(objects: Array, invert: bool = false) -> void: # When an object is picked, let it start pulsing orange
 	if !objects.is_empty():
 		for obj in objects: # Highlight the new selection
-			obj.get_parent().material_overlay = hiMat
-			
-		_oldSelection = objects # Update the old selection for next time
-
-func _diffArray(a1: Array, a2: Array) -> Array: # Find the difference between arrays
-	var inA1 := []
-	for v in a1:
-		if not (v in a2) and is_instance_valid(v):
-			inA1.append(v)
-	return inA1
-
-func _keyControls() -> void: # Keyboard controls
-	if Input.is_action_just_pressed("cursor_goto"): _camera.get_parent().position = Vector3.ZERO 
-	if Input.is_action_just_pressed("cursor_delete") and !selected.is_empty(): rmObj(selected)
-	if Input.is_action_just_pressed("place_object", true) and !selecting: reqPlacement.emit(_box.global_position)
-	if Input.is_action_just_pressed("cam_selectMode", true): selecting = !selecting
+			if !invert: obj.get_parent().material_overlay = hiMat
+			else: obj.get_parent().material_overlay = null
 
 func _vec2arr(vector: Vector3) -> Array: # Convert vectors into arrays
 	return [vector.x, vector.y, vector.z]
 
-func rmObj(arr: Array) -> void: # Delete objects
-	for o in arr: o.get_parent().queue_free()
+func rm_obj(arr: Array) -> void: # Delete objects
+	for o in arr:
+		if o.get_parent().visible:
+			o.get_parent().visible = false ## To allow undoing
 	selected = []
-	_oldSelection = []
+
+func pl_obj(arr: Array) -> void: # Place object based on type at cursor position
+	var palette: ItemList = arr[0]
+	var item: PackedInt32Array = arr[1]
+	
+	if item.size() == 0: return ## If we don't have an item selected, don't do anything!
+	
+	var type = palette.get_name()
+	var id = palette.get_item_metadata(item[0])
+	
+	## Handle different types of items to place
+	match type:
+		"Triles":
+			## If there's something at the current position, remove it then place the trile.
+			if !selected.is_empty(): rm_obj(selected)
+			
+			var info: Dictionary = {"Id" : id,
+						"Emplacement" : _vec2arr(round(_box.global_position)),
+						"Position" : _vec2arr(_box.global_position),
+						"Phi" : 0}
+			_loader.placeTriles([info])
+			
+		"AOs":
+			## TODO: Handle placement of AOs.
+			pass
+		"NPCs":
+			pass
+	
+	pass
 
 func _on_select_box_rect_changed(rect: Rect2) -> void:
 	_selection = rect
+
+func smooth_go_to(pos: Vector3, speed: float = 1) -> void: # Move the pivot smoothly to a position
+	var tween = get_tree().create_tween()
+	
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_SINE)
+	
+	tween.tween_property( # Set tween
+		_pivot,
+		"global_position",
+		pos,
+		speed,
+	)
+	pass

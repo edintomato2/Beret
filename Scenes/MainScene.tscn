@@ -145,13 +145,6 @@ size_flags_vertical = 3
 theme_override_constants/separation = 0
 script = ExtResource("1_qq0gs")
 
-[node name="ContextMenu" type="PopupMenu" parent="UI"]
-gui_embed_subwindows = true
-hide_on_checkable_item_selection = false
-item_count = 1
-item_0/text = "Delete"
-item_0/id = 0
-
 [node name="SelectBox" type="Control" parent="UI"]
 z_index = -1
 layout_mode = 2
@@ -241,30 +234,31 @@ text = "View"
 flat = false
 switch_on_hover = true
 item_count = 9
-popup/item_0/text = "Ortho Cam"
-popup/item_0/checkable = 1
-popup/item_0/checked = true
-popup/item_0/id = 5
-popup/item_1/text = "Free Cam"
+popup/item_0/text = "Visible Layers"
+popup/item_0/id = 1
+popup/item_0/separator = true
+popup/item_1/text = "Art Objects"
 popup/item_1/checkable = 1
-popup/item_1/id = 4
-popup/item_2/text = "Visible Layers"
-popup/item_2/id = 1
-popup/item_2/separator = true
-popup/item_3/text = "Art Objects"
+popup/item_1/checked = true
+popup/item_1/id = 6
+popup/item_2/text = "NPCs"
+popup/item_2/checkable = 1
+popup/item_2/checked = true
+popup/item_2/id = 8
+popup/item_3/text = "Triles"
 popup/item_3/checkable = 1
 popup/item_3/checked = true
-popup/item_3/id = 6
-popup/item_4/text = "NPCs"
+popup/item_3/id = 7
+popup/item_4/text = "Volumes"
 popup/item_4/checkable = 1
 popup/item_4/checked = true
-popup/item_4/id = 8
-popup/item_5/text = "Triles"
+popup/item_4/id = 10
+popup/item_5/text = "Background Planes"
 popup/item_5/checkable = 1
 popup/item_5/checked = true
-popup/item_5/id = 7
+popup/item_5/id = 42
 popup/item_6/text = ""
-popup/item_6/id = 10
+popup/item_6/id = 12
 popup/item_6/separator = true
 popup/item_7/text = "Debug terminal"
 popup/item_7/id = 2
@@ -373,13 +367,6 @@ layout_mode = 2
 text = "Facing: Left"
 horizontal_alignment = 1
 
-[node name="Object" type="Label" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
-layout_mode = 2
-mouse_filter = 1
-theme = ExtResource("3_53v8o")
-text = "None"
-horizontal_alignment = 1
-
 [node name="PhiControl" type="VBoxContainer" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
 
@@ -399,6 +386,16 @@ ticks_on_borders = true
 [node name="Inspector" type="Tree" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Inspector"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 27.0
+grow_horizontal = 2
+text = "Selection Info"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Toolbar" type="HBoxContainer" parent="UI/VSplitContainer"]
 clip_contents = true
@@ -483,6 +480,7 @@ script = ExtResource("12_qkuny")
 
 [node name="Cursor" type="Node3D" parent="UI"]
 script = ExtResource("13_agkp1")
+gotoPos = Vector3(14, 14, 17)
 
 [node name="Box" type="MeshInstance3D" parent="UI/Cursor"]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
@@ -509,7 +507,6 @@ fov = 50.0
 size = 20.0
 
 [node name="Area" type="Area3D" parent="UI/Cursor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 29)
 collision_mask = 31
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="UI/Cursor/Area"]
@@ -524,6 +521,7 @@ process_thread_group = 2
 process_thread_group_order = 0
 process_thread_messages = 0
 script = ExtResource("4_66a2y")
+volColor = Color(0.792157, 0.431373, 0, 0.227451)
 
 [node name="Exporter" type="Node" parent="."]
 process_thread_group = 2

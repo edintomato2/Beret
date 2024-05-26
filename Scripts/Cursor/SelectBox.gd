@@ -5,7 +5,7 @@ var end := Vector2.ZERO
 signal rectChanged(rect: Rect2)
 
 @export_color_no_alpha var borderColor = Color.DARK_ORANGE
-@export var fillColor = Color(1,1,1,1)
+@export var fillColor = Color(0.792, 0.431, 1, 0.5)
 
 func _draw() -> void:
 	if visible:

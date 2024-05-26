@@ -17,10 +17,12 @@ func _on_pressed(id: int):
 	get_popup().toggle_item_checked(idx)
 	
 	var maskVal = [16, true]
-	match id: # 2 = triles, 3 = AOs, 4 = NPCs
+	match id: # 2 = triles, 3 = AOs, 4 = NPCs, 5 = BkgPln, 6 = Vols
 		6 when checkable: maskVal = [3, get_popup().is_item_checked(idx)]
 		7 when checkable: maskVal = [2, get_popup().is_item_checked(idx)]
 		8 when checkable: maskVal = [4, get_popup().is_item_checked(idx)]
+		10 when checkable: maskVal = [6, get_popup().is_item_checked(idx)]
+		42 when checkable: maskVal = [5, get_popup().is_item_checked(idx)]
 		3:
 			if _curLvl.is_empty(): push_warning("No level loaded!")
 			else: OS.shell_open(_curLvl)
