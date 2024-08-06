@@ -1,0 +1,63 @@
+[gd_scene load_steps=6 format=3 uid="uid://c25hxbok5bsak"]
+
+[ext_resource type="Texture2D" uid="uid://44y8w8wcoafv" path="res://Assets/Logo.svg" id="1_0sbi7"]
+[ext_resource type="FontFile" uid="uid://dsnch7rpdgtnj" path="res://Assets/pixel by Acemond.ttf" id="2_lt6ij"]
+
+[sub_resource type="GDScript" id="GDScript_6mge5"]
+script/source = "extends Window
+
+func _on_close_requested() -> void:
+	self.visible = false
+"
+
+[sub_resource type="Theme" id="Theme_5kfuv"]
+default_font = ExtResource("2_lt6ij")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l0soi"]
+
+[node name="About" type="Window"]
+title = "About Beret"
+initial_position = 2
+size = Vector2i(750, 140)
+unresizable = true
+min_size = Vector2i(730, 140)
+keep_title_visible = true
+script = SubResource("GDScript_6mge5")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_right = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_0sbi7")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme = SubResource("Theme_5kfuv")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_l0soi")
+text = "Beret - A level editor and viewer for FEZ.
+Version 0.2.1
+edintomato2 and contributors, 2024
+This project is licensed under GPLv3!
+ "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]

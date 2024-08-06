@@ -139,7 +139,11 @@ func placeTriles(triles: Array): # Place triles listed in array.
 			trile.set_meta("Type", "Trile")
 			trile.set_meta("Name", trileInfo["Name"])
 			trile.set_meta("Id", id)
+			trile.set_meta("Phi", trileInst["Phi"])
+			trile.set_meta("Emplacement", _arr2vec(trileInst["Emplacement"]))
+			trile.set_meta("Position", _arr2vec(trileInst["Position"]))
 			
+			add_to_group("Triles")
 			call_deferred("add_child", trile)
 	if !silent:
 		print("Loaded triles!")
@@ -165,6 +169,7 @@ func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 		inst.set_meta("Name", aos[i]["Name"].to_lower())
 		inst.set_meta("Type", "AO")
 		
+		add_to_group("AOs")
 		call_deferred("add_child", inst)
 		
 	if !silent:
@@ -207,6 +212,8 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 		inst.set_meta("Type", "NPC")
 		inst.set_meta("Name", npcs[i]["Name"].capitalize())
 		inst.play("gif")
+		add_to_group("NPCs")
+		
 		call_deferred("add_child", inst)
 		
 	if !silent:
@@ -271,6 +278,8 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 
 		inst.set_meta("Name", bkgplns[i]["TextureName"].to_lower())
 		inst.set_meta("Type", "BackgroundPlanes")
+		add_to_group("BackgroundPlanes")
+		
 		call_deferred("add_child", inst)
 		
 	if !silent:
@@ -297,12 +306,11 @@ func placeVols(vols: Dictionary): # Place volumes in dict.
 		var to: Vector3 = _arr2vec(current["To"])
 		var from: Vector3 = _arr2vec(current["From"])
 		
-		print(vols[v])
-		
 		volModel.position = ((to + from) / 2) - Vector3(0.5, 0.5, 0.5) # Midpoint - offset
 		volModel.scale = abs(to - from) # Abs. Difference
 		volModel.set_meta("Type", "Volume")
 		volModel.set_meta("Id", v)
+		add_to_group("Volumes")
 		
 		call_deferred("add_child", volModel)
 	pass

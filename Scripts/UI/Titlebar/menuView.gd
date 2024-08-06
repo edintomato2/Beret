@@ -2,13 +2,9 @@ extends MenuButton
 
 @onready var _curCam: Camera3D = $"/root/Main/UI/Cursor/Pivot/Camera3D"
 @onready var _curCol: Area3D = $"/root/Main/UI/Cursor/Area"
-@onready var _ldr: Node = $"/root/Main/Loader"
-
-var _curLvl: String = ""
 
 func _ready():
 	get_popup().id_pressed.connect(_on_pressed)
-	pass # Replace with function body.
 
 func _on_pressed(id: int):
 	var idx = get_popup().get_item_index(id)
@@ -23,15 +19,6 @@ func _on_pressed(id: int):
 		8 when checkable: maskVal = [4, get_popup().is_item_checked(idx)]
 		10 when checkable: maskVal = [6, get_popup().is_item_checked(idx)]
 		42 when checkable: maskVal = [5, get_popup().is_item_checked(idx)]
-		3:
-			if _curLvl.is_empty(): push_warning("No level loaded!")
-			else: OS.shell_open(_curLvl)
 		
 	_curCam.set_cull_mask_value(maskVal[0], maskVal[1])
 	_curCol.set_collision_mask_value(maskVal[0], maskVal[1])
-
-func _on_loader_loaded(obj):
-	if obj == "fezlvl":
-		_curLvl = Settings.dict["AssetDirs"][Settings.idx]\
-				  + "levels/" + _ldr.fezlvl["Name"].to_lower() + ".fezlvl.json"
-	pass # Replace with function body.

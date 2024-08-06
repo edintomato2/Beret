@@ -7,7 +7,7 @@
 [ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://Defaults/default.tres" id="5_gtk8k"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuFile.gd" id="6_3qyif"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuEdit.gd" id="7_hbevb"]
-[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://Scenes/Set_paths_window.tscn" id="8_sf3g6"]
+[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://Scenes/Windows/SetPaths.tscn" id="8_sf3g6"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="9_5q62h"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="10_1t30l"]
 [ext_resource type="Texture2D" uid="uid://cw063pifm8hls" path="res://beret_logo.png" id="11_g0irl"]
@@ -241,7 +241,7 @@ use_native_dialog = true
 [node name="New" type="FileDialog" parent="UI/Titlebar/File"]
 title = "Open a File"
 initial_position = 2
-size = Vector2i(240, 154)
+size = Vector2i(312, 154)
 ok_button_text = "Open"
 dialog_hide_on_ok = true
 file_mode = 0

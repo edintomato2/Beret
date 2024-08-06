@@ -46,7 +46,7 @@ func _ready() -> void:
 	hiMat.albedo_color = Color(1, 0.675, 0.416, 1)
 	hiMat.blend_mode = BaseMaterial3D.BLEND_MODE_MUL
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	## Move the box to the camera's pivot point, aligned to the grid
 	var pivPos = _pivot.global_position
 	_box.global_position = round(pivPos)

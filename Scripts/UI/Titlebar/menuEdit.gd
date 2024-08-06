@@ -1,11 +1,19 @@
 extends MenuButton
-@onready var _setPaths = $"SetPaths"
 
-# Called when the node enters the scene tree for the first time.
+@onready var _ldr = $%Loader
+var _curLvl: String = "" 
+
 func _ready() -> void:
+	_ldr.loaded.connect(_on_loader_loaded)
 	get_popup().id_pressed.connect(_on_edit_menu_pressed)
-	pass # Replace with function body.
 
 func _on_edit_menu_pressed(id: int) -> void:
 	match id:
-		0: _setPaths.visible = true
+		0: OS.shell_open(_curLvl)
+	pass
+
+func _on_loader_loaded(obj: String) -> void:
+	if obj == "fezlvl":
+		get_popup().set_item_disabled(0, false)
+		_curLvl = Settings.dict["AssetDirs"][Settings.idx]\
+				  + "levels/" + _ldr.fezlvl["Name"].to_lower() + ".fezlvl.json"

@@ -42,6 +42,11 @@ func _process(_delta):
 		"1", "-3": _faceLabel.text = "Facing: Right"
 		"2", "-2": _faceLabel.text = "Facing: Back"
 		"3", "-1": _faceLabel.text = "Facing: Left"
+		
+	# Update position label
+	var pos = round(_pivot.global_position)
+	var posStr = posFormat % [pos.x, pos.y, pos.z]
+	_infoLabel.set_text(posStr)
 
 func _on_cursor_has_moved(keyPress):
 	playSound(keyPress)
@@ -81,16 +86,3 @@ func _on_h_slider_value_changed(value):
 
 func _vec2arr(vector: Vector3):
 	return [vector.x, vector.y, vector.z]
-
-func _on_cursor_obj_picked(object) -> void:
-	var pos := Vector3.ZERO
-	
-	match typeof(object):
-		TYPE_OBJECT:
-			pos = object.global_position
-		TYPE_VECTOR3:
-			pos = object
-	
-	var posStr = posFormat % [pos.x, pos.y, pos.z]
-	
-	_infoLabel.set_text(posStr)

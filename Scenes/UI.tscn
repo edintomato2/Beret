@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="4_5u3hn"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="4_gp4es"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuEdit.gd" id="4_p2wyv"]
-[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://Scenes/Set_paths_window.tscn" id="5_mhs4a"]
+[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://Scenes/Windows/SetPaths.tscn" id="5_mhs4a"]
 [ext_resource type="Texture2D" uid="uid://cw063pifm8hls" path="res://beret_logo.png" id="5_tfvu3"]
 [ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="7_jfdyk"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/Triles.gd" id="9_4swbr"]

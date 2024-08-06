@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://q6hiwea1m8ok"]
+[gd_scene load_steps=43 format=3 uid="uid://q6hiwea1m8ok"]
 
 [ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_qq0gs"]
 [ext_resource type="Script" path="res://Scripts/Cursor/SelectBox.gd" id="2_ryo6i"]
@@ -8,11 +8,12 @@
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuFile.gd" id="4_dvbmc"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuEdit.gd" id="5_fbdf1"]
 [ext_resource type="Script" path="res://Scripts/Exporter/Exporter.gd" id="5_ru75n"]
-[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://Scenes/Set_paths_window.tscn" id="6_kdtwj"]
+[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://Scenes/Windows/SetPaths.tscn" id="6_kdtwj"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="7_4me46"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="8_keuwy"]
-[ext_resource type="Texture2D" uid="uid://cw063pifm8hls" path="res://beret_logo.png" id="9_5s07m"]
+[ext_resource type="PackedScene" uid="uid://c25hxbok5bsak" path="res://Scenes/Windows/Credits.tscn" id="9_c7nvc"]
 [ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="10_7xq56"]
+[ext_resource type="Script" path="res://Scripts/UI/Inspector.gd" id="11_febcb"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/Triles.gd" id="11_qpy8j"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/NPCs.gd" id="12_qkuny"]
 [ext_resource type="Script" path="res://Scripts/Cursor/CamControls.gd" id="13_agkp1"]
@@ -57,6 +58,14 @@ keycode = 81
 
 [sub_resource type="Shortcut" id="Shortcut_x4u3j"]
 events = [SubResource("InputEventKey_slhck")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_a7o38"]
+device = -1
+ctrl_pressed = true
+keycode = 44
+
+[sub_resource type="Shortcut" id="Shortcut_4fx4j"]
+events = [SubResource("InputEventKey_a7o38")]
 
 [sub_resource type="InputEventKey" id="InputEventKey_2jet3"]
 device = -1
@@ -163,7 +172,7 @@ shortcut = SubResource("Shortcut_aqtus")
 text = "File"
 flat = false
 switch_on_hover = true
-item_count = 5
+item_count = 7
 popup/item_0/text = "Load Level"
 popup/item_0/id = 0
 popup/item_1/text = "Save Level"
@@ -174,13 +183,19 @@ popup/item_2/id = 5
 popup/item_3/text = ""
 popup/item_3/id = 3
 popup/item_3/separator = true
-popup/item_4/text = "Quit"
-popup/item_4/id = 4
+popup/item_4/text = "Asset Dirs..."
+popup/item_4/id = 6
+popup/item_5/text = ""
+popup/item_5/id = 6
+popup/item_5/separator = true
+popup/item_6/text = "Quit"
+popup/item_6/id = 4
 script = ExtResource("4_dvbmc")
 loadShortcut = SubResource("Shortcut_8hi2n")
 saveShortcut = SubResource("Shortcut_c4g0v")
 newShortcut = SubResource("Shortcut_o221s")
 quitShortcut = SubResource("Shortcut_x4u3j")
+dirsShortcut = SubResource("Shortcut_4fx4j")
 
 [node name="Load" type="FileDialog" parent="UI/Titlebar/File"]
 title = "Open a File"
@@ -214,18 +229,19 @@ access = 2
 filters = PackedStringArray("*.fezts.json ; FEZ Trileset")
 use_native_dialog = true
 
+[node name="SetPaths" parent="UI/Titlebar/File" instance=ExtResource("6_kdtwj")]
+visible = false
+
 [node name="Edit" type="MenuButton" parent="UI/Titlebar"]
 layout_mode = 2
 text = "Edit"
 flat = false
 switch_on_hover = true
 item_count = 1
-popup/item_0/text = "Asset Directories..."
+popup/item_0/text = "Level Script"
 popup/item_0/id = 0
+popup/item_0/disabled = true
 script = ExtResource("5_fbdf1")
-
-[node name="SetPaths" parent="UI/Titlebar/Edit" instance=ExtResource("6_kdtwj")]
-visible = false
 
 [node name="View" type="MenuButton" parent="UI/Titlebar"]
 layout_mode = 2
@@ -233,7 +249,7 @@ shortcut = SubResource("Shortcut_5p5ho")
 text = "View"
 flat = false
 switch_on_hover = true
-item_count = 9
+item_count = 8
 popup/item_0/text = "Visible Layers"
 popup/item_0/id = 1
 popup/item_0/separator = true
@@ -262,8 +278,6 @@ popup/item_6/id = 12
 popup/item_6/separator = true
 popup/item_7/text = "Debug terminal"
 popup/item_7/id = 2
-popup/item_8/text = "Raw FEZLVL.JSON"
-popup/item_8/id = 3
 script = ExtResource("7_4me46")
 
 [node name="Help" type="MenuButton" parent="UI/Titlebar"]
@@ -284,35 +298,8 @@ popup/item_3/text = "About"
 popup/item_3/id = 3
 script = ExtResource("8_keuwy")
 
-[node name="About" type="Window" parent="UI/Titlebar/Help"]
-title = "About Beret"
-initial_position = 2
-size = Vector2i(500, 100)
+[node name="About" parent="UI/Titlebar/Help" instance=ExtResource("9_c7nvc")]
 visible = false
-keep_title_visible = true
-
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Titlebar/Help/About"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="TextureRect" type="TextureRect" parent="UI/Titlebar/Help/About/HBoxContainer"]
-layout_mode = 2
-texture = ExtResource("9_5s07m")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="UI/Titlebar/Help/About/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-text = "Beret - A level editor and viewer for FEZ.
-edintomato2 and contributors, 2024
-This project is licensed under GPLv3!
- "
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="ColorRect" type="ColorRect" parent="UI/Titlebar"]
 layout_mode = 2
@@ -383,19 +370,16 @@ max_value = 3.0
 tick_count = 4
 ticks_on_borders = true
 
-[node name="Inspector" type="Tree" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
+[node name="Title" type="Label" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Title" type="Label" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Inspector"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 27.0
-grow_horizontal = 2
 text = "Selection Info"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Inspector" type="Tree" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("11_febcb")
 
 [node name="Toolbar" type="HBoxContainer" parent="UI/VSplitContainer"]
 clip_contents = true
@@ -531,8 +515,9 @@ script = ExtResource("5_ru75n")
 
 [connection signal="rectChanged" from="UI/SelectBox" to="UI/Cursor" method="_on_select_box_rect_changed"]
 [connection signal="file_selected" from="UI/Titlebar/File/New" to="UI/Titlebar/File" method="_on_new_file_selected"]
-[connection signal="close_requested" from="UI/Titlebar/Help/About" to="UI/Titlebar/Help" method="_on_about_close_requested"]
 [connection signal="value_changed" from="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl/HSlider" to="UI" method="_on_h_slider_value_changed"]
 [connection signal="item_selected" from="UI/VSplitContainer/Toolbar/ChoosePalette" to="UI/VSplitContainer/Toolbar/Palettes/Triles" method="_on_choose_palette_item_selected"]
 [connection signal="item_selected" from="UI/VSplitContainer/Toolbar/Palettes/NPCs" to="UI/VSplitContainer/Toolbar/Palettes/NPCs" method="_on_item_selected"]
+[connection signal="body_entered" from="UI/Cursor/Area" to="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Inspector" method="_on_area_body_entered"]
+[connection signal="body_exited" from="UI/Cursor/Area" to="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Inspector" method="_on_area_body_exited"]
 [connection signal="loaded" from="Loader" to="UI/Titlebar/View" method="_on_loader_loaded"]
