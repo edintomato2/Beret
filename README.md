@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/edinosma/Beret/blob/master/beret_logo.png?raw=true" />
+  <img src="https://raw.githubusercontent.com/edintomato2/Beret/master/Assets/Logo.svg" />
 </p>
 
 ### Beret, a level editor and viewer for FEZ.
