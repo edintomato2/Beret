@@ -1,0 +1,13 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://cd7ntvqe12ygn"]
+
+[ext_resource type="FontFile" uid="uid://dsnch7rpdgtnj" path="res://Assets/pixel by Acemond.ttf" id="1_uvo8y"]
+
+[resource]
+Button/fonts/font = ExtResource("1_uvo8y")
+Label/fonts/font = ExtResource("1_uvo8y")
+LineEdit/fonts/font = ExtResource("1_uvo8y")
+ProgressBar/fonts/font = ExtResource("1_uvo8y")
+TabBar/fonts/font = ExtResource("1_uvo8y")
+TextEdit/fonts/font = ExtResource("1_uvo8y")
+Tree/fonts/font = ExtResource("1_uvo8y")
+Tree/fonts/title_button_font = ExtResource("1_uvo8y")

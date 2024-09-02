@@ -1,6 +1,11 @@
 extends ItemList
+@onready var _ldr: Node = $"/root/Main/Loader"
 
-func _on_loader_loaded(_obj):
+func _ready() -> void:
+	_ldr.loaded.connect(_on_loader_loaded.bind())
+
+func _on_loader_loaded(_obj) -> void:
+	clear()
 	# NPCs character animations usually have an "idle" animation. However,
 	# a select few NPCs don't. If we aren't able to find one, let's use whatever the first
 	# animation there is for the NPC. 

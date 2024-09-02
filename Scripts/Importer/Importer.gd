@@ -233,9 +233,10 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		if !FileAccess.file_exists(path): ## File is most likely a gif and not a png.
 			path = dir + bkgplns[i]["TextureName"].to_lower() + ".gif"
 			tex = GifManager.sprite_frames_from_file(path)
-				### If we still have a problem... give up!
-			if tex != null:
-				mat.albedo_texture = tex.get_frame_texture("gif", 0)
+			if tex == null: ### If we still have a problem... give up!
+				tex = Image.load_from_file("res://Assets/missing.png")
+				mat.albedo_texture = ImageTexture.create_from_image(tex)
+			else: mat.albedo_texture = tex.get_frame_texture("gif", 0)
 		else:
 			tex = ImageTexture.create_from_image(Image.load_from_file(path))
 			mat.albedo_texture = tex

@@ -2,6 +2,7 @@ extends MenuButton
 
 @onready var _ldr = $%Loader
 var _curLvl: String = "" 
+signal randomRotation(state: bool)
 
 func _ready() -> void:
 	_ldr.loaded.connect(_on_loader_loaded)
@@ -10,6 +11,7 @@ func _ready() -> void:
 func _on_edit_menu_pressed(id: int) -> void:
 	match id:
 		0: OS.shell_open(_curLvl)
+		1: emit_signal("randomRotation", get_popup().is_item_checked(1))
 	pass
 
 func _on_loader_loaded(obj: String) -> void:

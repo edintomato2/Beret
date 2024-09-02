@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://c25hxbok5bsak"]
+[gd_scene load_steps=7 format=3 uid="uid://c25hxbok5bsak"]
 
-[ext_resource type="Texture2D" uid="uid://44y8w8wcoafv" path="res://Assets/Logo.svg" id="1_0sbi7"]
+[ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://Assets/starback.png" id="1_kyaec"]
+[ext_resource type="Texture2D" uid="uid://dsegnfbr7cgbc" path="res://Assets/logo.png" id="2_gmmxw"]
 [ext_resource type="FontFile" uid="uid://dsnch7rpdgtnj" path="res://Assets/pixel by Acemond.ttf" id="2_lt6ij"]
 
 [sub_resource type="GDScript" id="GDScript_6mge5"]
@@ -24,40 +25,43 @@ min_size = Vector2i(730, 140)
 keep_title_visible = true
 script = SubResource("GDScript_6mge5")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 1280.0
+offset_bottom = 720.0
+texture = ExtResource("1_kyaec")
+stretch_mode = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_right = 10.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
 layout_mode = 2
-texture = ExtResource("1_0sbi7")
-stretch_mode = 5
 
-[node name="Label" type="Label" parent="HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="CenterContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_gmmxw")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/HBoxContainer"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 theme = SubResource("Theme_5kfuv")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_l0soi")
 text = "Beret - A level editor and viewer for FEZ.
-Version 0.2.1
+Version 0.2.0
 edintomato2 and contributors, 2024
 This project is licensed under GPLv3!
  "
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="ColorRect" type="ColorRect" parent="."]
-z_index = -1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 1)
 
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]

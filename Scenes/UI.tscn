@@ -7,7 +7,6 @@
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="4_gp4es"]
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuEdit.gd" id="4_p2wyv"]
 [ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://Scenes/Windows/SetPaths.tscn" id="5_mhs4a"]
-[ext_resource type="Texture2D" uid="uid://cw063pifm8hls" path="res://beret_logo.png" id="5_tfvu3"]
 [ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="7_jfdyk"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/Triles.gd" id="9_4swbr"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/NPCs.gd" id="10_2driq"]
@@ -68,6 +67,9 @@ keycode = 72
 [sub_resource type="Shortcut" id="Shortcut_efjk7"]
 events = [SubResource("InputEventKey_oq4ek")]
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_fkkww"]
+load_path = "res://.godot/imported/beret_logo.png-8bcc4b57ee31b072bb3cd14724e9080b.ctex"
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mn0ei"]
 bg_color = Color(0, 0, 0, 0.196078)
 border_width_left = 2
@@ -99,13 +101,11 @@ flat = false
 switch_on_hover = true
 item_count = 5
 popup/item_0/text = "Load Level"
-popup/item_0/id = 0
 popup/item_1/text = "Save Level"
 popup/item_1/id = 1
 popup/item_1/disabled = true
 popup/item_2/text = "New Level"
 popup/item_2/id = 5
-popup/item_3/text = ""
 popup/item_3/id = 3
 popup/item_3/separator = true
 popup/item_4/text = "Quit"
@@ -153,7 +153,6 @@ flat = false
 switch_on_hover = true
 item_count = 1
 popup/item_0/text = "Asset Directories..."
-popup/item_0/id = 0
 script = ExtResource("4_p2wyv")
 
 [node name="SetPaths" parent="Titlebar/Edit" instance=ExtResource("5_mhs4a")]
@@ -188,7 +187,6 @@ popup/item_5/text = "Triles"
 popup/item_5/checkable = 1
 popup/item_5/checked = true
 popup/item_5/id = 7
-popup/item_6/text = ""
 popup/item_6/id = 10
 popup/item_6/separator = true
 popup/item_7/text = "Debug terminal"
@@ -205,10 +203,8 @@ flat = false
 switch_on_hover = true
 item_count = 4
 popup/item_0/text = "FEZModding Wiki"
-popup/item_0/id = 0
 popup/item_1/text = "Beret GitHub"
 popup/item_1/id = 1
-popup/item_2/text = ""
 popup/item_2/id = 2
 popup/item_2/separator = true
 popup/item_3/text = "About"
@@ -231,7 +227,7 @@ grow_vertical = 2
 
 [node name="TextureRect" type="TextureRect" parent="Titlebar/Help/About/HBoxContainer"]
 layout_mode = 2
-texture = ExtResource("5_tfvu3")
+texture = SubResource("CompressedTexture2D_fkkww")
 expand_mode = 2
 
 [node name="Label" type="Label" parent="Titlebar/Help/About/HBoxContainer"]
@@ -333,11 +329,10 @@ theme_override_constants/separation = 0
 [node name="ChoosePalette" type="OptionButton" parent="VSplitContainer/Toolbar"]
 layout_mode = 2
 alignment = 1
-item_count = 3
 selected = 0
 fit_to_longest_item = false
+item_count = 3
 popup/item_0/text = "Triles"
-popup/item_0/id = 0
 popup/item_0/disabled = true
 popup/item_1/text = "Art Objects"
 popup/item_1/id = 1

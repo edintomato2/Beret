@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cw063pifm8hls"
-path="res://.godot/imported/beret_logo.png-8bcc4b57ee31b072bb3cd14724e9080b.ctex"
+uid="uid://ewilfngtgpbq"
+path="res://.godot/imported/missing.png-2413641ec3d6dcf7b5b899ec089d810c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://beret_logo.png"
-dest_files=["res://.godot/imported/beret_logo.png-8bcc4b57ee31b072bb3cd14724e9080b.ctex"]
+source_file="res://Assets/missing.png"
+dest_files=["res://.godot/imported/missing.png-2413641ec3d6dcf7b5b899ec089d810c.ctex"]
 
 [params]
 

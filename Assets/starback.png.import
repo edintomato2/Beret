@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwbicf3xmqxgd"
-path="res://.godot/imported/starback.png-0d205fecdecb25c9af1336fd906dcba3.ctex"
+path="res://.godot/imported/starback.png-cf10557514b3eee065813a56506a1d68.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Defaults/starback.png"
-dest_files=["res://.godot/imported/starback.png-0d205fecdecb25c9af1336fd906dcba3.ctex"]
+source_file="res://Assets/starback.png"
+dest_files=["res://.godot/imported/starback.png-cf10557514b3eee065813a56506a1d68.ctex"]
 
 [params]
 

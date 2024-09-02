@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://q6hiwea1m8ok"]
+[gd_scene load_steps=44 format=4 uid="uid://q6hiwea1m8ok"]
 
 [ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_qq0gs"]
 [ext_resource type="Script" path="res://Scripts/Cursor/SelectBox.gd" id="2_ryo6i"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/Triles.gd" id="11_qpy8j"]
 [ext_resource type="Script" path="res://Scripts/UI/Toolbar/NPCs.gd" id="12_qkuny"]
 [ext_resource type="Script" path="res://Scripts/Cursor/CamControls.gd" id="13_agkp1"]
+[ext_resource type="Script" path="res://Scripts/UI/Toolbar/AOs.gd" id="13_ercwt"]
 [ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://Materials/UI.tres" id="14_8n04t"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kofio"]
@@ -98,11 +99,11 @@ _surfaces = [{
 "aabb": AABB(-0.55, -0.55, -0.55, 1.1, 1.1, 1.10001),
 "format": 34896613377,
 "index_count": 144,
-"index_data": PackedByteArray(2, 0, 18, 0, 19, 0, 2, 0, 0, 0, 18, 0, 19, 0, 6, 0, 2, 0, 4, 0, 18, 0, 0, 0, 4, 0, 22, 0, 18, 0, 23, 0, 6, 0, 19, 0, 4, 0, 23, 0, 22, 0, 6, 0, 23, 0, 4, 0, 12, 0, 14, 0, 13, 0, 12, 0, 15, 0, 14, 0, 13, 0, 4, 0, 12, 0, 6, 0, 14, 0, 15, 0, 6, 0, 7, 0, 14, 0, 5, 0, 4, 0, 13, 0, 6, 0, 5, 0, 7, 0, 4, 0, 5, 0, 6, 0, 12, 0, 21, 0, 15, 0, 12, 0, 20, 0, 21, 0, 17, 0, 15, 0, 21, 0, 8, 0, 20, 0, 12, 0, 8, 0, 16, 0, 20, 0, 17, 0, 10, 0, 15, 0, 8, 0, 17, 0, 16, 0, 10, 0, 17, 0, 8, 0, 1, 0, 2, 0, 3, 0, 1, 0, 0, 0, 2, 0, 9, 0, 0, 0, 1, 0, 10, 0, 3, 0, 2, 0, 10, 0, 11, 0, 3, 0, 9, 0, 8, 0, 0, 0, 10, 0, 9, 0, 11, 0, 8, 0, 9, 0, 10, 0, 28, 0, 8, 0, 12, 0, 0, 0, 24, 0, 4, 0, 0, 0, 25, 0, 24, 0, 29, 0, 8, 0, 28, 0, 0, 0, 29, 0, 25, 0, 8, 0, 29, 0, 0, 0, 4, 0, 28, 0, 12, 0, 4, 0, 24, 0, 28, 0, 31, 0, 15, 0, 10, 0, 6, 0, 27, 0, 2, 0, 6, 0, 26, 0, 27, 0, 30, 0, 15, 0, 31, 0, 6, 0, 30, 0, 26, 0, 15, 0, 30, 0, 6, 0, 27, 0, 10, 0, 2, 0, 27, 0, 31, 0, 10, 0),
+"index_data": PackedByteArray("AgASABMAAgAAABIAEwAGAAIABAASAAAABAAWABIAFwAGABMABAAXABYABgAXAAQADAAOAA0ADAAPAA4ADQAEAAwABgAOAA8ABgAHAA4ABQAEAA0ABgAFAAcABAAFAAYADAAVAA8ADAAUABUAEQAPABUACAAUAAwACAAQABQAEQAKAA8ACAARABAACgARAAgAAQACAAMAAQAAAAIACQAAAAEACgADAAIACgALAAMACQAIAAAACgAJAAsACAAJAAoAHAAIAAwAAAAYAAQAAAAZABgAHQAIABwAAAAdABkACAAdAAAABAAcAAwABAAYABwAHwAPAAoABgAbAAIABgAaABsAHgAPAB8ABgAeABoADwAeAAYAGwAKAAIAGwAfAAoA"),
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
 "vertex_count": 32,
-"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 0, 0, 69, 23, 69, 23, 254, 255, 0, 0, 0, 0, 255, 255, 254, 255, 0, 0, 69, 23, 185, 232, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 23, 69, 23, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 69, 23, 185, 232, 0, 0, 0, 0, 255, 255, 0, 0, 254, 255, 0, 0, 185, 232, 69, 23, 254, 255, 0, 0, 255, 255, 255, 255, 254, 255, 0, 0, 185, 232, 185, 232, 254, 255, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 185, 232, 69, 23, 0, 0, 0, 0, 185, 232, 185, 232, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 69, 23, 184, 232, 0, 0, 255, 255, 185, 232, 184, 232, 0, 0, 0, 0, 69, 23, 184, 232, 0, 0, 0, 0, 185, 232, 184, 232, 0, 0, 255, 255, 69, 23, 69, 23, 0, 0, 255, 255, 185, 232, 69, 23, 0, 0, 0, 0, 69, 23, 69, 23, 0, 0, 0, 0, 185, 232, 69, 23, 0, 0, 69, 23, 0, 0, 69, 23, 0, 0, 69, 23, 0, 0, 184, 232, 0, 0, 69, 23, 255, 255, 69, 23, 0, 0, 69, 23, 255, 255, 184, 232, 0, 0, 185, 232, 0, 0, 69, 23, 0, 0, 185, 232, 0, 0, 184, 232, 0, 0, 185, 232, 255, 255, 69, 23, 0, 0, 185, 232, 255, 255, 184, 232, 0, 0)
+"vertex_data": PackedByteArray("AAAAAP7/AABFF0UX/v8AAAAA///+/wAARRe56P7/AAAAAAAAAAAAAEUXRRcAAAAAAAD//wAAAABFF7noAAAAAP//AAD+/wAAuehFF/7/AAD//////v8AALnouej+/wAA//8AAAAAAAC56EUXAAAAALnouegAAAAA/////wAAAAD//0UXuOgAAP//uei46AAAAABFF7joAAAAALnouOgAAP//RRdFFwAA//+56EUXAAAAAEUXRRcAAAAAuehFFwAARRcAAEUXAABFFwAAuOgAAEUX//9FFwAARRf//7joAAC56AAARRcAALnoAAC46AAAuej//0UXAAC56P//uOgAAA==")
 }]
 blend_shape_mode = 0
 
@@ -110,15 +111,15 @@ blend_shape_mode = 0
 resource_name = "Box_Cube_001"
 _surfaces = [{
 "aabb": AABB(-0.55, -0.55, -0.55, 1.1, 1.1, 1.10001),
-"attribute_data": PackedByteArray(255, 95, 255, 255, 255, 31, 255, 63, 255, 95, 0, 0, 209, 101, 209, 5, 255, 159, 255, 255, 255, 159, 0, 0, 255, 223, 255, 63, 45, 154, 209, 5, 255, 95, 255, 191, 255, 31, 255, 127, 255, 95, 255, 191, 209, 101, 45, 186, 255, 159, 255, 191, 255, 159, 255, 191, 255, 223, 255, 127, 45, 154, 45, 186, 255, 95, 255, 63, 255, 95, 255, 63, 255, 95, 255, 63, 209, 101, 46, 58, 255, 159, 255, 63, 255, 159, 255, 63, 255, 159, 255, 63, 45, 154, 46, 58, 255, 95, 255, 127, 255, 95, 255, 127, 255, 95, 255, 127, 209, 101, 208, 133, 45, 154, 208, 133, 255, 159, 255, 127, 255, 159, 255, 127, 255, 159, 255, 127, 209, 101, 209, 69, 45, 154, 209, 69, 209, 101, 45, 250, 45, 154, 45, 250, 209, 101, 46, 122, 45, 154, 46, 122, 209, 101, 208, 197, 45, 154, 208, 197, 209, 37, 46, 122, 209, 37, 209, 69, 45, 218, 46, 122, 45, 218, 209, 69, 46, 90, 46, 122, 46, 90, 209, 69, 208, 165, 46, 122, 208, 165, 209, 69),
+"attribute_data": PackedByteArray("/1////8f/z//XwAA0WXRBf+f////nwAA/9//Py2a0QX/X/+//x//f/9f/7/RZS26/5//v/+f/7//3/9/LZotuv9f/z//X/8//1//P9FlLjr/n/8//5//P/+f/z8tmi46/1//f/9f/3//X/9/0WXQhS2a0IX/n/9//5//f/+f/3/RZdFFLZrRRdFlLfotmi360WUuei2aLnrRZdDFLZrQxdElLnrRJdFFLdouei3a0UUuWi56LlrRRdClLnrQpdFF"),
 "format": 34896613399,
 "index_count": 144,
-"index_data": PackedByteArray(4, 0, 34, 0, 35, 0, 4, 0, 0, 0, 34, 0, 35, 0, 12, 0, 4, 0, 8, 0, 34, 0, 0, 0, 8, 0, 38, 0, 34, 0, 39, 0, 12, 0, 35, 0, 8, 0, 39, 0, 38, 0, 12, 0, 39, 0, 8, 0, 25, 0, 28, 0, 27, 0, 25, 0, 29, 0, 28, 0, 27, 0, 10, 0, 25, 0, 13, 0, 28, 0, 29, 0, 13, 0, 15, 0, 28, 0, 11, 0, 10, 0, 27, 0, 13, 0, 11, 0, 15, 0, 10, 0, 11, 0, 13, 0, 26, 0, 37, 0, 31, 0, 26, 0, 36, 0, 37, 0, 33, 0, 31, 0, 37, 0, 18, 0, 36, 0, 26, 0, 18, 0, 32, 0, 36, 0, 33, 0, 22, 0, 31, 0, 18, 0, 33, 0, 32, 0, 22, 0, 33, 0, 18, 0, 3, 0, 5, 0, 7, 0, 3, 0, 2, 0, 5, 0, 19, 0, 2, 0, 3, 0, 20, 0, 7, 0, 5, 0, 20, 0, 23, 0, 7, 0, 19, 0, 17, 0, 2, 0, 20, 0, 19, 0, 23, 0, 17, 0, 19, 0, 20, 0, 44, 0, 16, 0, 24, 0, 1, 0, 40, 0, 9, 0, 1, 0, 41, 0, 40, 0, 45, 0, 16, 0, 44, 0, 1, 0, 45, 0, 41, 0, 16, 0, 45, 0, 1, 0, 9, 0, 44, 0, 24, 0, 9, 0, 40, 0, 44, 0, 47, 0, 30, 0, 21, 0, 14, 0, 43, 0, 6, 0, 14, 0, 42, 0, 43, 0, 46, 0, 30, 0, 47, 0, 14, 0, 46, 0, 42, 0, 30, 0, 46, 0, 14, 0, 43, 0, 21, 0, 6, 0, 43, 0, 47, 0, 21, 0),
+"index_data": PackedByteArray("BAAiACMABAAAACIAIwAMAAQACAAiAAAACAAmACIAJwAMACMACAAnACYADAAnAAgAGQAcABsAGQAdABwAGwAKABkADQAcAB0ADQAPABwACwAKABsADQALAA8ACgALAA0AGgAlAB8AGgAkACUAIQAfACUAEgAkABoAEgAgACQAIQAWAB8AEgAhACAAFgAhABIAAwAFAAcAAwACAAUAEwACAAMAFAAHAAUAFAAXAAcAEwARAAIAFAATABcAEQATABQALAAQABgAAQAoAAkAAQApACgALQAQACwAAQAtACkAEAAtAAEACQAsABgACQAoACwALwAeABUADgArAAYADgAqACsALgAeAC8ADgAuACoAHgAuAA4AKwAVAAYAKwAvABUA"),
 "material": SubResource("StandardMaterial3D_i5nyl"),
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
 "vertex_count": 48,
-"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 84, 213, 0, 0, 0, 0, 254, 255, 255, 191, 0, 0, 0, 0, 254, 255, 255, 191, 69, 23, 69, 23, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 84, 213, 0, 0, 255, 255, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 255, 255, 69, 23, 185, 232, 254, 255, 255, 191, 0, 0, 0, 0, 0, 0, 84, 213, 0, 0, 0, 0, 0, 0, 255, 191, 0, 0, 0, 0, 0, 0, 255, 255, 69, 23, 69, 23, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 84, 213, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 69, 23, 185, 232, 0, 0, 255, 255, 255, 255, 0, 0, 254, 255, 255, 191, 255, 255, 0, 0, 254, 255, 255, 191, 255, 255, 0, 0, 254, 255, 84, 213, 185, 232, 69, 23, 254, 255, 255, 191, 255, 255, 255, 255, 254, 255, 255, 191, 255, 255, 255, 255, 254, 255, 255, 255, 255, 255, 255, 255, 254, 255, 84, 213, 185, 232, 185, 232, 254, 255, 255, 191, 255, 255, 0, 0, 0, 0, 255, 191, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 84, 213, 185, 232, 69, 23, 0, 0, 255, 255, 185, 232, 185, 232, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 84, 213, 255, 255, 69, 23, 184, 232, 84, 213, 255, 255, 185, 232, 184, 232, 84, 213, 0, 0, 69, 23, 184, 232, 84, 213, 0, 0, 185, 232, 184, 232, 84, 213, 255, 255, 69, 23, 69, 23, 84, 213, 255, 255, 185, 232, 69, 23, 84, 213, 0, 0, 69, 23, 69, 23, 84, 213, 0, 0, 185, 232, 69, 23, 84, 213, 69, 23, 0, 0, 69, 23, 255, 191, 69, 23, 0, 0, 184, 232, 255, 191, 69, 23, 255, 255, 69, 23, 255, 255, 69, 23, 255, 255, 184, 232, 255, 255, 185, 232, 0, 0, 69, 23, 255, 191, 185, 232, 0, 0, 184, 232, 255, 191, 185, 232, 255, 255, 69, 23, 255, 255, 185, 232, 255, 255, 184, 232, 255, 255, 84, 213, 84, 213, 0, 0, 255, 127, 255, 255, 255, 255, 255, 255, 255, 255, 84, 213, 84, 213, 255, 255, 255, 255, 255, 127, 255, 191, 255, 255, 255, 255, 84, 213, 84, 213, 0, 0, 255, 127, 255, 191, 255, 191, 255, 191, 255, 191, 84, 213, 84, 213, 255, 191, 255, 191, 255, 127, 255, 191, 255, 191, 255, 191, 0, 0, 255, 127, 255, 255, 255, 255, 170, 42, 170, 42, 255, 255, 255, 255, 255, 255, 255, 255, 255, 127, 255, 191, 170, 42, 170, 42, 255, 255, 255, 255, 0, 0, 255, 127, 255, 191, 255, 191, 170, 42, 170, 42, 255, 191, 255, 191, 255, 191, 255, 191, 255, 191, 255, 191, 255, 127, 255, 191, 170, 42, 170, 42, 170, 42, 170, 42, 170, 42, 170, 42, 84, 213, 84, 213, 84, 213, 84, 213, 170, 42, 170, 42, 170, 42, 170, 42, 84, 213, 84, 213, 84, 213, 84, 213, 0, 0, 255, 127, 0, 0, 255, 127, 255, 127, 255, 191, 255, 127, 255, 191, 0, 0, 255, 127, 0, 0, 255, 127, 255, 127, 255, 191, 255, 127, 255, 191)
+"vertex_data": PackedByteArray("AAAAAP7/VNUAAAAA/v//vwAAAAD+//+/RRdFF/7//78AAP///v9U1QAA///+//+/AAD///7///9FF7no/v//vwAAAAAAAFTVAAAAAAAA/78AAAAAAAD//0UXRRcAAP//AAD//wAAVNUAAP//AAD//wAA//8AAP//RRe56AAA/////wAA/v//v///AAD+//+///8AAP7/VNW56EUX/v//v//////+//+///////7//////////v9U1bnouej+//+///8AAAAA/7///wAAAAD/////AAAAAFTVuehFFwAA//+56LnoAAD///////8AAP///////wAA////////AABU1f//RRe46FTV//+56LjoVNUAAEUXuOhU1QAAuei46FTV//9FF0UXVNX//7noRRdU1QAARRdFF1TVAAC56EUXVNVFFwAARRf/v0UXAAC46P+/RRf//0UX//9FF///uOj//7noAABFF/+/uegAALjo/7+56P//RRf//7no//+46P//VNVU1QAA/3///////////1TVVNX//////3//v/////9U1VTVAAD/f/+//7//v/+/VNVU1f+//7//f/+//7//vwAA/3//////qiqqKv///////////3//v6oqqir/////AAD/f/+//7+qKqoq/7//v/+//7//v/+//3//v6oqqiqqKqoqqiqqKlTVVNVU1VTVqiqqKqoqqipU1VTVVNVU1QAA/38AAP9//3//v/9//78AAP9/AAD/f/9//7//f/+/")
 }]
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_ip15m")
@@ -174,18 +175,15 @@ flat = false
 switch_on_hover = true
 item_count = 7
 popup/item_0/text = "Load Level"
-popup/item_0/id = 0
 popup/item_1/text = "Save Level"
 popup/item_1/id = 1
 popup/item_1/disabled = true
 popup/item_2/text = "New Level"
 popup/item_2/id = 5
-popup/item_3/text = ""
 popup/item_3/id = 3
 popup/item_3/separator = true
 popup/item_4/text = "Asset Dirs..."
 popup/item_4/id = 6
-popup/item_5/text = ""
 popup/item_5/id = 6
 popup/item_5/separator = true
 popup/item_6/text = "Quit"
@@ -211,7 +209,7 @@ use_native_dialog = true
 [node name="Save" type="FileDialog" parent="UI/Titlebar/File"]
 title = "Save FEZLVL as"
 initial_position = 2
-size = Vector2i(357, 154)
+size = Vector2i(357, 175)
 ok_button_text = "Save"
 dialog_hide_on_ok = true
 access = 2
@@ -221,7 +219,7 @@ use_native_dialog = true
 [node name="New" type="FileDialog" parent="UI/Titlebar/File"]
 title = "Open a File"
 initial_position = 2
-size = Vector2i(312, 154)
+size = Vector2i(312, 175)
 ok_button_text = "Open"
 dialog_hide_on_ok = true
 file_mode = 0
@@ -237,10 +235,13 @@ layout_mode = 2
 text = "Edit"
 flat = false
 switch_on_hover = true
-item_count = 1
-popup/item_0/text = "Level Script"
-popup/item_0/id = 0
-popup/item_0/disabled = true
+item_count = 2
+popup/item_0/text = "Random Rotation"
+popup/item_0/checkable = 1
+popup/item_0/id = 1
+popup/item_1/text = "Level Script"
+popup/item_1/id = 1
+popup/item_1/disabled = true
 script = ExtResource("5_fbdf1")
 
 [node name="View" type="MenuButton" parent="UI/Titlebar"]
@@ -273,7 +274,6 @@ popup/item_5/text = "Background Planes"
 popup/item_5/checkable = 1
 popup/item_5/checked = true
 popup/item_5/id = 42
-popup/item_6/text = ""
 popup/item_6/id = 12
 popup/item_6/separator = true
 popup/item_7/text = "Debug terminal"
@@ -288,10 +288,8 @@ flat = false
 switch_on_hover = true
 item_count = 4
 popup/item_0/text = "FEZModding Wiki"
-popup/item_0/id = 0
 popup/item_1/text = "Beret GitHub"
 popup/item_1/id = 1
-popup/item_2/text = ""
 popup/item_2/id = 2
 popup/item_2/separator = true
 popup/item_3/text = "About"
@@ -346,29 +344,13 @@ theme_override_constants/separation = 0
 layout_mode = 2
 mouse_filter = 1
 theme = SubResource("Theme_328gk")
-text = "[0, 0, 0]"
+text = "[0, 0, 0], 0 deg"
 horizontal_alignment = 1
 
 [node name="Facing" type="Label" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
 text = "Facing: Left"
 horizontal_alignment = 1
-
-[node name="PhiControl" type="VBoxContainer" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl"]
-layout_mode = 2
-text = "Rotation: -0 deg"
-horizontal_alignment = 1
-
-[node name="HSlider" type="HSlider" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl"]
-layout_mode = 2
-mouse_force_pass_scroll_events = false
-theme = ExtResource("3_53v8o")
-max_value = 3.0
-tick_count = 4
-ticks_on_borders = true
 
 [node name="Title" type="Label" parent="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
@@ -389,11 +371,10 @@ theme_override_constants/separation = 0
 [node name="ChoosePalette" type="OptionButton" parent="UI/VSplitContainer/Toolbar"]
 layout_mode = 2
 alignment = 1
-item_count = 3
 selected = 0
 fit_to_longest_item = false
+item_count = 3
 popup/item_0/text = "Triles"
-popup/item_0/id = 0
 popup/item_0/disabled = true
 popup/item_1/text = "Art Objects"
 popup/item_1/id = 1
@@ -441,6 +422,7 @@ max_columns = 0
 same_column_width = true
 icon_mode = 0
 icon_scale = 2.0
+script = ExtResource("13_ercwt")
 
 [node name="NPCs" type="ItemList" parent="UI/VSplitContainer/Toolbar/Palettes"]
 visible = false
@@ -481,6 +463,13 @@ libraries = {
 autoplay = "CursorBreath"
 speed_scale = 1.25
 
+[node name="BoxArea" type="Area3D" parent="UI/Cursor/Box"]
+transform = Transform3D(0.833333, 0, 0, 0, 0.833333, 0, 0, 0, 0.833333, 0, 0, 0)
+collision_mask = 30
+
+[node name="BoxColl" type="CollisionShape3D" parent="UI/Cursor/Box/BoxArea"]
+shape = SubResource("BoxShape3D_twr4l")
+
 [node name="Pivot" type="Node3D" parent="UI/Cursor"]
 
 [node name="Camera3D" type="Camera3D" parent="UI/Cursor/Pivot"]
@@ -514,10 +503,14 @@ process_thread_messages = 0
 script = ExtResource("5_ru75n")
 
 [connection signal="rectChanged" from="UI/SelectBox" to="UI/Cursor" method="_on_select_box_rect_changed"]
+[connection signal="file_selected" from="UI/Titlebar/File/Save" to="Exporter" method="_on_save_file_selected"]
 [connection signal="file_selected" from="UI/Titlebar/File/New" to="UI/Titlebar/File" method="_on_new_file_selected"]
-[connection signal="value_changed" from="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl/HSlider" to="UI" method="_on_h_slider_value_changed"]
+[connection signal="randomRotation" from="UI/Titlebar/Edit" to="UI/Cursor" method="_on_edit_random_rotation"]
 [connection signal="item_selected" from="UI/VSplitContainer/Toolbar/ChoosePalette" to="UI/VSplitContainer/Toolbar/Palettes/Triles" method="_on_choose_palette_item_selected"]
+[connection signal="item_selected" from="UI/VSplitContainer/Toolbar/Palettes/AOs" to="UI/VSplitContainer/Toolbar/Palettes/AOs" method="_on_item_selected"]
 [connection signal="item_selected" from="UI/VSplitContainer/Toolbar/Palettes/NPCs" to="UI/VSplitContainer/Toolbar/Palettes/NPCs" method="_on_item_selected"]
+[connection signal="body_entered" from="UI/Cursor/Box/BoxArea" to="UI" method="_update_onObj"]
+[connection signal="body_entered" from="UI/Cursor/Area" to="UI" method="_on_area_body_entered"]
 [connection signal="body_entered" from="UI/Cursor/Area" to="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Inspector" method="_on_area_body_entered"]
 [connection signal="body_exited" from="UI/Cursor/Area" to="UI/VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Inspector" method="_on_area_body_exited"]
 [connection signal="loaded" from="Loader" to="UI/Titlebar/View" method="_on_loader_loaded"]

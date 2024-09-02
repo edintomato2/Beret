@@ -7,18 +7,15 @@ var soundCancel = preload("res://Sounds/cancel.wav")
 var soundLeft = preload("res://Sounds/rotateleft.wav")
 var soundRight = preload("res://Sounds/rotateright.wav")
 
-var posFormat = "[%d, %d, %d]" # Position formatting.
+var posFormat = "[%d, %d, %d], %d" # Position formatting.
 var movement = false
 
-var onObj = null
+var onObj: Node3D = null
 var selectedObjs = []
 
 # Labels
 @onready var _infoLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Position"
 @onready var _faceLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Facing"
-
-# Rotation control
-@onready var _phiLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/PhiControl/Label"
 
 # Palette control
 @onready var _palettes: Control = $"VSplitContainer/Toolbar/Palettes"
@@ -45,7 +42,9 @@ func _process(_delta):
 		
 	# Update position label
 	var pos = round(_pivot.global_position)
-	var posStr = posFormat % [pos.x, pos.y, pos.z]
+	var rot = Vector3(0, 0, 0) if onObj == null else round(onObj.global_rotation_degrees)
+	
+	var posStr = posFormat % [pos.x, pos.y, pos.z, rot.y] 
 	_infoLabel.set_text(posStr)
 
 func _on_cursor_has_moved(keyPress):
@@ -81,8 +80,8 @@ func getSelectedItem() -> Array:
 	var selected = active.get_selected_items()
 	return [active, selected]
 
-func _on_h_slider_value_changed(value):
-	_phiLabel.text = "Rotation: " + str(value * 90) + " deg"
-
 func _vec2arr(vector: Vector3):
 	return [vector.x, vector.y, vector.z]
+
+func _update_onObj(body: Node3D) -> void:
+	onObj = body

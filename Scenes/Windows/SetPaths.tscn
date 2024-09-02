@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://b6ks8iuocigav"]
+[gd_scene load_steps=6 format=3 uid="uid://b6ks8iuocigav"]
 
 [ext_resource type="Script" path="res://Scripts/UI/Titlebar/Set_paths_window.gd" id="1_uscpf"]
-[ext_resource type="Theme" uid="uid://cd3wy0ejn28l0" path="res://Themes/Popups.tres" id="2_kdsq2"]
+[ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://Assets/starback.png" id="2_1o483"]
+[ext_resource type="Theme" uid="uid://cd7ntvqe12ygn" path="res://Assets/Main.tres" id="3_pwdo3"]
+[ext_resource type="Theme" uid="uid://cd3wy0ejn28l0" path="res://Assets/Popups.tres" id="4_jtps0"]
+
+[sub_resource type="Theme" id="Theme_x2ok3"]
 
 [node name="SetPaths" type="Window"]
 title = "Set Asset Paths"
@@ -18,6 +22,17 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = SubResource("Theme_x2ok3")
+
+[node name="TextureRect" type="TextureRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_1o483")
+stretch_mode = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="Control"]
 layout_mode = 1
@@ -38,6 +53,7 @@ layout_mode = 2
 
 [node name="Buttons" type="VBoxContainer" parent="Control/CenterContainer/VBoxContainer/HBoxContainer/CenterContainer"]
 layout_mode = 2
+theme = ExtResource("3_pwdo3")
 
 [node name="Add" type="Button" parent="Control/CenterContainer/VBoxContainer/HBoxContainer/CenterContainer/Buttons"]
 layout_mode = 2
@@ -52,9 +68,17 @@ file_mode = 2
 access = 2
 use_native_dialog = true
 
+[node name="MarginContainer" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer/HBoxContainer/CenterContainer/Buttons"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
 [node name="Remove" type="Button" parent="Control/CenterContainer/VBoxContainer/HBoxContainer/CenterContainer/Buttons"]
 layout_mode = 2
 text = "Remove Folder"
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
 
 [node name="DirList" type="Tree" parent="Control/CenterContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(400, 300)
@@ -63,9 +87,13 @@ hide_folding = true
 hide_root = true
 select_mode = 2
 
+[node name="MarginContainer" type="MarginContainer" parent="Control/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
 [node name="Label" type="Label" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme = ExtResource("2_kdsq2")
+theme = ExtResource("4_jtps0")
 text = "Add directories of HAT mod \"Asset\" folders,
 or to a decompiled FEZ .pak file."
 horizontal_alignment = 1

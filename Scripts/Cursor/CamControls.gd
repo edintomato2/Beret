@@ -287,6 +287,10 @@ func pl_obj(arr: Array) -> void: # Place object based on type at cursor position
 			## TODO: Handle placement of AOs.
 			pass
 		"NPCs":
+			## NPCs can have the same position of a trile or other NPCs, although it may not look pretty.
+			
+			
+			
 			pass
 	
 	pass
@@ -307,3 +311,11 @@ func smooth_go_to(pos: Vector3, speed: float = 1) -> void: # Move the pivot smoo
 		speed,
 	)
 	pass
+
+func _on_edit_random_rotation(state: bool) -> void:
+	if state:
+		
+		pass
+	else:
+		pass
+	pass # Replace with function body.

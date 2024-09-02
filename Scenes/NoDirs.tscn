@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://ceqvj0x5ig6nk"]
 
-[ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://Defaults/starback.png" id="1_57dfe"]
+[ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://Assets/starback.png" id="1_57dfe"]
 [ext_resource type="Script" path="res://Scripts/UI/NoDirs.gd" id="1_p3fr0"]
 
 [sub_resource type="SystemFont" id="SystemFont_t632v"]
