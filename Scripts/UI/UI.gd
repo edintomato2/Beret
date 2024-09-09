@@ -22,6 +22,9 @@ var selectedObjs = []
 
 # General nodes
 @onready var _pivot: Node3D = $"Cursor/Pivot"
+@export_node_path("MeshInstance3D") var box
+@export_node_path("ColorRect") var LoadingRect
+@export_node_path("AnimationPlayer") var Animations
 @onready var _sfx: AudioStreamPlayer = $"SFX"
 
 func _notification(what):
@@ -41,7 +44,7 @@ func _process(_delta):
 		"3", "-1": _faceLabel.text = "Facing: Left"
 		
 	# Update position label
-	var pos = round(_pivot.global_position)
+	var pos = round(get_node(box).global_position)
 	var rot = Vector3(0, 0, 0) if onObj == null else round(onObj.global_rotation_degrees)
 	
 	var posStr = posFormat % [pos.x, pos.y, pos.z, rot.y] 
@@ -85,3 +88,19 @@ func _vec2arr(vector: Vector3):
 
 func _update_onObj(body: Node3D) -> void:
 	onObj = body
+
+func loading(type: int) -> void:
+	match type:
+		0: # Start loading + loop
+			get_node(Animations).animation_set_next("start", "loop")
+			get_node(Animations).play("start")
+			pass
+		1: # End loading
+			get_node(Animations).play("end")
+			pass
+	pass
+
+func _on_loader_loaded(obj: String) -> void:
+	match obj:
+		"start": loading(0)
+		"level": loading(1)

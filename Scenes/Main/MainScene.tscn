@@ -24,3 +24,5 @@ script = ExtResource("3_23ipx")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("4_wqjf0")
+
+[connection signal="loaded" from="Loader" to="UI" method="_on_loader_loaded"]

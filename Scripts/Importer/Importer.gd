@@ -14,7 +14,8 @@ extends Node
 var fezlvl: Dictionary
 var fezts: Array
 
-var thread: Thread = Thread.new()
+var thread: Thread
+var sema: Semaphore
 
 @warning_ignore("unused_signal")
 signal loaded(obj: String)
@@ -24,30 +25,35 @@ signal loaded(obj: String)
 @export var volColor = Color(0.792, 0.431, 1, 0.5)
 
 func _ready():
-	_fileLoad.file_selected.connect(_on_load_dialog_file_selected.bind())
-	pass
-
-func _on_load_dialog_file_selected(path) -> void:
-	killChildren()
-	
-	loadLVL(path)
+	sema = Semaphore.new()
+	thread = Thread.new()
 	
 	thread.start(_load.bind())
-	thread.wait_to_finish()
+	_fileLoad.file_selected.connect(_on_load_dialog_file_selected.bind())
+
+func _on_load_dialog_file_selected(path: String) -> void:
+	killChildren()
+	loadLVL(path)
+	sema.post()
 
 func _load() -> void:
-	loadTS(fezlvl["TrileSetName"])
-	
-	# Implement multithreading here!
-	placeTriles(fezlvl["Triles"])
-	placeAOs(fezlvl["ArtObjects"])
-	placeNPCs(fezlvl["NonPlayerCharacters"])
-	placeBkgPlanes(fezlvl["BackgroundPlanes"])
-	placeVols(fezlvl["Volumes"])
-	#placeSky(fezlvl["SkyName"])
-	placeStart(fezlvl["StartingPosition"])
-	
-	call_deferred("emit_signal", "loaded", "level")
+	while true:
+		sema.wait()
+		
+		if fezlvl.has("BeretExit"): break
+		
+		call_deferred("emit_signal", "loaded", "start")
+		
+		loadTS(fezlvl["TrileSetName"])
+		placeTriles(fezlvl["Triles"])
+		placeAOs(fezlvl["ArtObjects"])
+		placeNPCs(fezlvl["NonPlayerCharacters"])
+		placeBkgPlanes(fezlvl["BackgroundPlanes"])
+		placeVols(fezlvl["Volumes"])
+		#placeSky(fezlvl["SkyName"])
+		placeStart(fezlvl["StartingPosition"])
+
+		call_deferred("emit_signal", "loaded", "level")
 
 func killChildren() -> void: # Please do not judge my function names.
 	for n in get_child_count(): # Clear out all objects.
@@ -225,8 +231,8 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 			path = dir + bkgplns[i]["TextureName"].to_lower() + ".gif"
 			tex = GifManager.sprite_frames_from_file(path)
 			if tex == null: ### If we still have a problem... give up!
-				tex = Image.load_from_file("res://Assets/missing.png")
-				mat.albedo_texture = ImageTexture.create_from_image(tex)
+				tex = load("res://Assets/missing.png")
+				mat.albedo_texture = tex
 			else: mat.albedo_texture = tex.get_frame_texture("gif", 0)
 		else:
 			tex = ImageTexture.create_from_image(Image.load_from_file(path))
@@ -382,8 +388,9 @@ func _loadObj(filepath: String, type: int): # Internal object loader.
 	return m
 
 func _exit_tree():
+	fezlvl = {"BeretExit" : null}
+	sema.post()
 	thread.wait_to_finish()
-	pass
 
 func _arr2vec(arr: Array):
 	return Vector3(arr[0], arr[1], arr[2])

@@ -1,6 +1,6 @@
 extends Node3D
 
-@export_range(0.05, 5.0) var sensitivity = 0.25
+@export_range(0.05, 5.0) var sensitivity = 0.05
 @export var min_zoom := 1.0
 @export var max_zoom := 50.0
 @export var zoom_duration := 0.01
@@ -30,7 +30,7 @@ signal objPicked(object)
 signal selectionChanged(startPos: Vector2, drag: bool)
 
 # Constants
-@export var rayLength := 100
+@export var rayLength := 5
 var hiMat := StandardMaterial3D.new()
 
 # General Vars
@@ -43,25 +43,22 @@ func _ready() -> void:
 	hiMat.albedo_color = Color(1, 0.675, 0.416, 1)
 	hiMat.blend_mode = BaseMaterial3D.BLEND_MODE_MUL
 
-func _process(_delta: float) -> void:
-	## Move the box to the camera's pivot point, aligned to the grid
-	var pivPos = _pivot.global_position
-	_box.global_position = round(pivPos)
-	pass
-
 func _unhandled_input(event: InputEvent) -> void:
 	# Camera movement
 	if event is InputEventMouseMotion:
 		if Input.is_action_pressed("cam_pan", true): _pan_camera(event.relative)
-		elif Input.is_action_pressed("cam_orbit", true): _3dOrbit(event.relative)
-		else: Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		elif Input.is_action_pressed("cam_orbit", true):
+			_move_cursor()
+			_3dOrbit(event.relative)
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			_move_cursor()
 	_zoom(1.1)
 	
 	# Key input
 	if Input.is_action_just_pressed("cursor_delete", true) and !selected.is_empty(): rm_obj(selected)
 	if Input.is_action_just_pressed("cam_face_snap", true): _camera_face_snap()
 	
-	_move_cursor()
 	_select()
 	_flip()
 	_ltrt()
@@ -69,7 +66,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _3dOrbit(mousePos: Vector2) -> void: # Rotate around pivot
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	var _mouse_position = mousePos
-	_mouse_position *= sensitivity
+	_mouse_position *= 0.25
 	
 	var yaw = _mouse_position.x
 	var pitch = _mouse_position.y
@@ -227,20 +224,11 @@ func _move_area() -> void: # Move the selection area
 		selected = _area.get_overlapping_bodies()
 		_change_objs_color(selected)
 
-func _move_cursor() -> void: # Move the cursor around with WASD
-	## Yes, this is stupidly complex. I blame Godot!
-	var right = 1 if Input.is_action_pressed("cursor_right", true) else 0
-	var left = 1 if Input.is_action_pressed("cursor_left", true) else 0
-	var up = 1 if Input.is_action_pressed("cursor_up", true) else 0
-	var down = 1 if Input.is_action_pressed("cursor_down", true) else 0
-	var back = 1 if Input.is_action_pressed("cursor_backwards", true) else 0
-	var front = 1 if Input.is_action_pressed("cursor_forwards", true) else 0
-	
-	var moveTo := Vector3((right - left), (up - down), (back - front)) # x, y, z
-	var pivBasis = _pivot.transform
-	
-	smooth_go_to(_pivot.global_position + (pivBasis.basis * moveTo), 0.2)
-	pass
+func _move_cursor() -> void: # Move the cursor around with mouse cursor
+	## We'll need to move the cursor relative to the viewport and the 3d rotation of the camera.
+	var pos = get_viewport().get_mouse_position()
+	var projected = _camera.project_position(pos, 30)
+	_box.global_position = round(projected)
 
 func _change_objs_color(objects: Array, invert: bool = false) -> void: # When an object is picked, let it start pulsing orange
 	if !objects.is_empty():
