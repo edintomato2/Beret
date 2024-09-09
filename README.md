@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/edintomato2/Beret/master/Assets/Logo.svg" />
+  <img src="https://raw.githubusercontent.com/edintomato2/Beret/master/Assets/logo.png" width="500"/>
 </p>
 
 ### Beret, a level editor and viewer for FEZ.
@@ -7,8 +7,8 @@
 Level viewing and editing
 ---
 1. Use [FEZRepacker](https://github.com/FEZModding/FEZRepacker) to extract the contents of your FEZ `.pak` files. Note that most of the good stuff is stored in `Other.pak`!
-2. Launch Beret.exe. Go through the first time setup to tell Beret where your decompiled directories are.
-3. Load a `.fezlvl.json` file from the File menu! (`.fezlvl.json`s are usually found in the levels directory)
+2. Launch Beret.exe. You'll have to tell Beret where your decompiled directories are by going to `File > Asset Dirs...`!
+3. Load a `.fezlvl.json` file from the File menu! (`.fezlvl.json`s are usually found in the `Others/levels` directory!)
 4. Alternatively, you can make a new level from scratch by pressing the "New Level" button instead. This will ask you to load a specific trileset for your level!
 
 Level testing
@@ -23,15 +23,18 @@ Thanks to HAT v1.1.0, levels don't have to be recompiled into a `.pak` file!
 
 Usage
 ---
-|Key(s)|What it does|
+|Key(s)|What they do|
 |:---:|:---:|
-|W/S|Up/Down|
-|A/D|Left/Right|
-|R/F|Forwards/Backwards|
-|X|Delete object (trile, art object, NPC...)|
-|Left Click|Place object|
-|Arrow Keys|Select from palette|
-|Shift + 2| 2D Mode|
+| Mouse | Move the cursor around |
+| Middle Mouse Button | Rotate around 
+| Shift + Middle Mouse Button | Pan around |
+| Q/E | Rotate by 90 degrees|
+| Left Alt | Snap to closest 2D view | 
+| Numpad 5 | Perspective to Ortho mode switch |
+| X | Delete object |
+| Left Click | Place object |
+| Arrow Keys | Select from palette |
+
 
 Screenshots
 ---
