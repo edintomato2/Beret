@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://q6hiwea1m8ok"]
+
+[ext_resource type="PackedScene" uid="uid://cocyah7e1sj5q" path="res://Scenes/Main/UI.tscn" id="1_ds5bi"]
+[ext_resource type="Script" path="res://Scripts/Importer/Importer.gd" id="2_fl8e3"]
+[ext_resource type="Script" path="res://Scripts/Exporter/Exporter.gd" id="3_23ipx"]
+[ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://Materials/DefaultEnv.tres" id="4_wqjf0"]
+
+[node name="Main" type="Node"]
+
+[node name="UI" parent="." instance=ExtResource("1_ds5bi")]
+
+[node name="Loader" type="Node" parent="." groups=["editor"]]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 0
+script = ExtResource("2_fl8e3")
+volColor = Color(0.792157, 0.431373, 0, 0.227451)
+
+[node name="Exporter" type="Node" parent="." groups=["editor"]]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 0
+script = ExtResource("3_23ipx")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("4_wqjf0")

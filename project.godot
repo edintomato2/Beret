@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Beret - A FEZ Level Editor"
 config/version="0.2.1"
-run/main_scene="res://Scenes/MainScene.tscn"
+run/main_scene="res://Scenes/Main/MainScene.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 boot_splash/show_image=false
 config/icon="res://Assets/icon.png"
@@ -40,6 +40,10 @@ version_control/autoload_on_startup=true
 [filesystem]
 
 import/blender/enabled=false
+
+[global_group]
+
+editor="Group of nodes pertaining to the editor."
 
 [input]
 

@@ -14,33 +14,28 @@ extends Node
 var fezlvl: Dictionary
 var fezts: Array
 
-var _thread: Thread # Threading. To get data into a thread, use a Mutex!
-var _sema: Semaphore
-var _mutex: Mutex
-var _threadFlag = false
+var thread: Thread = Thread.new()
 
+@warning_ignore("unused_signal")
 signal loaded(obj: String)
 
 @onready var _fileLoad: FileDialog = $"/root/Main/UI/Titlebar/File/Load"
 
-@export var silent: bool = false:
-	get: return silent
-	set(value): silent = value
-
 @export var volColor = Color(0.792, 0.431, 1, 0.5)
 
 func _ready():
-	_thread = Thread.new() # Prepare threading.
-	_sema = Semaphore.new()
-	_mutex = Mutex.new()
 	_fileLoad.file_selected.connect(_on_load_dialog_file_selected.bind())
 	pass
 
 func _on_load_dialog_file_selected(path) -> void:
-	silent = false
 	killChildren()
 	
 	loadLVL(path)
+	
+	thread.start(_load.bind())
+	thread.wait_to_finish()
+
+func _load() -> void:
 	loadTS(fezlvl["TrileSetName"])
 	
 	# Implement multithreading here!
@@ -52,9 +47,7 @@ func _on_load_dialog_file_selected(path) -> void:
 	#placeSky(fezlvl["SkyName"])
 	placeStart(fezlvl["StartingPosition"])
 	
-	emit_signal("loaded", "level")
-	silent = true
-	pass
+	call_deferred("emit_signal", "loaded", "level")
 
 func killChildren() -> void: # Please do not judge my function names.
 	for n in get_child_count(): # Clear out all objects.
@@ -68,7 +61,7 @@ func loadLVL(path: String) -> Error: # Read fezlvl.json, return the JSON if vali
 		print(readLvl.get_error_message())
 	
 	fezlvl = readLvl.data
-	if !silent: emit_signal("loaded", "fezlvl")
+	call_deferred("emit_signal", "loaded", "fezlvl")
 	return err
 
 func loadTS(tsName: String): # Load in trileset.
@@ -94,7 +87,7 @@ func loadTS(tsName: String): # Load in trileset.
 		push_error(readTS.get_error_message()); return err
 	
 	fezts = [meshDict, mat, readTS.data]
-	if !silent: emit_signal("loaded", "fezts")
+	call_deferred("emit_signal", "loaded", "fezts")
 
 func placeTriles(triles: Array): # Place triles listed in array.
 	for trileInst in triles:
@@ -143,11 +136,11 @@ func placeTriles(triles: Array): # Place triles listed in array.
 			trile.set_meta("Emplacement", _arr2vec(trileInst["Emplacement"]))
 			trile.set_meta("Position", _arr2vec(trileInst["Position"]))
 			
-			add_to_group("Triles")
+			call_deferred("add_to_group", "Triles")
 			call_deferred("add_child", trile)
-	if !silent:
-		print("Loaded triles!")
-		emit_signal("loaded", "Triles")
+			
+	print("Loaded triles!")
+	call_deferred("emit_signal", "loaded", "Triles")
 
 func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 	for i in aos:
@@ -169,12 +162,11 @@ func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 		inst.set_meta("Name", aos[i]["Name"].to_lower())
 		inst.set_meta("Type", "AO")
 		
-		add_to_group("AOs")
+		call_deferred("add_to_group", "AOs")
 		call_deferred("add_child", inst)
 		
-	if !silent:
-		print("Loaded AOs!")
-		emit_signal("loaded", "ArtObjects")
+	print("Loaded AOs!")
+	call_deferred("emit_signal", "loaded", "ArtObjects")
 
 func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations/"
@@ -212,13 +204,12 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 		inst.set_meta("Type", "NPC")
 		inst.set_meta("Name", npcs[i]["Name"].capitalize())
 		inst.play("gif")
-		add_to_group("NPCs")
 		
+		call_deferred("add_to_group", "NPCs")
 		call_deferred("add_child", inst)
 		
-	if !silent:
-		print("Loaded NPCs!")
-		emit_signal("loaded", "NonPlayerCharacters")
+	print("Loaded NPCs!")
+	call_deferred("emit_signal", "loaded", "NonPlayerCharacters")
 
 func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a dict.
 	for i in bkgplns:
@@ -279,12 +270,11 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 
 		inst.set_meta("Name", bkgplns[i]["TextureName"].to_lower())
 		inst.set_meta("Type", "BackgroundPlanes")
-		add_to_group("BackgroundPlanes")
+		call_deferred("add_to_group","BackgroundPlanes")
 		
 		call_deferred("add_child", inst)
 		
-	if !silent:
-		print("Loaded Background Planes!")
+	print("Loaded Background Planes!")
 
 func placeVols(vols: Dictionary): # Place volumes in dict.
 	## First, define how our volumes will look.
@@ -311,7 +301,7 @@ func placeVols(vols: Dictionary): # Place volumes in dict.
 		volModel.scale = abs(to - from) # Abs. Difference
 		volModel.set_meta("Type", "Volume")
 		volModel.set_meta("Id", v)
-		add_to_group("Volumes")
+		call_deferred("add_to_group","Volumes")
 		
 		call_deferred("add_child", volModel)
 	pass
@@ -349,9 +339,8 @@ func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own f
 	gomez.play("gif")
 	call_deferred("add_child", gomez)
 	
-	if !silent:
-		print("Loaded Gomez's Starting Position!")
-		emit_signal("loaded", "StartingPosition")
+	print("Loaded Gomez's Starting Position!")
+	call_deferred("emit_signal", "loaded", "StartingPosition")
 
 func _loadObj(filepath: String, type: int): # Internal object loader.
 	## TODO: Handler for if filepath doesn't exist
@@ -393,13 +382,7 @@ func _loadObj(filepath: String, type: int): # Internal object loader.
 	return m
 
 func _exit_tree():
-	_mutex.lock() # Exit thread gracefully.
-	_threadFlag = true 
-	_mutex.unlock()
-	
-	_sema.post()
-	
-	_thread.wait_to_finish()
+	thread.wait_to_finish()
 	pass
 
 func _arr2vec(arr: Array):

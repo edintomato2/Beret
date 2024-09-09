@@ -1,0 +1,510 @@
+[gd_scene load_steps=44 format=4 uid="uid://cocyah7e1sj5q"]
+
+[ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_nneru"]
+[ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://Defaults/default.tres" id="2_5dp6f"]
+[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuFile.gd" id="3_t0hi2"]
+[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://Scenes/Windows/SetPaths.tscn" id="4_rvm4g"]
+[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuEdit.gd" id="5_yecpo"]
+[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuView.gd" id="6_dy5t7"]
+[ext_resource type="Script" path="res://Scripts/UI/Titlebar/menuHelp.gd" id="7_jn3ws"]
+[ext_resource type="PackedScene" uid="uid://c25hxbok5bsak" path="res://Scenes/Windows/Credits.tscn" id="8_3hw7i"]
+[ext_resource type="PackedScene" uid="uid://hdvr1a3cde46" path="res://Scenes/Windows/Goto.tscn" id="9_afh2a"]
+[ext_resource type="Script" path="res://Scripts/UI/Sidebar/EditorInfo.gd" id="9_oxq86"]
+[ext_resource type="Script" path="res://Scripts/UI/Inspector.gd" id="10_hxjec"]
+[ext_resource type="Script" path="res://Scripts/UI/Toolbar/Triles.gd" id="11_3d3kl"]
+[ext_resource type="Script" path="res://Scripts/UI/Toolbar/AOs.gd" id="12_0a6lv"]
+[ext_resource type="Script" path="res://Scripts/UI/Toolbar/NPCs.gd" id="13_xp4cg"]
+[ext_resource type="Script" path="res://Scripts/Cursor/CamControls.gd" id="14_w7gtq"]
+[ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://Materials/UI.tres" id="15_y8qhk"]
+[ext_resource type="Script" path="res://Scripts/Cursor/SelectBox.gd" id="16_mo5eo"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5nyl"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ip15m"]
+_surfaces = [{
+"aabb": AABB(-0.55, -0.55, -0.55, 1.1, 1.1, 1.10001),
+"format": 34896613377,
+"index_count": 144,
+"index_data": PackedByteArray("AgASABMAAgAAABIAEwAGAAIABAASAAAABAAWABIAFwAGABMABAAXABYABgAXAAQADAAOAA0ADAAPAA4ADQAEAAwABgAOAA8ABgAHAA4ABQAEAA0ABgAFAAcABAAFAAYADAAVAA8ADAAUABUAEQAPABUACAAUAAwACAAQABQAEQAKAA8ACAARABAACgARAAgAAQACAAMAAQAAAAIACQAAAAEACgADAAIACgALAAMACQAIAAAACgAJAAsACAAJAAoAHAAIAAwAAAAYAAQAAAAZABgAHQAIABwAAAAdABkACAAdAAAABAAcAAwABAAYABwAHwAPAAoABgAbAAIABgAaABsAHgAPAB8ABgAeABoADwAeAAYAGwAKAAIAGwAfAAoA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 32,
+"vertex_data": PackedByteArray("AAAAAP7/AABFF0UX/v8AAAAA///+/wAARRe56P7/AAAAAAAAAAAAAEUXRRcAAAAAAAD//wAAAABFF7noAAAAAP//AAD+/wAAuehFF/7/AAD//////v8AALnouej+/wAA//8AAAAAAAC56EUXAAAAALnouegAAAAA/////wAAAAD//0UXuOgAAP//uei46AAAAABFF7joAAAAALnouOgAAP//RRdFFwAA//+56EUXAAAAAEUXRRcAAAAAuehFFwAARRcAAEUXAABFFwAAuOgAAEUX//9FFwAARRf//7joAAC56AAARRcAALnoAAC46AAAuej//0UXAAC56P//uOgAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_351w7"]
+resource_name = "Box_Cube_001"
+_surfaces = [{
+"aabb": AABB(-0.55, -0.55, -0.55, 1.1, 1.1, 1.10001),
+"attribute_data": PackedByteArray("/1////8f/z//XwAA0WXRBf+f////nwAA/9//Py2a0QX/X/+//x//f/9f/7/RZS26/5//v/+f/7//3/9/LZotuv9f/z//X/8//1//P9FlLjr/n/8//5//P/+f/z8tmi46/1//f/9f/3//X/9/0WXQhS2a0IX/n/9//5//f/+f/3/RZdFFLZrRRdFlLfotmi360WUuei2aLnrRZdDFLZrQxdElLnrRJdFFLdouei3a0UUuWi56LlrRRdClLnrQpdFF"),
+"format": 34896613399,
+"index_count": 144,
+"index_data": PackedByteArray("BAAiACMABAAAACIAIwAMAAQACAAiAAAACAAmACIAJwAMACMACAAnACYADAAnAAgAGQAcABsAGQAdABwAGwAKABkADQAcAB0ADQAPABwACwAKABsADQALAA8ACgALAA0AGgAlAB8AGgAkACUAIQAfACUAEgAkABoAEgAgACQAIQAWAB8AEgAhACAAFgAhABIAAwAFAAcAAwACAAUAEwACAAMAFAAHAAUAFAAXAAcAEwARAAIAFAATABcAEQATABQALAAQABgAAQAoAAkAAQApACgALQAQACwAAQAtACkAEAAtAAEACQAsABgACQAoACwALwAeABUADgArAAYADgAqACsALgAeAC8ADgAuACoAHgAuAA4AKwAVAAYAKwAvABUA"),
+"material": SubResource("StandardMaterial3D_i5nyl"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 48,
+"vertex_data": PackedByteArray("AAAAAP7/VNUAAAAA/v//vwAAAAD+//+/RRdFF/7//78AAP///v9U1QAA///+//+/AAD///7///9FF7no/v//vwAAAAAAAFTVAAAAAAAA/78AAAAAAAD//0UXRRcAAP//AAD//wAAVNUAAP//AAD//wAA//8AAP//RRe56AAA/////wAA/v//v///AAD+//+///8AAP7/VNW56EUX/v//v//////+//+///////7//////////v9U1bnouej+//+///8AAAAA/7///wAAAAD/////AAAAAFTVuehFFwAA//+56LnoAAD///////8AAP///////wAA////////AABU1f//RRe46FTV//+56LjoVNUAAEUXuOhU1QAAuei46FTV//9FF0UXVNX//7noRRdU1QAARRdFF1TVAAC56EUXVNVFFwAARRf/v0UXAAC46P+/RRf//0UX//9FF///uOj//7noAABFF/+/uegAALjo/7+56P//RRf//7no//+46P//VNVU1QAA/3///////////1TVVNX//////3//v/////9U1VTVAAD/f/+//7//v/+/VNVU1f+//7//f/+//7//vwAA/3//////qiqqKv///////////3//v6oqqir/////AAD/f/+//7+qKqoq/7//v/+//7//v/+//3//v6oqqiqqKqoqqiqqKlTVVNVU1VTVqiqqKqoqqipU1VTVVNVU1QAA/38AAP9//3//v/9//78AAP9/AAD/f/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ip15m")
+
+[sub_resource type="Animation" id="Animation_e1hvu"]
+resource_name = "CursorBreath"
+loop_mode = 2
+tracks/0/type = "scale_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1.2, 1.2, 1.2, 1, 1, 1, 1, 1)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_slj4o"]
+_data = {
+"CursorBreath": SubResource("Animation_e1hvu")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_twr4l"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_kofio"]
+device = -1
+alt_pressed = true
+keycode = 70
+
+[sub_resource type="Shortcut" id="Shortcut_aqtus"]
+events = [SubResource("InputEventKey_kofio")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_fwuaw"]
+device = -1
+ctrl_pressed = true
+keycode = 79
+
+[sub_resource type="Shortcut" id="Shortcut_8hi2n"]
+events = [SubResource("InputEventKey_fwuaw")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_txw7b"]
+device = -1
+ctrl_pressed = true
+keycode = 83
+
+[sub_resource type="Shortcut" id="Shortcut_c4g0v"]
+events = [SubResource("InputEventKey_txw7b")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_pptsy"]
+device = -1
+ctrl_pressed = true
+keycode = 78
+
+[sub_resource type="Shortcut" id="Shortcut_o221s"]
+events = [SubResource("InputEventKey_pptsy")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_slhck"]
+device = -1
+ctrl_pressed = true
+keycode = 81
+
+[sub_resource type="Shortcut" id="Shortcut_x4u3j"]
+events = [SubResource("InputEventKey_slhck")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_a7o38"]
+device = -1
+ctrl_pressed = true
+keycode = 44
+
+[sub_resource type="Shortcut" id="Shortcut_4fx4j"]
+events = [SubResource("InputEventKey_a7o38")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_cchnp"]
+device = -1
+ctrl_pressed = true
+keycode = 71
+
+[sub_resource type="Shortcut" id="Shortcut_i47l8"]
+events = [SubResource("InputEventKey_cchnp")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_2jet3"]
+device = -1
+alt_pressed = true
+keycode = 86
+
+[sub_resource type="Shortcut" id="Shortcut_5p5ho"]
+events = [SubResource("InputEventKey_2jet3")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_oq4ek"]
+device = -1
+alt_pressed = true
+keycode = 72
+
+[sub_resource type="Shortcut" id="Shortcut_efjk7"]
+events = [SubResource("InputEventKey_oq4ek")]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mn0ei"]
+bg_color = Color(0, 0, 0, 0.196078)
+border_width_left = 2
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Theme" id="Theme_328gk"]
+Label/styles/normal = SubResource("StyleBoxFlat_mn0ei")
+
+[node name="UI" type="VBoxContainer" groups=["editor"]]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+script = ExtResource("1_nneru")
+
+[node name="Cursor" type="Node3D" parent="."]
+script = ExtResource("14_w7gtq")
+
+[node name="Box" type="MeshInstance3D" parent="Cursor"]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
+layers = 512
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_351w7")
+skeleton = NodePath("")
+surface_material_override/0 = ExtResource("15_y8qhk")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Cursor/Box"]
+libraries = {
+"": SubResource("AnimationLibrary_slj4o")
+}
+autoplay = "CursorBreath"
+speed_scale = 1.25
+
+[node name="BoxArea" type="Area3D" parent="Cursor/Box"]
+transform = Transform3D(0.833333, 0, 0, 0, 0.833333, 0, 0, 0, 0.833333, 0, 0, 0)
+collision_mask = 30
+
+[node name="BoxColl" type="CollisionShape3D" parent="Cursor/Box/BoxArea"]
+shape = SubResource("BoxShape3D_twr4l")
+
+[node name="Pivot" type="Node3D" parent="Cursor"]
+
+[node name="Camera3D" type="Camera3D" parent="Cursor/Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
+projection = 1
+current = true
+fov = 50.0
+size = 20.0
+
+[node name="Area" type="Area3D" parent="Cursor"]
+collision_mask = 31
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Cursor/Area"]
+shape = SubResource("BoxShape3D_twr4l")
+
+[node name="SelectBox" type="Control" parent="Cursor"]
+z_index = -1
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 1
+script = ExtResource("16_mo5eo")
+borderColor = Color(0.792157, 0.431373, 0, 1)
+fillColor = Color(0.792157, 0.431373, 0, 0.572549)
+
+[node name="SFX" type="AudioStreamPlayer" parent="."]
+
+[node name="Titlebar" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme = ExtResource("2_5dp6f")
+
+[node name="File" type="MenuButton" parent="Titlebar"]
+layout_mode = 2
+shortcut = SubResource("Shortcut_aqtus")
+text = "File"
+flat = false
+switch_on_hover = true
+item_count = 7
+popup/item_0/text = "Load Level"
+popup/item_1/text = "Save Level"
+popup/item_1/id = 1
+popup/item_1/disabled = true
+popup/item_2/text = "New Level"
+popup/item_2/id = 5
+popup/item_3/id = 3
+popup/item_3/separator = true
+popup/item_4/text = "Asset Dirs..."
+popup/item_4/id = 6
+popup/item_5/id = 6
+popup/item_5/separator = true
+popup/item_6/text = "Quit"
+popup/item_6/id = 4
+script = ExtResource("3_t0hi2")
+loadShortcut = SubResource("Shortcut_8hi2n")
+saveShortcut = SubResource("Shortcut_c4g0v")
+newShortcut = SubResource("Shortcut_o221s")
+quitShortcut = SubResource("Shortcut_x4u3j")
+dirsShortcut = SubResource("Shortcut_4fx4j")
+
+[node name="Load" type="FileDialog" parent="Titlebar/File"]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 1
+size = Vector2i(454, 400)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
+use_native_dialog = true
+
+[node name="Save" type="FileDialog" parent="Titlebar/File"]
+auto_translate_mode = 1
+title = "Save FEZLVL as"
+initial_position = 2
+size = Vector2i(357, 175)
+ok_button_text = "Save"
+dialog_hide_on_ok = true
+access = 2
+filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
+use_native_dialog = true
+
+[node name="New" type="FileDialog" parent="Titlebar/File"]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 2
+size = Vector2i(312, 175)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.fezts.json ; FEZ Trileset")
+use_native_dialog = true
+
+[node name="SetPaths" parent="Titlebar/File" instance=ExtResource("4_rvm4g")]
+auto_translate_mode = 1
+visible = false
+
+[node name="Edit" type="MenuButton" parent="Titlebar"]
+layout_mode = 2
+text = "Edit"
+flat = false
+switch_on_hover = true
+item_count = 3
+popup/item_0/text = "Go to..."
+popup/item_0/id = 2
+popup/item_1/text = "Random Rotation"
+popup/item_1/checkable = 1
+popup/item_1/id = 1
+popup/item_2/text = "Level Script"
+popup/item_2/id = 2
+popup/item_2/disabled = true
+script = ExtResource("5_yecpo")
+_GoToShortcut = SubResource("Shortcut_i47l8")
+
+[node name="Goto" parent="Titlebar/Edit" instance=ExtResource("9_afh2a")]
+visible = false
+popup_window = true
+
+[node name="View" type="MenuButton" parent="Titlebar"]
+layout_mode = 2
+shortcut = SubResource("Shortcut_5p5ho")
+text = "View"
+flat = false
+switch_on_hover = true
+item_count = 8
+popup/item_0/text = "Visible Layers"
+popup/item_0/id = 1
+popup/item_0/separator = true
+popup/item_1/text = "Art Objects"
+popup/item_1/checkable = 1
+popup/item_1/checked = true
+popup/item_1/id = 6
+popup/item_2/text = "NPCs"
+popup/item_2/checkable = 1
+popup/item_2/checked = true
+popup/item_2/id = 8
+popup/item_3/text = "Triles"
+popup/item_3/checkable = 1
+popup/item_3/checked = true
+popup/item_3/id = 7
+popup/item_4/text = "Volumes"
+popup/item_4/checkable = 1
+popup/item_4/checked = true
+popup/item_4/id = 10
+popup/item_5/text = "Background Planes"
+popup/item_5/checkable = 1
+popup/item_5/checked = true
+popup/item_5/id = 42
+popup/item_6/id = 12
+popup/item_6/separator = true
+popup/item_7/text = "Debug terminal"
+popup/item_7/id = 2
+script = ExtResource("6_dy5t7")
+_curCam = NodePath("../../Cursor/Pivot/Camera3D")
+_curCol = NodePath("../../Cursor/Area")
+
+[node name="Help" type="MenuButton" parent="Titlebar"]
+layout_mode = 2
+shortcut = SubResource("Shortcut_efjk7")
+text = "Help"
+flat = false
+switch_on_hover = true
+item_count = 4
+popup/item_0/text = "FEZModding Wiki"
+popup/item_1/text = "Beret GitHub"
+popup/item_1/id = 1
+popup/item_2/id = 2
+popup/item_2/separator = true
+popup/item_3/text = "About"
+popup/item_3/id = 3
+script = ExtResource("7_jn3ws")
+
+[node name="About" parent="Titlebar/Help" instance=ExtResource("8_3hw7i")]
+auto_translate_mode = 1
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="Titlebar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+color = Color(0, 0, 0, 1)
+
+[node name="Main Screen" type="VSplitContainer" parent="."]
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("2_5dp6f")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Main Screen"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EditorLog" type="RichTextLabel" parent="Main Screen/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+theme = ExtResource("2_5dp6f")
+text = "Welcome to Beret!
+"
+scroll_following = true
+threaded = true
+script = ExtResource("9_oxq86")
+
+[node name="Sidebar" type="HBoxContainer" parent="Main Screen/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SidebarVertical" type="VBoxContainer" parent="Main Screen/HBoxContainer/Sidebar"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
+theme_override_constants/separation = 0
+
+[node name="Position" type="Label" parent="Main Screen/HBoxContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+mouse_filter = 1
+theme = SubResource("Theme_328gk")
+text = "[0, 0, 0], 0 deg"
+horizontal_alignment = 1
+
+[node name="Facing" type="Label" parent="Main Screen/HBoxContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+text = "Facing: Left"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="Main Screen/HBoxContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+text = "Selection Info"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Inspector" type="Tree" parent="Main Screen/HBoxContainer/Sidebar/SidebarVertical"]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("10_hxjec")
+
+[node name="Toolbar" type="HBoxContainer" parent="Main Screen"]
+clip_contents = true
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ChoosePalette" type="OptionButton" parent="Main Screen/Toolbar"]
+layout_mode = 2
+alignment = 1
+selected = 0
+fit_to_longest_item = false
+item_count = 3
+popup/item_0/text = "Triles"
+popup/item_0/disabled = true
+popup/item_1/text = "Art Objects"
+popup/item_1/id = 1
+popup/item_1/disabled = true
+popup/item_2/text = "NPCs"
+popup/item_2/id = 2
+popup/item_2/disabled = true
+
+[node name="Palettes" type="Control" parent="Main Screen/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Triles" type="ItemList" parent="Main Screen/Toolbar/Palettes"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+mouse_force_pass_scroll_events = false
+theme = ExtResource("2_5dp6f")
+allow_search = false
+max_columns = 0
+same_column_width = true
+icon_mode = 0
+icon_scale = 2.0
+script = ExtResource("11_3d3kl")
+
+[node name="AOs" type="ItemList" parent="Main Screen/Toolbar/Palettes"]
+visible = false
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+mouse_force_pass_scroll_events = false
+theme = ExtResource("2_5dp6f")
+allow_search = false
+max_columns = 0
+same_column_width = true
+icon_mode = 0
+icon_scale = 2.0
+script = ExtResource("12_0a6lv")
+
+[node name="NPCs" type="ItemList" parent="Main Screen/Toolbar/Palettes"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+mouse_force_pass_scroll_events = false
+theme = ExtResource("2_5dp6f")
+allow_search = false
+max_columns = 0
+same_column_width = true
+icon_mode = 0
+icon_scale = 2.0
+script = ExtResource("13_xp4cg")
+
+[connection signal="file_selected" from="Titlebar/File/New" to="Titlebar/File" method="_on_new_file_selected"]
+[connection signal="newPos" from="Titlebar/Edit/Goto" to="Cursor" method="_on_goto_new_pos"]
+[connection signal="item_selected" from="Main Screen/Toolbar/ChoosePalette" to="Main Screen/Toolbar/Palettes/Triles" method="_on_choose_palette_item_selected"]
+[connection signal="item_selected" from="Main Screen/Toolbar/Palettes/AOs" to="Main Screen/Toolbar/Palettes/AOs" method="_on_item_selected"]
+[connection signal="item_selected" from="Main Screen/Toolbar/Palettes/NPCs" to="Main Screen/Toolbar/Palettes/NPCs" method="_on_item_selected"]

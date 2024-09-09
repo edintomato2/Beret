@@ -1,0 +1,105 @@
+[gd_scene load_steps=10 format=4 uid="uid://rwftaephsry"]
+
+[ext_resource type="Script" path="res://Scripts/Cursor/CamControls.gd" id="1_ia5hm"]
+[ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://Materials/UI.tres" id="2_ws57u"]
+[ext_resource type="Script" path="res://Scripts/Cursor/SelectBox.gd" id="3_smnsw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5nyl"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ip15m"]
+_surfaces = [{
+"aabb": AABB(-0.55, -0.55, -0.55, 1.1, 1.1, 1.10001),
+"format": 34896613377,
+"index_count": 144,
+"index_data": PackedByteArray("AgASABMAAgAAABIAEwAGAAIABAASAAAABAAWABIAFwAGABMABAAXABYABgAXAAQADAAOAA0ADAAPAA4ADQAEAAwABgAOAA8ABgAHAA4ABQAEAA0ABgAFAAcABAAFAAYADAAVAA8ADAAUABUAEQAPABUACAAUAAwACAAQABQAEQAKAA8ACAARABAACgARAAgAAQACAAMAAQAAAAIACQAAAAEACgADAAIACgALAAMACQAIAAAACgAJAAsACAAJAAoAHAAIAAwAAAAYAAQAAAAZABgAHQAIABwAAAAdABkACAAdAAAABAAcAAwABAAYABwAHwAPAAoABgAbAAIABgAaABsAHgAPAB8ABgAeABoADwAeAAYAGwAKAAIAGwAfAAoA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 32,
+"vertex_data": PackedByteArray("AAAAAP7/AABFF0UX/v8AAAAA///+/wAARRe56P7/AAAAAAAAAAAAAEUXRRcAAAAAAAD//wAAAABFF7noAAAAAP//AAD+/wAAuehFF/7/AAD//////v8AALnouej+/wAA//8AAAAAAAC56EUXAAAAALnouegAAAAA/////wAAAAD//0UXuOgAAP//uei46AAAAABFF7joAAAAALnouOgAAP//RRdFFwAA//+56EUXAAAAAEUXRRcAAAAAuehFFwAARRcAAEUXAABFFwAAuOgAAEUX//9FFwAARRf//7joAAC56AAARRcAALnoAAC46AAAuej//0UXAAC56P//uOgAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_351w7"]
+resource_name = "Box_Cube_001"
+_surfaces = [{
+"aabb": AABB(-0.55, -0.55, -0.55, 1.1, 1.1, 1.10001),
+"attribute_data": PackedByteArray("/1////8f/z//XwAA0WXRBf+f////nwAA/9//Py2a0QX/X/+//x//f/9f/7/RZS26/5//v/+f/7//3/9/LZotuv9f/z//X/8//1//P9FlLjr/n/8//5//P/+f/z8tmi46/1//f/9f/3//X/9/0WXQhS2a0IX/n/9//5//f/+f/3/RZdFFLZrRRdFlLfotmi360WUuei2aLnrRZdDFLZrQxdElLnrRJdFFLdouei3a0UUuWi56LlrRRdClLnrQpdFF"),
+"format": 34896613399,
+"index_count": 144,
+"index_data": PackedByteArray("BAAiACMABAAAACIAIwAMAAQACAAiAAAACAAmACIAJwAMACMACAAnACYADAAnAAgAGQAcABsAGQAdABwAGwAKABkADQAcAB0ADQAPABwACwAKABsADQALAA8ACgALAA0AGgAlAB8AGgAkACUAIQAfACUAEgAkABoAEgAgACQAIQAWAB8AEgAhACAAFgAhABIAAwAFAAcAAwACAAUAEwACAAMAFAAHAAUAFAAXAAcAEwARAAIAFAATABcAEQATABQALAAQABgAAQAoAAkAAQApACgALQAQACwAAQAtACkAEAAtAAEACQAsABgACQAoACwALwAeABUADgArAAYADgAqACsALgAeAC8ADgAuACoAHgAuAA4AKwAVAAYAKwAvABUA"),
+"material": SubResource("StandardMaterial3D_i5nyl"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 48,
+"vertex_data": PackedByteArray("AAAAAP7/VNUAAAAA/v//vwAAAAD+//+/RRdFF/7//78AAP///v9U1QAA///+//+/AAD///7///9FF7no/v//vwAAAAAAAFTVAAAAAAAA/78AAAAAAAD//0UXRRcAAP//AAD//wAAVNUAAP//AAD//wAA//8AAP//RRe56AAA/////wAA/v//v///AAD+//+///8AAP7/VNW56EUX/v//v//////+//+///////7//////////v9U1bnouej+//+///8AAAAA/7///wAAAAD/////AAAAAFTVuehFFwAA//+56LnoAAD///////8AAP///////wAA////////AABU1f//RRe46FTV//+56LjoVNUAAEUXuOhU1QAAuei46FTV//9FF0UXVNX//7noRRdU1QAARRdFF1TVAAC56EUXVNVFFwAARRf/v0UXAAC46P+/RRf//0UX//9FF///uOj//7noAABFF/+/uegAALjo/7+56P//RRf//7no//+46P//VNVU1QAA/3///////////1TVVNX//////3//v/////9U1VTVAAD/f/+//7//v/+/VNVU1f+//7//f/+//7//vwAA/3//////qiqqKv///////////3//v6oqqir/////AAD/f/+//7+qKqoq/7//v/+//7//v/+//3//v6oqqiqqKqoqqiqqKlTVVNVU1VTVqiqqKqoqqipU1VTVVNVU1QAA/38AAP9//3//v/9//78AAP9/AAD/f/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ip15m")
+
+[sub_resource type="Animation" id="Animation_e1hvu"]
+resource_name = "CursorBreath"
+loop_mode = 2
+tracks/0/type = "scale_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1.2, 1.2, 1.2, 1, 1, 1, 1, 1)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_slj4o"]
+_data = {
+"CursorBreath": SubResource("Animation_e1hvu")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_twr4l"]
+
+[node name="Cursor" type="Node3D"]
+script = ExtResource("1_ia5hm")
+gotoPos = Vector3(14, 14, 17)
+
+[node name="Box" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
+layers = 512
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_351w7")
+skeleton = NodePath("")
+surface_material_override/0 = ExtResource("2_ws57u")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Box"]
+libraries = {
+"": SubResource("AnimationLibrary_slj4o")
+}
+autoplay = "CursorBreath"
+speed_scale = 1.25
+
+[node name="BoxArea" type="Area3D" parent="Box"]
+transform = Transform3D(0.833333, 0, 0, 0, 0.833333, 0, 0, 0, 0.833333, 0, 0, 0)
+collision_mask = 30
+
+[node name="BoxColl" type="CollisionShape3D" parent="Box/BoxArea"]
+shape = SubResource("BoxShape3D_twr4l")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
+projection = 1
+current = true
+fov = 50.0
+size = 20.0
+
+[node name="Area" type="Area3D" parent="."]
+collision_mask = 31
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area"]
+shape = SubResource("BoxShape3D_twr4l")
+
+[node name="SelectBox" type="Control" parent="."]
+z_index = -1
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 1
+script = ExtResource("3_smnsw")
+borderColor = Color(0.792157, 0.431373, 0, 1)
+fillColor = Color(0.792157, 0.431373, 0, 0.572549)

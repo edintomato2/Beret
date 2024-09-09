@@ -14,11 +14,11 @@ var onObj: Node3D = null
 var selectedObjs = []
 
 # Labels
-@onready var _infoLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Position"
-@onready var _faceLabel: Label = $"VSplitContainer/HBoxContainer/Sidebar/SidebarVertical/Facing"
+@onready var _infoLabel: Label = $"Main Screen/HBoxContainer/Sidebar/SidebarVertical/Position"
+@onready var _faceLabel: Label = $"Main Screen/HBoxContainer/Sidebar/SidebarVertical/Facing"
 
 # Palette control
-@onready var _palettes: Control = $"VSplitContainer/Toolbar/Palettes"
+@onready var _palettes: Control = $"Main Screen/Toolbar/Palettes"
 
 # General nodes
 @onready var _pivot: Node3D = $"Cursor/Pivot"
@@ -60,7 +60,7 @@ func playSound(keyPress):
 			_sfx.stream = soundLeft; _sfx.play()
 		"move_rt", "cam_zoom_in", "cam_2d_enter":
 			_sfx.stream = soundRight; _sfx.play()
-		"fail":
+		"fail", "err":
 			_sfx.stream = soundCancel; _sfx.play()
 		"loaded":
 			_sfx.stream = soundOK;     _sfx.play()

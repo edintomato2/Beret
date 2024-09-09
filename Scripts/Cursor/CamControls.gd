@@ -5,16 +5,13 @@ extends Node3D
 @export var max_zoom := 50.0
 @export var zoom_duration := 0.01
 @export var rotation_duration := 0.2
-@export var gotoPos := Vector3(6, 6, 7)
 
 # Object info
 @onready var _camera = $"Pivot/Camera3D"
+@onready var _boxSelect = $"SelectBox"
 @onready var _pivot = $"Pivot"
 @onready var _area = $"Area"
-@onready var _boxSelect = $"../SelectBox"
 @onready var _box = $"Box"
-@onready var _ui = $"../../UI"
-@onready var _loader = %Loader
 
 # Mouse state
 var _total_pitch = 0.0
@@ -61,9 +58,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	_zoom(1.1)
 	
 	# Key input
-	if Input.is_action_just_pressed("cursor_goto", true): smooth_go_to(gotoPos, 1)
 	if Input.is_action_just_pressed("cursor_delete", true) and !selected.is_empty(): rm_obj(selected)
-	if Input.is_action_just_pressed("cursor_place", true) and selected.is_empty(): pl_obj(_ui.getSelectedItem())
 	if Input.is_action_just_pressed("cam_face_snap", true): _camera_face_snap()
 	
 	_move_cursor()
@@ -281,15 +276,13 @@ func pl_obj(arr: Array) -> void: # Place object based on type at cursor position
 						"Emplacement" : _vec2arr(round(_box.global_position)),
 						"Position" : _vec2arr(_box.global_position),
 						"Phi" : 0}
-			_loader.placeTriles([info])
+			get_tree().call_group("Editor", "placeTriles", [info])
 			
 		"AOs":
 			## TODO: Handle placement of AOs.
 			pass
 		"NPCs":
 			## NPCs can have the same position of a trile or other NPCs, although it may not look pretty.
-			
-			
 			
 			pass
 	
@@ -317,5 +310,10 @@ func _on_edit_random_rotation(state: bool) -> void:
 		
 		pass
 	else:
+		
 		pass
+	pass # Replace with function body.
+
+func _on_goto_new_pos(pos: Vector3) -> void:
+	smooth_go_to(pos, 2)
 	pass # Replace with function body.

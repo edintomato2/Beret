@@ -6,7 +6,7 @@ extends MenuButton
 @onready var _setDirs = $SetPaths
 
 @onready var _ldr = $"/root/Main/Loader"
-@onready var _ui = $"../.."
+@onready var _ui = get_tree().get_root()
 
 @export var loadShortcut: Shortcut
 @export var saveShortcut: Shortcut

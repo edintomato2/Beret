@@ -1,7 +1,7 @@
 extends MenuButton
 
-@onready var _curCam: Camera3D = $"/root/Main/UI/Cursor/Pivot/Camera3D"
-@onready var _curCol: Area3D = $"/root/Main/UI/Cursor/Area"
+@export_node_path("Camera3D") var _curCam
+@export_node_path("Area3D") var _curCol
 
 func _ready():
 	get_popup().id_pressed.connect(_on_pressed)
