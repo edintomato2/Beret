@@ -40,8 +40,4 @@ Usage
 Screenshots
 ---
 > [!WARNING]
-> Since I'm updating this pretty often, screenshots may not necessarily be representative of the latest release!
-
-Regardless, here are a few screenshots.
-![Screenshot of level "OWL"](https://github.com/edinosma/Beret/blob/master/github/beret_screenshot.png?raw=true)
-![Screenshot of custom level "BERET"](https://github.com/edintomato2/Beret/blob/master/github/beret_logo_wall.png?raw=true)
+> To be updated! Beret's going through some major UI changes!
