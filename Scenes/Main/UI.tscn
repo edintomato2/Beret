@@ -281,6 +281,7 @@ Animations = NodePath("Main Screen/HBoxContainer/Sidebar/SidebarVertical/Notific
 
 [node name="Cursor" type="Node3D" parent="."]
 script = ExtResource("14_w7gtq")
+_raycast = NodePath("Pivot/Camera3D/RayCast3D")
 
 [node name="Box" type="MeshInstance3D" parent="Cursor"]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
@@ -294,7 +295,6 @@ surface_material_override/0 = ExtResource("15_y8qhk")
 libraries = {
 "": SubResource("AnimationLibrary_slj4o")
 }
-autoplay = "CursorBreath"
 speed_scale = 1.25
 
 [node name="BoxArea" type="Area3D" parent="Cursor/Box"]
@@ -312,6 +312,13 @@ projection = 1
 current = true
 fov = 50.0
 size = 20.0
+
+[node name="RayCast3D" type="RayCast3D" parent="Cursor/Pivot/Camera3D"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+target_position = Vector3(0, 0, 30)
+collision_mask = 30
+collide_with_areas = true
+debug_shape_custom_color = Color(1, 0, 0, 1)
 
 [node name="Area" type="Area3D" parent="Cursor"]
 collision_mask = 31
@@ -459,6 +466,7 @@ popup/item_7/id = 2
 script = ExtResource("6_dy5t7")
 _curCam = NodePath("../../Cursor/Pivot/Camera3D")
 _curCol = NodePath("../../Cursor/Area")
+_ray = NodePath("../../Cursor/Pivot/Camera3D/RayCast3D")
 
 [node name="Help" type="MenuButton" parent="Titlebar"]
 layout_mode = 2
@@ -534,25 +542,35 @@ text = "Facing: Left"
 horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="Main Screen/HBoxContainer/Sidebar/SidebarVertical"]
+visible = false
 layout_mode = 2
 text = "Selection Info"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Inspector" type="Tree" parent="Main Screen/HBoxContainer/Sidebar/SidebarVertical"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("10_hxjec")
 
 [node name="Notifications" type="Control" parent="Main Screen/HBoxContainer/Sidebar/SidebarVertical"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="Loading" type="ColorRect" parent="Main Screen/HBoxContainer/Sidebar/SidebarVertical/Notifications"]
 layout_mode = 1
-offset_left = 60.0
-offset_top = -120.0
-offset_right = 140.0
-offset_bottom = -40.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -102.0
+offset_right = 40.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
 rotation = 0.785398
 pivot_offset = Vector2(40, 40)
 color = Color(0.847059, 0, 0.0313726, 0)

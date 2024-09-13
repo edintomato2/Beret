@@ -2,6 +2,7 @@ extends MenuButton
 
 @export_node_path("Camera3D") var _curCam
 @export_node_path("Area3D") var _curCol
+@export_node_path("RayCast3D") var _ray
 
 func _ready():
 	get_popup().id_pressed.connect(_on_pressed)
@@ -20,5 +21,6 @@ func _on_pressed(id: int):
 		10 when checkable: maskVal = [6, get_popup().is_item_checked(idx)]
 		42 when checkable: maskVal = [5, get_popup().is_item_checked(idx)]
 		
-	_curCam.set_cull_mask_value(maskVal[0], maskVal[1])
-	_curCol.set_collision_mask_value(maskVal[0], maskVal[1])
+	get_node(_curCam).set_cull_mask_value(maskVal[0], maskVal[1])
+	get_node(_curCol).set_collision_mask_value(maskVal[0], maskVal[1])
+	get_node(_ray).set_collision_mask_value(maskVal[0], maskVal[1])

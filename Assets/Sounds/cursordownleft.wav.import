@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cbxdlh86gx7h1"
-path="res://.godot/imported/cursordownleft.wav-0f983a4ea3251e816877206956f629df.sample"
+path="res://.godot/imported/cursordownleft.wav-81b0ad7633dff47b27535adae1328a60.sample"
 
 [deps]
 
-source_file="res://Sounds/cursordownleft.wav"
-dest_files=["res://.godot/imported/cursordownleft.wav-0f983a4ea3251e816877206956f629df.sample"]
+source_file="res://Assets/Sounds/cursordownleft.wav"
+dest_files=["res://.godot/imported/cursordownleft.wav-81b0ad7633dff47b27535adae1328a60.sample"]
 
 [params]
 

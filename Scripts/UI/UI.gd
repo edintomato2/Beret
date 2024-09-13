@@ -1,11 +1,11 @@
 extends VBoxContainer
 
-var soundDown = preload("res://Sounds/cursordownleft.wav") # Sounds.
-var soundUp = preload("res://Sounds/cursorupright.wav")
-var soundOK = preload("res://Sounds/ok.wav")
-var soundCancel = preload("res://Sounds/cancel.wav")
-var soundLeft = preload("res://Sounds/rotateleft.wav")
-var soundRight = preload("res://Sounds/rotateright.wav")
+var soundDown = preload("res://Assets/Sounds/cursordownleft.wav") # Sounds.
+var soundUp = preload("res://Assets/Sounds/cursorupright.wav")
+var soundOK = preload("res://Assets/Sounds/ok.wav")
+var soundCancel = preload("res://Assets/Sounds/cancel.wav")
+var soundLeft = preload("res://Assets/Sounds/rotateleft.wav")
+var soundRight = preload("res://Assets/Sounds/rotateright.wav")
 
 var posFormat = "[%d, %d, %d], %d" # Position formatting.
 var movement = false

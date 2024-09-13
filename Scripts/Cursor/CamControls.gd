@@ -12,6 +12,7 @@ extends Node3D
 @onready var _pivot = $"Pivot"
 @onready var _area = $"Area"
 @onready var _box = $"Box"
+@export_node_path("RayCast3D") var _raycast
 
 # Mouse state
 var _total_pitch = 0.0
@@ -30,7 +31,7 @@ signal objPicked(object)
 signal selectionChanged(startPos: Vector2, drag: bool)
 
 # Constants
-@export var rayLength := 5
+@export var rayLength := 30
 var hiMat := StandardMaterial3D.new()
 
 # General Vars
@@ -42,6 +43,10 @@ var _selection: Rect2
 func _ready() -> void:
 	hiMat.albedo_color = Color(1, 0.675, 0.416, 1)
 	hiMat.blend_mode = BaseMaterial3D.BLEND_MODE_MUL
+
+func _process(delta: float) -> void:
+	# Update so that the cursor is always in front of an object.	
+	pass
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Camera movement
@@ -84,6 +89,8 @@ func _pan_camera(mouseVel: Vector2) -> void: # Pans the camera around
 	# orientation. We'll ignore the z-axis, and just focus on the x and y.
 	var yDir = _camera.transform.basis.y * mouseVel.y
 	var xDir = _camera.transform.basis.x * -mouseVel.x
+	
+	#get_node(_raycast).global_position = _box.global_position
 	#var _sens = (sensitivity / get_size()) # TODO: The greater the zoom, the slower the panning speed
 	_pivot.translate_object_local((xDir + yDir) * sensitivity)
 
@@ -192,16 +199,16 @@ func _camera_face_snap() -> void: # Snap camera to nearest orthogonal face
 
 func _select() -> void: # Drag to select objects, or just simply click to select
 	## This part is dedicate to drawing the selection box on the screen
-	if Input.is_action_just_pressed("cam_select", true):
+	if Input.is_action_just_pressed("cam_selectMulti", true):
 		drag_start = get_viewport().get_mouse_position()
 		
-	if Input.is_action_pressed("cam_select", true) and drag_start != get_viewport().get_mouse_position():
-		_change_objs_color(selected, true)
+	if Input.is_action_pressed("cam_selectMulti", true) \
+	and drag_start != get_viewport().get_mouse_position():
+		_move_area()
 		_boxSelect.start = drag_start
 		_boxSelect.end = get_viewport().get_mouse_position()
 		_boxSelect.queue_redraw()
 		_boxSelect.visible = true
-		_move_area()
 	else:
 		_boxSelect.visible = false
 		
@@ -226,9 +233,35 @@ func _move_area() -> void: # Move the selection area
 
 func _move_cursor() -> void: # Move the cursor around with mouse cursor
 	## We'll need to move the cursor relative to the viewport and the 3d rotation of the camera.
+	## We'll do this by using a raycast.
+	
+	var ray: RayCast3D = get_node(_raycast)
+	var reach: float = 30
 	var pos = get_viewport().get_mouse_position()
-	var projected = _camera.project_position(pos, 30)
-	_box.global_position = round(projected)
+	
+	ray.global_rotation = _pivot.global_rotation
+	ray.global_position = _camera.project_position(pos, 0)
+	
+	## The ray's target position is relative to the ray's actual positon.
+	## Therefore, we'll have to convert its position to local space.
+	ray.target_position = ray.to_local(_camera.project_position(pos, reach))
+	
+	## We'll also need to move the cursor to be on top of the first object in its path.
+	if ray.is_colliding():
+		var coll = ray.get_collider().get_parent()
+		
+		# TODO: Handle the different types of things we encounter.
+		match coll.get_class():
+			"MeshInstance3D":
+				var aabb: AABB = coll.get_mesh().get_aabb()
+				
+				_box.global_position = coll.global_position
+				
+				## Add a little extra in case one dim is 0.
+				_box.scale = aabb.size + Vector3(0.001, 0.001, 0.001)
+	else:
+		_box.global_position = round(_camera.project_position(pos, reach))
+		_box.scale = Vector3(1, 1, 1)
 
 func _change_objs_color(objects: Array, invert: bool = false) -> void: # When an object is picked, let it start pulsing orange
 	if !objects.is_empty():
@@ -285,13 +318,21 @@ func smooth_go_to(pos: Vector3, speed: float = 1) -> void: # Move the pivot smoo
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_trans(Tween.TRANS_SINE)
 	
-	tween.tween_property( # Set tween
+	_box.global_position = pos
+	
+	tween.parallel().tween_property( # Tween for Cursor
+		self,
+		"global_position",
+		pos,
+		speed,
+	)
+	
+	tween.parallel().tween_property( # Tween for Pivot
 		_pivot,
 		"global_position",
 		pos,
 		speed,
 	)
-	pass
 
 func _on_edit_random_rotation(state: bool) -> void:
 	if state:

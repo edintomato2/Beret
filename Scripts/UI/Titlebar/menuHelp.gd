@@ -3,7 +3,7 @@ extends MenuButton
 @onready var sfx = get_node("../../SFX")
 @onready var winAbout = $About
 
-var soundOK = preload("res://Sounds/ok.wav")
+var soundOK = preload("res://Assets/Sounds/ok.wav")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

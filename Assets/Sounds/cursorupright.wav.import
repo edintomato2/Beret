@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://btxnlvkw1ofcn"
-path="res://.godot/imported/cursorupright.wav-cd8bbe8869e39e141de26d5319136bb9.sample"
+path="res://.godot/imported/cursorupright.wav-fbb24b0650444c598ea3062076b75ce5.sample"
 
 [deps]
 
-source_file="res://Sounds/cursorupright.wav"
-dest_files=["res://.godot/imported/cursorupright.wav-cd8bbe8869e39e141de26d5319136bb9.sample"]
+source_file="res://Assets/Sounds/cursorupright.wav"
+dest_files=["res://.godot/imported/cursorupright.wav-fbb24b0650444c598ea3062076b75ce5.sample"]
 
 [params]
 
