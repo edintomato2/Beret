@@ -1,5 +1,6 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/edintomato2/Beret/master/Assets/logo.png" width="500"/>
+  <br>(logo by zeko)
 </p>
 
 ### Beret, a level editor and viewer for FEZ.
