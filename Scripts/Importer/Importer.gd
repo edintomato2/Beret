@@ -145,7 +145,6 @@ func placeTriles(triles: Array): # Place triles listed in array.
 			call_deferred("add_to_group", "Triles")
 			call_deferred("add_child", trile)
 			
-	print("Loaded triles!")
 	call_deferred("emit_signal", "loaded", "Triles")
 
 func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
@@ -171,7 +170,6 @@ func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 		call_deferred("add_to_group", "AOs")
 		call_deferred("add_child", inst)
 		
-	print("Loaded AOs!")
 	call_deferred("emit_signal", "loaded", "ArtObjects")
 
 func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
@@ -214,12 +212,11 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 		call_deferred("add_to_group", "NPCs")
 		call_deferred("add_child", inst)
 		
-	print("Loaded NPCs!")
 	call_deferred("emit_signal", "loaded", "NonPlayerCharacters")
 
 func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a dict.
 	for i in bkgplns:
-		# TODO: Handle subdirs.
+		# TODO: Handle subdirs, and other paths.
 		var dir = Settings.dict["AssetDirs"][Settings.idx] + "background planes/"
 		var path = dir + bkgplns[i]["TextureName"].to_lower() + ".png"
 		var tex
@@ -229,11 +226,12 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		
 		if !FileAccess.file_exists(path): ## File is most likely a gif and not a png.
 			path = dir + bkgplns[i]["TextureName"].to_lower() + ".gif"
-			tex = GifManager.sprite_frames_from_file(path)
-			if tex == null: ### If we still have a problem... give up!
+			if FileAccess.file_exists(path):
+				tex = GifManager.sprite_frames_from_file(path)
+				mat.albedo_texture = tex.get_frame_texture("gif", 0)
+			else:
 				tex = load("res://Assets/missing.png")
 				mat.albedo_texture = tex
-			else: mat.albedo_texture = tex.get_frame_texture("gif", 0)
 		else:
 			tex = ImageTexture.create_from_image(Image.load_from_file(path))
 			mat.albedo_texture = tex
@@ -279,8 +277,7 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		call_deferred("add_to_group","BackgroundPlanes")
 		
 		call_deferred("add_child", inst)
-		
-	print("Loaded Background Planes!")
+	call_deferred("emit_signal", "loaded", "BackgroundPlanes")
 
 func placeVols(vols: Dictionary): # Place volumes in dict.
 	## First, define how our volumes will look.
@@ -345,7 +342,6 @@ func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own f
 	gomez.play("gif")
 	call_deferred("add_child", gomez)
 	
-	print("Loaded Gomez's Starting Position!")
 	call_deferred("emit_signal", "loaded", "StartingPosition")
 
 func _loadObj(filepath: String, type: int): # Internal object loader.

@@ -3,9 +3,6 @@ extends Window
 # Get nodes
 @export_node_path("LineEdit") var _lineEdit
 
-# Emit signals
-signal newPos(pos: Vector3)
-
 func _on_ok_pressed() -> void:
 	var goto: Array = split(get_node(_lineEdit).text, [" ", ","], false)
 	var pos: Array

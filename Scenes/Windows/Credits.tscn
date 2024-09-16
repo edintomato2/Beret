@@ -58,7 +58,7 @@ theme = SubResource("Theme_5kfuv")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_l0soi")
 text = "Beret - A level editor and viewer for FEZ.
 Version 0.2.0
-edintomato2 and contributors, 2024
+edintomato2 and contributors, 2024. Icon and logo by zeko.
 This project is licensed under GPLv3!
  "
 horizontal_alignment = 1

@@ -4,7 +4,8 @@ extends ItemList
 func _ready() -> void:
 	_ldr.loaded.connect(_on_loader_loaded.bind())
 
-func _on_loader_loaded(_obj) -> void:
+func _on_loader_loaded(obj) -> void:
+	if obj != "fezts": return
 	# Delete on reload.
 	clear()
 	# AOs are 6-sided textures. Just get out the first texture.

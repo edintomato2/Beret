@@ -6,7 +6,7 @@ extends MenuButton
 @onready var _setDirs = $SetPaths
 
 @onready var _ldr = $"/root/Main/Loader"
-@onready var _ui = get_tree().get_root()
+@export_node_path("VBoxContainer") var _ui
 
 @export var loadShortcut: Shortcut
 @export var saveShortcut: Shortcut
@@ -43,5 +43,5 @@ func _on_new_file_selected(path: String):
 	get_popup().set_item_disabled(1, false)
 	_ldr.killChildren() ## Clear out all objects
 	await _ldr.loadTS(cleanPath) ## Wait for the new trileset to load
-	_ui.playSound("loaded")
+	get_node(_ui).playSound("loaded")
 	pass

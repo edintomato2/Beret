@@ -8,15 +8,16 @@
 [node name="Main" type="Node"]
 
 [node name="UI" parent="." instance=ExtResource("1_ds5bi")]
+loaderPath = NodePath("../Loader")
 
-[node name="Loader" type="Node" parent="." groups=["editor"]]
+[node name="Loader" type="Node" parent="."]
 process_thread_group = 2
 process_thread_group_order = 0
 process_thread_messages = 0
 script = ExtResource("2_fl8e3")
 volColor = Color(0.792157, 0.431373, 0, 0.227451)
 
-[node name="Exporter" type="Node" parent="." groups=["editor"]]
+[node name="Exporter" type="Node" parent="."]
 process_thread_group = 2
 process_thread_group_order = 0
 process_thread_messages = 0

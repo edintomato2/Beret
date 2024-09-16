@@ -26,16 +26,12 @@ var _rt = 0
 var _zoomIn  = 0
 var _zoomOut = 0
 
-# Signals
-signal objPicked(object)
-signal selectionChanged(startPos: Vector2, drag: bool)
-
 # Constants
 @export var rayLength := 30
 var hiMat := StandardMaterial3D.new()
 
 # General Vars
-var selected := []
+var selected: Array = []
 var drag_start: Vector2
 var selecting := true
 var _selection: Rect2
@@ -44,8 +40,10 @@ func _ready() -> void:
 	hiMat.albedo_color = Color(1, 0.675, 0.416, 1)
 	hiMat.blend_mode = BaseMaterial3D.BLEND_MODE_MUL
 
-func _process(delta: float) -> void:
-	# Update so that the cursor is always in front of an object.	
+func _process(_delta: float) -> void:
+	## Keep objs under cursor selected
+	var area: Area3D = _box.get_child(1)
+	selected = area.get_overlapping_bodies()
 	pass
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -61,7 +59,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	_zoom(1.1)
 	
 	# Key input
-	if Input.is_action_just_pressed("cursor_delete", true) and !selected.is_empty(): rm_obj(selected)
 	if Input.is_action_just_pressed("cam_face_snap", true): _camera_face_snap()
 	
 	_select()
@@ -217,7 +214,7 @@ func _move_area() -> void: # Move the selection area
 		### Turn both 2D positions into actual 3D coordinates in accordance to the camera's basis,
 		var camBasis: Transform3D = _camera.global_transform
 		var start: Vector3 = _camera.project_position(_selection.position, 30)
-		var end: Vector3 = _camera.project_position(_selection.end, 30)
+		var end: Vector3 = _camera.project_position(_selection.end, rayLength)
 		
 		### move the area to the midpoint between both positions, and change the area's rotation,
 		_area.global_rotation = _camera.global_rotation
@@ -236,7 +233,6 @@ func _move_cursor() -> void: # Move the cursor around with mouse cursor
 	## We'll do this by using a raycast.
 	
 	var ray: RayCast3D = get_node(_raycast)
-	var reach: float = 30
 	var pos = get_viewport().get_mouse_position()
 	
 	ray.global_rotation = _pivot.global_rotation
@@ -244,7 +240,7 @@ func _move_cursor() -> void: # Move the cursor around with mouse cursor
 	
 	## The ray's target position is relative to the ray's actual positon.
 	## Therefore, we'll have to convert its position to local space.
-	ray.target_position = ray.to_local(_camera.project_position(pos, reach))
+	ray.target_position = ray.to_local(_camera.project_position(pos, 1000))
 	
 	## We'll also need to move the cursor to be on top of the first object in its path.
 	if ray.is_colliding():
@@ -256,11 +252,13 @@ func _move_cursor() -> void: # Move the cursor around with mouse cursor
 				var aabb: AABB = coll.get_mesh().get_aabb()
 				
 				_box.global_position = coll.global_position
+				_box.rotation = coll.rotation
 				
 				## Add a little extra in case one dim is 0.
 				_box.scale = aabb.size + Vector3(0.001, 0.001, 0.001)
 	else:
-		_box.global_position = round(_camera.project_position(pos, reach))
+		_box.rotation_degrees = Vector3(0, 0, 0)
+		_box.global_position = round(_camera.project_position(pos, rayLength))
 		_box.scale = Vector3(1, 1, 1)
 
 func _change_objs_color(objects: Array, invert: bool = false) -> void: # When an object is picked, let it start pulsing orange
@@ -271,43 +269,6 @@ func _change_objs_color(objects: Array, invert: bool = false) -> void: # When an
 
 func _vec2arr(vector: Vector3) -> Array: # Convert vectors into arrays
 	return [vector.x, vector.y, vector.z]
-
-func rm_obj(arr: Array) -> void: # Delete objects
-	for o in arr:
-		if o.get_parent().visible:
-			o.get_parent().visible = false ## To allow undoing
-	selected = []
-
-func pl_obj(arr: Array) -> void: # Place object based on type at cursor position
-	var palette: ItemList = arr[0]
-	var item: PackedInt32Array = arr[1]
-	
-	if item.size() == 0: return ## If we don't have an item selected, don't do anything!
-	
-	var type = palette.get_name()
-	var id = palette.get_item_metadata(item[0])
-	
-	## Handle different types of items to place
-	match type:
-		"Triles":
-			## If there's something at the current position, remove it then place the trile.
-			if !selected.is_empty(): rm_obj(selected)
-			
-			var info: Dictionary = {"Id" : id,
-						"Emplacement" : _vec2arr(round(_box.global_position)),
-						"Position" : _vec2arr(_box.global_position),
-						"Phi" : 0}
-			get_tree().call_group("Editor", "placeTriles", [info])
-			
-		"AOs":
-			## TODO: Handle placement of AOs.
-			pass
-		"NPCs":
-			## NPCs can have the same position of a trile or other NPCs, although it may not look pretty.
-			
-			pass
-	
-	pass
 
 func _on_select_box_rect_changed(rect: Rect2) -> void:
 	_selection = rect

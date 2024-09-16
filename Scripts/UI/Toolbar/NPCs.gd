@@ -5,6 +5,7 @@ func _ready() -> void:
 	_ldr.loaded.connect(_on_loader_loaded.bind())
 
 func _on_loader_loaded(_obj) -> void:
+	if _obj != "fezts": return
 	clear()
 	# NPCs character animations usually have an "idle" animation. However,
 	# a select few NPCs don't. If we aren't able to find one, let's use whatever the first
