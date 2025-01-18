@@ -17,7 +17,7 @@ func _on_loader_loaded(_obj) -> void:
 	while filename != "":
 		if dir.current_is_dir():
 			# Get NPC name from dir name, set idle animation
-			var files = DirAccess.get_files_at(str(directory + filename))
+			var files = Array(DirAccess.get_files_at(str(directory + filename)))
 			
 			var delIdx = files.find("metadata.feznpc.json")
 			if delIdx != -1: files.remove_at(delIdx)
@@ -31,12 +31,25 @@ func _on_loader_loaded(_obj) -> void:
 			var gif = GifManager.sprite_frames_from_file(directory + filename + "/" + files[idx])
 			var tex = gif.get_frame_texture("gif", 0) # Get first frame of anim
 			var iconIdx = add_icon_item(tex, true)
+
+			# Convert filenames to actions, structured like FEZRepacker's export
+			var actions: Dictionary = {"Actions": null}
+			for i in files.size():
+				var basename: String = files[i].get_basename().capitalize()
+				actions[basename] = {
+					"AnimationName" = basename,
+					"SoundName" = null
+					}
 			
-			set_item_metadata(iconIdx, filename) # Set type of NPC as metadata.
+			# Metadata dictionary (metadict!)
+			# - NPC type
+			# - Available animations
+			var metadict: Dictionary = {
+				"Name" : filename,
+				"Actions" : actions
+			}
+			
+			set_item_metadata(iconIdx, metadict)
 			set_item_tooltip(iconIdx, filename.capitalize()) # Set name as tooltip.
 			
 		filename = dir.get_next()
-
-func _on_item_selected(index):
-	print(get_item_metadata(index))
-	pass # Replace with function body.

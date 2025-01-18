@@ -68,10 +68,9 @@ func pl_obj() -> void: # Place object at position
 	# Adjust how things are placed based on placement mode
 	match edit_mode:
 		4: ## Build mode
-			## If there's something at the current pos, go towards the camera 1 unit then place the obj there.
-			var cur_pos = box.global_position
-			var pivot = cursor.get_child(1)
-			var cam = pivot.get_child(0)
+			## If there's something at the current pos,
+			## offset the cursor towards the camera, then place there.
+			if !cursor.selected.is_empty(): return
 		5: ## Remove mode
 			## If there's something at the current pos, remove it.
 			rm_obj(cursor.selected)
@@ -85,21 +84,40 @@ func pl_obj() -> void: # Place object at position
 	if randRot: phi = randi_range(0, 3)
 	
 	# Now we match the type of obj we want to place
+	## Before placing, wait a small amount of time before letting the player place again.
+	await get_tree().create_timer(0.1).timeout
+	
 	match type:
 		"Triles":
 			var info: Dictionary = {"Id" : id,
 						"Emplacement" : _vec2arr(round(pos)),
-						"Position" : _vec2arr(pos),
-						"Phi" : phi}
+						"Position" : _vec2arr(round(pos)),
+						"Phi" : phi
+						}
 						
 			ldr.placeTriles([info])
-		"AOs": ## TODO: Handle placement of AOs.
+		"AOs": ## Handle placement of AOs.
+			## AOs can inhabit the same space as triles, especially for those used as collision.
+			var info: Dictionary = {"Name": id,
+						"Rotation": [1, 0, 0, 0],
+						"Scale": [1, 1, 1],
+						"Position": _vec2arr(round(pos))
+						}
+			ldr.placeAOs({0: info})
 			
-			pass
-		"NPCs": ## TODO: Handle placement of NPCs. Will also need script editing.
-			## NPCs can have the same position of a trile or other NPCs, although it may not look pretty.
+		"NPCs": ## Handle placement of NPCs.
+			### TODO: Script editing.
+			## NPCs can have the same position of a trile or other NPCs,
+			## although it may not look pretty in Beret. Maybe we can find a better way
+			## to show two things inhabiting the same space?
 			
-			pass
+			var info: Dictionary = {
+				"Actions": id["Actions"],
+				"Name": id["Name"],
+				"Position": _vec2arr(round(pos))
+				}
+			
+			ldr.placeNPCs({0: info})
 
 func rm_obj(arr: Array) -> void: # Remove objects at cursor position
 	for o in arr:
@@ -132,7 +150,7 @@ func _process(_delta):
 	var posStr = posFormat % [pos.x, pos.y, pos.z, rot.y] 
 	_infoLabel.set_text(posStr)
 
-func playSound(keyPress):
+func playSound(keyPress: String):
 	match keyPress:
 		"move_up", "move_right", "move_up_layer":
 			_sfx.stream = soundUp; _sfx.play()
@@ -159,11 +177,9 @@ func get_active_palette():
 			return child
 	return null
 
-func _vec2arr(vector: Vector3):
-	return [vector.x, vector.y, vector.z]
+func _vec2arr(vector: Vector3): return [vector.x, vector.y, vector.z]
 
-func _update_onObj(body: Node3D) -> void:
-	onObj = body
+func _update_onObj(body: Node3D) -> void: onObj = body
 
 func play_anim(child: int, type: int) -> void:
 	var anim: AnimationPlayer = notifs.get_child(0)

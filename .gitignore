@@ -3,3 +3,4 @@
 test/
 *.dll
 *.tmp
+.vscode/

@@ -27,7 +27,7 @@ var _zoomIn  = 0
 var _zoomOut = 0
 
 # Constants
-@export var rayLength := 30
+@export var reach := 30
 var hiMat := StandardMaterial3D.new()
 
 # General Vars
@@ -35,6 +35,8 @@ var selected: Array = []
 var drag_start: Vector2
 var selecting := true
 var _selection: Rect2
+
+var edit_mode: int = 4 # Edit mode (build is default)
 
 func _ready() -> void:
 	hiMat.albedo_color = Color(1, 0.675, 0.416, 1)
@@ -51,16 +53,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		if Input.is_action_pressed("cam_pan", true): _pan_camera(event.relative)
 		elif Input.is_action_pressed("cam_orbit", true):
-			_move_cursor()
+			_cursor_drive_control()
 			_3dOrbit(event.relative)
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-			_move_cursor()
-	_zoom(1.1)
 	
 	# Key input
 	if Input.is_action_just_pressed("cam_face_snap", true): _camera_face_snap()
 	
+	_zoom(1.1)
+	_cursor_mouse_control()
 	_select()
 	_flip()
 	_ltrt()
@@ -214,7 +216,7 @@ func _move_area() -> void: # Move the selection area
 		### Turn both 2D positions into actual 3D coordinates in accordance to the camera's basis,
 		var camBasis: Transform3D = _camera.global_transform
 		var start: Vector3 = _camera.project_position(_selection.position, 30)
-		var end: Vector3 = _camera.project_position(_selection.end, rayLength)
+		var end: Vector3 = _camera.project_position(_selection.end, reach)
 		
 		### move the area to the midpoint between both positions, and change the area's rotation,
 		_area.global_rotation = _camera.global_rotation
@@ -223,12 +225,12 @@ func _move_area() -> void: # Move the selection area
 		### then calculate the new size of the selection area.
 		### Add a very small amount to prevent Godot from complaining about a dimension equal to 0.
 		_area.scale = abs((end - start) * camBasis.basis) + Vector3(0.000001, 0.000001, 0.000001)
-		_area.scale.z = rayLength
+		_area.scale.z = reach
 		
 		selected = _area.get_overlapping_bodies()
 		_change_objs_color(selected)
 
-func _move_cursor() -> void: # Move the cursor around with mouse cursor
+func _cursor_mouse_control() -> void: # Move the cursor around with mouse cursor
 	## We'll need to move the cursor relative to the viewport and the 3d rotation of the camera.
 	## We'll do this by using a raycast.
 	
@@ -244,6 +246,7 @@ func _move_cursor() -> void: # Move the cursor around with mouse cursor
 	
 	## We'll also need to move the cursor to be on top of the first object in its path.
 	if ray.is_colliding():
+		var offset = round(_camera.global_basis * Vector3.BACK) if edit_mode == 4 else Vector3.ZERO
 		var coll = ray.get_collider().get_parent()
 		
 		# TODO: Handle the different types of things we encounter.
@@ -251,15 +254,30 @@ func _move_cursor() -> void: # Move the cursor around with mouse cursor
 			"MeshInstance3D":
 				var aabb: AABB = coll.get_mesh().get_aabb()
 				
-				_box.global_position = coll.global_position
+				_box.global_position = coll.global_position + offset
 				_box.rotation = coll.rotation
 				
 				## Add a little extra in case one dim is 0.
 				_box.scale = aabb.size + Vector3(0.001, 0.001, 0.001)
 	else:
 		_box.rotation_degrees = Vector3(0, 0, 0)
-		_box.global_position = round(_camera.project_position(pos, rayLength))
+		_box.global_position = round(_camera.project_position(pos, reach))
 		_box.scale = Vector3(1, 1, 1)
+
+func _cursor_drive_control() -> void: # Let the user drive around the cursor if we're being orbited around
+	## Godot moment.
+	var right = 1 if Input.is_action_pressed("cursor_right", true) else 0
+	var left = 1 if Input.is_action_pressed("cursor_left", true) else 0
+	
+	var up = 1 if Input.is_action_pressed("cursor_up", true) else 0
+	var down = 1 if Input.is_action_pressed("cursor_down", true) else 0
+	
+	var back = 1 if Input.is_action_pressed("cursor_backwards", true) else 0
+	var front = 1 if Input.is_action_pressed("cursor_forwards", true) else 0
+
+	var moveTo := Vector3((right - left), (back - front), (down - up)) # x, y, z
+	
+	smooth_go_to(_pivot.global_position + (_pivot.transform.basis * moveTo), 0.2)
 
 func _change_objs_color(objects: Array, invert: bool = false) -> void: # When an object is picked, let it start pulsing orange
 	if !objects.is_empty():
@@ -304,6 +322,6 @@ func _on_edit_random_rotation(state: bool) -> void:
 		pass
 	pass # Replace with function body.
 
-func _on_goto_new_pos(pos: Vector3) -> void:
-	smooth_go_to(pos, 2)
-	pass # Replace with function body.
+func _on_goto_new_pos(pos: Vector3) -> void: smooth_go_to(pos, 2)
+
+func _on_edit_edit_mode(mode: int) -> void: edit_mode = mode

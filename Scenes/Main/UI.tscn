@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=4 uid="uid://cocyah7e1sj5q"]
+[gd_scene load_steps=55 format=4 uid="uid://cocyah7e1sj5q"]
 
 [ext_resource type="Script" path="res://Scripts/UI/UI.gd" id="1_nneru"]
 [ext_resource type="Theme" uid="uid://5wxvr808qkyw" path="res://Defaults/default.tres" id="2_5dp6f"]
@@ -123,6 +123,27 @@ keycode = 71
 
 [sub_resource type="Shortcut" id="Shortcut_i47l8"]
 events = [SubResource("InputEventKey_cchnp")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_c32sm"]
+device = -1
+keycode = 66
+unicode = 98
+
+[sub_resource type="Shortcut" id="Shortcut_qtcut"]
+events = [SubResource("InputEventKey_c32sm")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_c5pla"]
+device = -1
+keycode = 88
+unicode = 120
+
+[sub_resource type="Shortcut" id="Shortcut_8keeu"]
+events = [SubResource("InputEventKey_c5pla")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_n557e"]
+
+[sub_resource type="Shortcut" id="Shortcut_enk0r"]
+events = [SubResource("InputEventKey_n557e")]
 
 [sub_resource type="InputEventKey" id="InputEventKey_2jet3"]
 device = -1
@@ -438,6 +459,9 @@ popup/item_6/checkable = 2
 popup/item_6/id = 6
 script = ExtResource("5_yecpo")
 _GoToShortcut = SubResource("Shortcut_i47l8")
+_buildShortcut = SubResource("Shortcut_qtcut")
+_removeShortcut = SubResource("Shortcut_8keeu")
+_replaceShortcut = SubResource("Shortcut_enk0r")
 
 [node name="Goto" parent="Titlebar/Edit" instance=ExtResource("9_afh2a")]
 visible = false
@@ -679,7 +703,11 @@ script = ExtResource("13_xp4cg")
 [connection signal="silence" from="." to="Main Screen/HBoxContainer/EditorLog" method="_on_ui_silence"]
 [connection signal="file_selected" from="Titlebar/File/New" to="Titlebar/File" method="_on_new_file_selected"]
 [connection signal="edit_mode" from="Titlebar/Edit" to="." method="_on_edit_edit_mode"]
+[connection signal="edit_mode" from="Titlebar/Edit" to="Cursor" method="_on_edit_edit_mode"]
+[connection signal="edit_mode" from="Titlebar/Edit" to="Main Screen/HBoxContainer/EditorLog" method="_on_edit_edit_mode"]
 [connection signal="rand_rot" from="Titlebar/Edit" to="." method="_on_edit_rand_rot"]
+[connection signal="new_pos" from="Titlebar/Edit/Goto" to="Cursor" method="_on_goto_new_pos"]
+[connection signal="finished" from="Main Screen/HBoxContainer/EditorLog" to="Main Screen/HBoxContainer/EditorLog" method="_on_finished"]
 [connection signal="item_selected" from="Main Screen/Toolbar/ChoosePalette" to="Main Screen/Toolbar/Palettes/Triles" method="_on_choose_palette_item_selected"]
 [connection signal="item_selected" from="Main Screen/Toolbar/Palettes/AOs" to="Main Screen/Toolbar/Palettes/AOs" method="_on_item_selected"]
 [connection signal="item_selected" from="Main Screen/Toolbar/Palettes/NPCs" to="Main Screen/Toolbar/Palettes/NPCs" method="_on_item_selected"]

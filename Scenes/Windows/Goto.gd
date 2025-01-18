@@ -3,6 +3,9 @@ extends Window
 # Get nodes
 @export_node_path("LineEdit") var _lineEdit
 
+# Signals
+signal new_pos(pos: Vector3)
+
 func _on_ok_pressed() -> void:
 	var goto: Array = split(get_node(_lineEdit).text, [" ", ","], false)
 	var pos: Array
@@ -14,7 +17,7 @@ func _on_ok_pressed() -> void:
 	
 	if pos.size() <= 2: return
 	
-	emit_signal("newPos", Vector3(pos[0], pos[1], pos[2]))
+	emit_signal("new_pos", Vector3(pos[0], pos[1], pos[2]))
 	emit_signal("close_requested")
 
 func _input(event: InputEvent) -> void:

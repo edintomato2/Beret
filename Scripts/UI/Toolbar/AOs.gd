@@ -19,6 +19,7 @@ func _on_loader_loaded(obj) -> void:
 			var img = Image.load_from_file(directory + filename) # Load texture
 			var tex = ImageTexture.create_from_image(img)
 			var atlas = AtlasTexture.new()
+			var aoname: String = filename.to_upper().get_basename().get_basename()
 			
 			atlas.atlas = tex
 			atlas.region = Rect2(0, 0, img.get_width() / 6, img.get_height())
@@ -26,10 +27,7 @@ func _on_loader_loaded(obj) -> void:
 			
 			var iconIdx = add_icon_item(atlas, true)
 			
-			set_item_tooltip(iconIdx, filename.capitalize()) # Set name as tooltip.
+			set_item_tooltip(iconIdx, aoname) # Set name as tooltip.
+			set_item_metadata(iconIdx, aoname)
 			
 		filename = dir.get_next()
-
-func _on_item_selected(index):
-	print(get_item_metadata(index))
-	pass # Replace with function body.

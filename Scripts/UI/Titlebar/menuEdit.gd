@@ -8,16 +8,27 @@ signal rand_rot(state: bool)
 # Shortcuts
 @export_category("Shortcuts")
 @export var _GoToShortcut: Shortcut
+@export var _buildShortcut: Shortcut
+@export var _removeShortcut: Shortcut
+@export var _replaceShortcut: Shortcut
 
 func _ready() -> void:
 	_ldr.loaded.connect(_on_loader_loaded)
 	get_popup().id_pressed.connect(_on_edit_menu_pressed)
+	
+	# Set shortcuts
 	get_popup().set_item_shortcut(0, _GoToShortcut, true)
+	get_popup().set_item_shortcut(4, _buildShortcut, true)
+	get_popup().set_item_shortcut(5, _removeShortcut, true)
+	get_popup().set_item_shortcut(6, _replaceShortcut, true)
 
 func _on_edit_menu_pressed(id: int) -> void:
 	match id:
 		0: OS.shell_open(_curLvl)
-		1: emit_signal("rand_rot", get_popup().is_item_checked(1))
+		1:
+			var val: bool = get_popup().is_item_checked(1)
+			get_popup().set_item_checked(1, !val)
+			emit_signal("rand_rot", !val)
 		2: $Goto.visible = true
 		4, 5, 6: _edit_modes(id)
 

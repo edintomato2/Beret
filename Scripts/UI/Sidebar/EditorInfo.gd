@@ -1,17 +1,9 @@
 extends RichTextLabel
 
 @export_node_path() var loaderPath
-var _timer = Timer.new()
 var silent: bool = false
 
-func _ready() -> void: # Add timer as child to this node. Make it so it doesn't constantly run.
-	add_child(_timer)
-	_timer.one_shot = true
-	_textChanged()
-
 func _on_ui_loader_relay(obj: String, amt: Variant) -> void:
-	modulate = Color.WHITE
-	
 	# Reset silence state if we're loading a new level
 	if silent == true and obj == "fezlvl": silent = false
 	if silent == true: return
@@ -31,18 +23,26 @@ func _on_ui_loader_relay(obj: String, amt: Variant) -> void:
 		"BackgroundPlanes":
 			print("Loaded Background Planes!")
 			add_text("Loaded " + str(amt) + " background planes.\n")
+		"Volumes":
+			print("Loaded Volumes!")
+			add_text("Loaded " + str(amt) + " volumes.\n")
 
-func _textChanged() -> void: # Wait 3 seconds before fading out text. Fading out takes 5 seconds.
-	_timer.start(3)
-	await _timer.timeout
+func _on_exporter_level_saved(filename: String) -> void: add_text("Saved level: " + filename + "\n")
+
+func _on_ui_silence(state: bool) -> void: silent = state
+
+func _on_edit_edit_mode(mode: int) -> void:
+	match mode:
+		4: add_text("Build mode\n")
+		5: add_text("Remove mode\n")
+		6: add_text("Replace mode\n")
+
+func _on_finished() -> void: # Leave text up for 3 seconds, then fade and clear.
+	await get_tree().create_timer(3).timeout
 	
 	var tween = create_tween()
 	tween.tween_property(self, "modulate", Color.TRANSPARENT, 5)
 	await tween.finished
-	self.clear()
-
-func _on_exporter_level_saved(filename: String) -> void:
-	add_text("Saved level: " + filename + "\n")
-	_textChanged()
-
-func _on_ui_silence(state: bool) -> void: silent = state
+	
+	clear()
+	modulate = Color.WHITE

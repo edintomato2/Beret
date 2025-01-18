@@ -107,6 +107,7 @@ func placeTriles(triles: Array): # Place triles listed in array.
 			
 			## We have everything we need now. Let's set up the trile.
 			var trile = MeshInstance3D.new()
+			trile.visible = false
 			trile.mesh = fezts[0].get(id)
 			
 			### Handle special cases where a trile mesh doesn't exist (usually collisions)
@@ -144,6 +145,7 @@ func placeTriles(triles: Array): # Place triles listed in array.
 			
 			call_deferred("add_to_group", "Triles")
 			call_deferred("add_child", trile)
+			trile.visible = true
 			
 	call_deferred("emit_signal", "loaded", "Triles")
 
@@ -153,6 +155,7 @@ func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 		var dir = Settings.dict["AssetDirs"][Settings.idx] + "art objects/"
 		var path = dir + aos[i]["Name"].to_lower() + ".fezao.json"
 		var inst = _loadObj(path, 4)
+		inst.visible = false
 		
 		## Set instance properties.
 		inst.quaternion = Quaternion(aos[i]["Rotation"][0], aos[i]["Rotation"][1],\
@@ -169,6 +172,7 @@ func placeAOs(aos: Dictionary): # Place AOs listed in dictionary.
 		
 		call_deferred("add_to_group", "AOs")
 		call_deferred("add_child", inst)
+		inst.visible = true
 		
 	call_deferred("emit_signal", "loaded", "ArtObjects")
 
@@ -182,13 +186,14 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 		
 		## Set up instance and texture.
 		var inst = AnimatedSprite3D.new()
+		inst.visible = false
 		
 		var tex = GifManager.sprite_frames_from_file(dir + npcs[i]["Name"].to_lower() + "/" + filename)
 		
 		inst.billboard     = BaseMaterial3D.BILLBOARD_FIXED_Y
 		inst.sprite_frames = tex
 		inst.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		inst.scale = Vector3(5, 5, 5) ### TODO: This may need adjustment.
+		inst.scale = Vector3(5, 5, 5) ### TODO: This may need adjustment, depending on the NPC.
 		
 		## Set up collisions for Cursor
 		var statBod = StaticBody3D.new()
@@ -211,6 +216,7 @@ func placeNPCs(npcs: Dictionary): # Place NPCs listed in a dictionary.
 		
 		call_deferred("add_to_group", "NPCs")
 		call_deferred("add_child", inst)
+		inst.visible = true
 		
 	call_deferred("emit_signal", "loaded", "NonPlayerCharacters")
 
@@ -221,6 +227,7 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		var path = dir + bkgplns[i]["TextureName"].to_lower() + ".png"
 		var tex
 		var inst := MeshInstance3D.new()
+		inst.visible = false
 		inst.mesh = PlaneMesh.new()
 		var mat = StandardMaterial3D.new()
 		
@@ -277,6 +284,7 @@ func placeBkgPlanes(bkgplns: Dictionary): # Place background planes listed in a 
 		call_deferred("add_to_group","BackgroundPlanes")
 		
 		call_deferred("add_child", inst)
+		inst.visible = true
 	call_deferred("emit_signal", "loaded", "BackgroundPlanes")
 
 func placeVols(vols: Dictionary): # Place volumes in dict.
@@ -307,7 +315,7 @@ func placeVols(vols: Dictionary): # Place volumes in dict.
 		call_deferred("add_to_group","Volumes")
 		
 		call_deferred("add_child", volModel)
-	pass
+	call_deferred("emit_signal", "loaded", "Volumes")
 
 func placeStart(dict: Dictionary): # Gomez is special, so he gets his very-own function.
 	## Set up his mesh and material.
