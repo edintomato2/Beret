@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://q6hiwea1m8ok"]
+
+[ext_resource type="PackedScene" uid="uid://cocyah7e1sj5q" path="res://ui/UI.tscn" id="1_u8akb"]
+[ext_resource type="Script" uid="uid://dxyvkhobbfet7" path="res://main/save-load/Importer.gd" id="2_ixvwh"]
+[ext_resource type="Script" uid="uid://cstrs0h42ssb5" path="res://main/save-load/Exporter.gd" id="3_enypl"]
+[ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://main/DefaultEnv.tres" id="4_u8god"]
+
+[node name="Main" type="Node"]
+
+[node name="UI" parent="." instance=ExtResource("1_u8akb")]
+loaderPath = NodePath("../Loader")
+
+[node name="Loader" type="Node" parent="."]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 0
+script = ExtResource("2_ixvwh")
+volColor = Color(0.792157, 0.431373, 0, 0.227451)
+
+[node name="Exporter" type="Node" parent="."]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 0
+script = ExtResource("3_enypl")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("4_u8god")
+
+[connection signal="loaded" from="Loader" to="UI" method="_on_loader_loaded"]

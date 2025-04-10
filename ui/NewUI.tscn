@@ -1,0 +1,63 @@
+[gd_scene load_steps=4 format=3 uid="uid://dvki037st0vqu"]
+
+[ext_resource type="Script" uid="uid://ccrpvfy3t1k4j" path="res://ui/new_ui.gd" id="1_lovj8"]
+[ext_resource type="PackedScene" uid="uid://da143myvimsgb" path="res://ui/cursor/Box.tscn" id="2_72b8f"]
+[ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://main/DefaultEnv.tres" id="3_3gi0v"]
+
+[node name="NewUI" type="Node"]
+script = ExtResource("1_lovj8")
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Topbar" type="HBoxContainer" parent="UI"]
+layout_mode = 0
+offset_right = 221.0
+offset_bottom = 31.0
+
+[node name="Load File" type="Button" parent="UI/Topbar"]
+layout_mode = 2
+text = "Open FEZLVL"
+
+[node name="Close File" type="Button" parent="UI/Topbar"]
+layout_mode = 2
+text = "Close FEZLVL"
+
+[node name="Popups" type="Node" parent="UI"]
+
+[node name="Load Diag" type="FileDialog" parent="UI/Popups"]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 1
+size = Vector2i(454, 400)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
+use_native_dialog = true
+
+[node name="Box" parent="." instance=ExtResource("2_72b8f")]
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="Camera" type="Camera3D" parent="Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+projection = 2
+current = true
+near = 1.0
+
+[node name="Background" type="WorldEnvironment" parent="."]
+environment = ExtResource("3_3gi0v")
+
+[node name="Objects" type="Node" parent="."]
+
+[connection signal="pressed" from="UI/Topbar/Load File" to="." method="_ui_load_pressed"]
+[connection signal="pressed" from="UI/Topbar/Close File" to="." method="_ui_close_file"]
+[connection signal="file_selected" from="UI/Popups/Load Diag" to="." method="_ui_load_file"]
