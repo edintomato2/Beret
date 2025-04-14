@@ -1,8 +1,3 @@
-extends Object
-class_name fezlvl_load
-
-const vol_color = Color(1, 0.270588, 0, 0.4)
-
 # Import all objects in a FEZLVL file.
 ## Known objects:
 ## - "trile sets": We have an object file with a bunch of triles all at 0,0,0. Associated .png (texture), .apng (emissive), and .json (descriptor)
@@ -11,6 +6,12 @@ const vol_color = Color(1, 0.270588, 0, 0.4)
 ## - "music": Level music. Not touching this, we're a level editor.
 ## - NPCs: where they start, where they move, what they say. Textures in "character animations".
 ## - Scripts: We need to do a lot of work on how scripting works in FEZ and what can be changed. For now, I'm leaving it out!
+
+extends Object
+class_name fezlvl_load
+
+const vol_color = Color(1, 0.270588, 0, 0.4)
+const click_script = preload("res://main/new_saveload/clickable_objects.gd")
 
 static func load_fezlvl(path: String) -> Variant: # Read fezlvl.json, return the JSON if valid.
 	var readLvl = JSON.new()
@@ -77,6 +78,7 @@ static func load_triles(triles: Array, trileset: Array) -> Array: # Load trile(s
 			colBod.shape = colShape
 			statBod.position = cent
 			
+			statBod.set_script(click_script)
 			statBod.collision_layer = 2
 			statBod.call_deferred("add_child", colBod)
 			trile.add_child(statBod)
@@ -145,6 +147,7 @@ static func load_npcs(npcs: Dictionary) -> Array: # Load NPCs as AnimatedSprite3
 		var colBod = CollisionShape3D.new()
 		var colShape = SphereShape3D.new()
 		
+		statBod.set_script(click_script)
 		statBod.collision_layer = 8
 		colShape.radius = 0.05
 		colBod.shape = colShape
@@ -207,6 +210,7 @@ static func load_bkgplns(bkgplns: Dictionary) -> Array: # Load background planes
 		colShape.size = ab.size
 		colBod.shape = colShape
 		
+		statBod.set_script(click_script)
 		statBod.collision_layer = 16
 		statBod.position = cent
 		
@@ -229,6 +233,7 @@ static func load_bkgplns(bkgplns: Dictionary) -> Array: # Load background planes
 	return loaded_bkgplns
 
 static func load_vols(vols: Dictionary) -> Array: # Load volumes as Node3Ds.
+	# TODO: Add support for clicking these things.
 	var loaded_volumes := []
 	
 	## First, define how our volumes will look.
@@ -256,6 +261,21 @@ static func load_vols(vols: Dictionary) -> Array: # Load volumes as Node3Ds.
 		volModel.set_meta("Type", "Volume")
 		volModel.set_meta("Id", v)
 		volModel.add_to_group("vol")
+		
+		## Add mouse collision
+		var statBod = StaticBody3D.new()
+		var colBod = CollisionShape3D.new()
+		var colShape = BoxShape3D.new()
+		colBod.shape = colShape
+		
+		statBod.scale = volModel.scale
+		
+		statBod.set_script(click_script)
+		statBod.collision_layer = 2
+		statBod.call_deferred("add_child", colBod)
+		
+		volModel.add_child(statBod)
+		
 		loaded_volumes.append(volModel)
 	return loaded_volumes
 
@@ -278,6 +298,7 @@ static func load_gomez(dict: Dictionary) -> Array: # Load in player start as Gom
 	colShape.radius = 0.05
 	colBod.shape = colShape
 	
+	statBod.set_script(click_script)
 	statBod.call_deferred("add_child", colBod)
 	gomez.add_child(statBod)
 	
@@ -325,6 +346,7 @@ static func _loadObj(filepath: String, type: int): # Internal object loader.
 	colShape.size = ab.size
 	colBod.shape = colShape
 	
+	statBod.set_script(click_script)
 	statBod.collision_layer = type
 	statBod.position = cent
 	

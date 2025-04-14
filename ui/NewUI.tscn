@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://dvki037st0vqu"]
+[gd_scene load_steps=3 format=3 uid="uid://dvki037st0vqu"]
 
 [ext_resource type="Script" uid="uid://ccrpvfy3t1k4j" path="res://ui/new_ui.gd" id="1_lovj8"]
-[ext_resource type="PackedScene" uid="uid://da143myvimsgb" path="res://ui/cursor/Box.tscn" id="2_72b8f"]
 [ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://main/DefaultEnv.tres" id="3_3gi0v"]
 
 [node name="NewUI" type="Node"]
@@ -29,6 +28,10 @@ text = "Open FEZLVL"
 layout_mode = 2
 text = "Close FEZLVL"
 
+[node name="Quit Editor" type="Button" parent="UI/Topbar"]
+layout_mode = 2
+text = "Quit"
+
 [node name="Popups" type="Node" parent="UI"]
 
 [node name="Load Diag" type="FileDialog" parent="UI/Popups"]
@@ -43,15 +46,13 @@ access = 2
 filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
 use_native_dialog = true
 
-[node name="Box" parent="." instance=ExtResource("2_72b8f")]
-
 [node name="Pivot" type="Node3D" parent="."]
 
 [node name="Camera" type="Camera3D" parent="Pivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
-projection = 2
 current = true
-near = 1.0
+fov = 55.0
+size = 10.0
 
 [node name="Background" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_3gi0v")
@@ -60,4 +61,5 @@ environment = ExtResource("3_3gi0v")
 
 [connection signal="pressed" from="UI/Topbar/Load File" to="." method="_ui_load_pressed"]
 [connection signal="pressed" from="UI/Topbar/Close File" to="." method="_ui_close_file"]
+[connection signal="pressed" from="UI/Topbar/Quit Editor" to="." method="_ui_quit_editor"]
 [connection signal="file_selected" from="UI/Popups/Load Diag" to="." method="_ui_load_file"]
