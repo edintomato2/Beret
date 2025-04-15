@@ -4,12 +4,15 @@
 extends Node
 
 ## -=-= UI vars. =-=-
-@onready var _pvt: Node3D = $Pivot
-@onready var _cam: Camera3D = $Pivot/Camera
-@onready var _bkg: WorldEnvironment = $Background
+@onready var  _pvt: Node3D = $Pivot
+@onready var  _cam: Camera3D = $Pivot/Camera
+@onready var  _bkg: WorldEnvironment = $Background
+@onready var _area: Area3D = $"Pivot/Area3D"
 
 var _pivot_anim = false ### Flag for if the camera's pivot is in an animation or not.
 var _total_pitch = 0.0 ### Total pitch for 3d orbit.
+
+var _select_objs: Array ### Selected objects.
 
 const _mat_selected = preload("res://ui/selected/obj_selected.tres") ### "Selected" look of objects.
 
@@ -19,8 +22,9 @@ var fezlvl: Dictionary
 var fezts: Array
 
 func _ready() -> void:
-	_set_editor_shortcuts()
+	_editor_setup()
 	_cam_setup()
+	_ui_setup()
 
 func _process(delta: float) -> void:
 	pass
@@ -32,10 +36,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	_cam_control(event)
 	
 	# Mouse specific code
-	_mouse_place(event)
+	_mouse_place()
 
 ## -=-= Editor keyboard control. =-=-
-func _set_editor_shortcuts() -> void:
+func _editor_setup() -> void:
 	var ui_open = Shortcut.new() ## Open a FEZLVL.
 	ui_open.events = InputMap.action_get_events("editor_open")
 	$"UI/Topbar/Load File".shortcut = ui_open
@@ -56,7 +60,8 @@ func _cam_setup() -> void:
 	_cam.fov = 55.0
 
 func _cam_control(event: InputEvent) -> void:
-	_cam_rotate()
+	_cam_qe()
+	_cam_wasd()
 	if Input.is_action_just_pressed("cam_projection", true): _cam_proj_switch()
 	
 	### Mouse Button 3 Controls (all require mouse movement)	
@@ -101,7 +106,7 @@ func _cam_zoom(mouseVel: Vector2) -> void:
 			var cam_move = _cam.fov + (mouseVel.y * 0.5)
 			if (cam_move > 10.0) and (cam_move < 120.0): _cam.fov = cam_move
 
-func _cam_rotate() -> void: ## Q + E camera rotation, like in FEZ.
+func _cam_qe() -> void: ## Q + E camera rotation, like in FEZ.
 	if Input.is_action_just_pressed("cam_closest_face", true):
 		var temp = Vector3.ZERO
 		temp.y = snappedf(_pvt.rotation_degrees.y, 90)
@@ -132,16 +137,22 @@ func _cam_tween_ctrl(prop: String, target: Variant, duration: float) -> void:
 	await tween.finished
 	_pivot_anim = false
 
-# -=-= Mouse control. =-=-
-func _mouse_select(body: StaticBody3D) -> void: # Hooked in via signal from each object instance.
-	print(body.get_parent().get_meta("Type"))
-	body.get_parent().material_overlay = _mat_selected
-
-func _obj_tween_color(mat: StandardMaterial3D) -> void:
+func _cam_wasd() -> void: ## Keyboard movement.
+	var move_target = Vector3.ZERO
 	
+	if Input.is_action_just_pressed("ui_up", true): move_target += Vector3.UP
+	if Input.is_action_just_pressed("ui_down", true): move_target += Vector3.DOWN
+	if Input.is_action_just_pressed("ui_right", true): move_target += Vector3.RIGHT
+	if Input.is_action_just_pressed("ui_left", true): move_target += Vector3.LEFT
+	
+	if move_target == Vector3.ZERO: return
+	_cam_tween_ctrl("global_position", _pvt.global_position + (_pvt.global_basis * move_target), 0.15)
+
+# -=-= Mouse control. =-=-
+func _mouse_select() -> void:
 	pass
 
-func _mouse_place(event: InputEvent) -> void: ## Handle placement and editing of objects.
+func _mouse_place() -> void: ## Handle placement and editing of objects.
 	## Below could probably be handled by assigning mouse interactions for every obj 
 	### Mouse Button 1 Controls
 	#### M1 click = select object
@@ -170,7 +181,6 @@ func _load_fezlvl(path: String) -> void:
 	
 	for i in super_array:
 		$Objects.add_child(i)
-		i.get_child(0).clicked.connect(_mouse_select)
 		i.visible = true
 		
 	_pvt.global_position = gomez[0].global_position
@@ -180,11 +190,40 @@ func _close_fezlvl() -> void:
 	_pvt.global_position = Vector3.ZERO
 	_pvt.rotation_degrees = Vector3.ZERO
 
+## -=-= UI control and signal links. =-=-
+func _ui_setup() -> void:
+	_ui_hide_dropdown_setup()
+	pass
+
+func _ui_hide_dropdown_setup() -> void:
+	var target: MenuButton = $UI/Topbar/Hide
+	var hideables = ["Triles", "AOs", "Background Planes", "NPCs", "Volumes"]
+	
+	var shortcut = Shortcut.new()
+	shortcut.events = InputMap.action_get_events("editor_hide")
+	target.shortcut = shortcut
+	
+	target.get_popup().hide_on_item_selection = false
+	target.get_popup().index_pressed.connect(_ui_hide_dropdown_connect.bind())
+	
+	for i in range(hideables.size()):
+		target.get_popup().add_check_item(hideables[i])
+		target.get_popup().set_item_checked(i, true)
+
+func _ui_hide_dropdown_connect( index: int) -> void:
+	var target: MenuButton = $UI/Topbar/Hide
+	
+	var wanna_hide = target.get_popup().get_item_text(index)
+	target.get_popup().toggle_item_checked(index)
+	
+	var state = target.get_popup().is_item_checked(index)
+	get_tree().call_group(wanna_hide, "set_visible", state)
+
 func _ui_load_file(path: String) -> void: ## Remove all objects and (re)load.
 	_close_fezlvl()
 	_load_fezlvl(path)
 
-func _ui_load_pressed() -> void: $"UI/Popups/Load Diag".visible = true
+func _ui_load_pressed() -> void: $"UI/Popups/Load Diag".show()
 
 func _ui_close_file() -> void:
 	print("Closing level.")
@@ -193,3 +232,24 @@ func _ui_close_file() -> void:
 func _ui_quit_editor() -> void:
 	_close_fezlvl() ## Close safely! And try not to crash my GPU!
 	get_tree().quit()
+
+func _ui_selectbox_select(rect: Rect2) -> Array: # Moves the Selection Area node's bounds to where we click.
+	var basis: Transform3D = _cam.global_transform
+	var start: Vector3 = _cam.project_position(rect.position, 10)
+	var end: Vector3 = _cam.project_position(rect.end, 10)
+	
+	### move the area to the midpoint between both positions, and change the area's rotation,
+	_area.global_rotation = _cam.global_rotation
+	_area.global_position = start.lerp(end, 0.5)
+	
+	### then calculate the new size of the selection area.
+	### Add a very small amount to prevent Godot from complaining about a dimension equal to 0.
+	_area.scale = abs((end - start) * basis.basis) + Vector3(0.000001, 0.000001, 0.000001)
+	_area.scale.z = 10
+	
+	return _area.get_overlapping_bodies()
+	#body.get_parent().material_overlay = _mat_selected
+
+func _ui_selectbox_changed(rect: Rect2) -> void: _select_objs = _ui_selectbox_select(rect)
+
+func _ui_set_dirs() -> void: $UI/Popups/SetPaths.show()

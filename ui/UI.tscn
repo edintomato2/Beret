@@ -353,8 +353,6 @@ layout_mode = 3
 anchors_preset = 0
 mouse_filter = 1
 script = ExtResource("16_mo5eo")
-borderColor = Color(0.792157, 0.431373, 0, 1)
-fillColor = Color(0.792157, 0.431373, 0, 0.572549)
 
 [node name="SFX" type="AudioStreamPlayer" parent="."]
 

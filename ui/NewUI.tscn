@@ -1,24 +1,24 @@
-[gd_scene load_steps=3 format=3 uid="uid://dvki037st0vqu"]
+[gd_scene load_steps=6 format=3 uid="uid://dvki037st0vqu"]
 
 [ext_resource type="Script" uid="uid://ccrpvfy3t1k4j" path="res://ui/new_ui.gd" id="1_lovj8"]
+[ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://ui/cursor/SelectBox.gd" id="2_3gi0v"]
 [ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://main/DefaultEnv.tres" id="3_3gi0v"]
+[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://ui/popups/SetPaths.tscn" id="3_rldmy"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_72b8f"]
 
 [node name="NewUI" type="Node"]
 script = ExtResource("1_lovj8")
 
-[node name="UI" type="Control" parent="."]
-layout_mode = 3
+[node name="UI" type="VBoxContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
 
 [node name="Topbar" type="HBoxContainer" parent="UI"]
-layout_mode = 0
-offset_right = 221.0
-offset_bottom = 31.0
+layout_mode = 2
 
 [node name="Load File" type="Button" parent="UI/Topbar"]
 layout_mode = 2
@@ -30,9 +30,29 @@ text = "Close FEZLVL"
 
 [node name="Quit Editor" type="Button" parent="UI/Topbar"]
 layout_mode = 2
-text = "Quit"
+text = "Quit Beret"
+
+[node name="Hide" type="MenuButton" parent="UI/Topbar"]
+layout_mode = 2
+text = "Hide objects..."
+flat = false
+
+[node name="Button" type="Button" parent="UI/Topbar"]
+layout_mode = 2
+text = "Set Asset Directories..."
+
+[node name="Selectbox" type="Control" parent="UI"]
+z_index = 10
+z_as_relative = false
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+script = ExtResource("2_3gi0v")
 
 [node name="Popups" type="Node" parent="UI"]
+
+[node name="SetPaths" parent="UI/Popups" instance=ExtResource("3_rldmy")]
+visible = false
 
 [node name="Load Diag" type="FileDialog" parent="UI/Popups"]
 auto_translate_mode = 1
@@ -54,6 +74,12 @@ current = true
 fov = 55.0
 size = 10.0
 
+[node name="Area3D" type="Area3D" parent="Pivot"]
+top_level = true
+
+[node name="Selection Shape" type="CollisionShape3D" parent="Pivot/Area3D"]
+shape = SubResource("BoxShape3D_72b8f")
+
 [node name="Background" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_3gi0v")
 
@@ -62,4 +88,6 @@ environment = ExtResource("3_3gi0v")
 [connection signal="pressed" from="UI/Topbar/Load File" to="." method="_ui_load_pressed"]
 [connection signal="pressed" from="UI/Topbar/Close File" to="." method="_ui_close_file"]
 [connection signal="pressed" from="UI/Topbar/Quit Editor" to="." method="_ui_quit_editor"]
+[connection signal="pressed" from="UI/Topbar/Button" to="." method="_ui_set_dirs"]
+[connection signal="rectChanged" from="UI/Selectbox" to="." method="_ui_selectbox_changed"]
 [connection signal="file_selected" from="UI/Popups/Load Diag" to="." method="_ui_load_file"]

@@ -33,4 +33,6 @@ func _on_add_dirs_dir_selected(dir: String) -> void:
 		_listDirs(_root, dir)
 		Settings.saveSettings()
 
-func _on_close_requested() -> void: hide()
+func _on_close_requested() -> void:
+	Settings.saveSettings()
+	hide()

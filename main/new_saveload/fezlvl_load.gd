@@ -91,7 +91,7 @@ static func load_triles(triles: Array, trileset: Array) -> Array: # Load trile(s
 			trile.set_meta("Phi", trileInst["Phi"])
 			trile.set_meta("Emplacement", _arr2vec(trileInst["Emplacement"]))
 			trile.set_meta("Position", _arr2vec(trileInst["Position"]))
-			trile.add_to_group("triles")
+			trile.add_to_group("Triles")
 			
 			loaded_triles.append(trile)
 	return loaded_triles
@@ -161,7 +161,7 @@ static func load_npcs(npcs: Dictionary) -> Array: # Load NPCs as AnimatedSprite3
 		inst.set_meta("Type", "NPC")
 		inst.set_meta("Name", npcs[i]["Name"].capitalize())
 		inst.play("gif")
-		inst.add_to_group("npcs")
+		inst.add_to_group("NPCs")
 		loaded_npcs.append(inst)
 	return loaded_npcs
 
@@ -228,7 +228,7 @@ static func load_bkgplns(bkgplns: Dictionary) -> Array: # Load background planes
 
 		inst.set_meta("Name", bkgplns[i]["TextureName"].to_lower())
 		inst.set_meta("Type", "bkgpln")
-		inst.add_to_group("bkgpln")
+		inst.add_to_group("Background Planes")
 		loaded_bkgplns.append(inst)
 	return loaded_bkgplns
 
@@ -260,7 +260,7 @@ static func load_vols(vols: Dictionary) -> Array: # Load volumes as Node3Ds.
 		volModel.scale = abs(to - from) # Abs. Difference
 		volModel.set_meta("Type", "Volume")
 		volModel.set_meta("Id", v)
-		volModel.add_to_group("vol")
+		volModel.add_to_group("Volumes")
 		
 		## Add mouse collision
 		var statBod = StaticBody3D.new()
@@ -311,7 +311,7 @@ static func load_gomez(dict: Dictionary) -> Array: # Load in player start as Gom
 	gomez.set_meta("Face", dict["Face"])
 	gomez.set_meta("Name", "Gomez")
 	gomez.play("gif")
-	gomez.add_to_group("gomez")
+	gomez.add_to_group("NPCs")
 	return [gomez]
 
 static func _loadObj(filepath: String, type: int): # Internal object loader.
