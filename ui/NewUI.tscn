@@ -1,53 +1,59 @@
-[gd_scene load_steps=6 format=3 uid="uid://dvki037st0vqu"]
+[gd_scene load_steps=9 format=3 uid="uid://dvki037st0vqu"]
 
 [ext_resource type="Script" uid="uid://ccrpvfy3t1k4j" path="res://ui/new_ui.gd" id="1_lovj8"]
-[ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://ui/cursor/SelectBox.gd" id="2_3gi0v"]
+[ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://ui/selecting/select_box.gd" id="2_3gi0v"]
 [ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://main/DefaultEnv.tres" id="3_3gi0v"]
 [ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://ui/popups/SetPaths.tscn" id="3_rldmy"]
+
+[sub_resource type="Animation" id="Animation_rldmy"]
+resource_name = "ui_console_fade"
+length = 8.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBox/Control/Console:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 5, 8),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_ggqg0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBox/Control/Console:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lovj8"]
+_data = {
+&"RESET": SubResource("Animation_ggqg0"),
+&"ui_console_fade": SubResource("Animation_rldmy")
+}
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_72b8f"]
 
 [node name="NewUI" type="Node"]
 script = ExtResource("1_lovj8")
 
-[node name="UI" type="VBoxContainer" parent="."]
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Topbar" type="HBoxContainer" parent="UI"]
-layout_mode = 2
-
-[node name="Load File" type="Button" parent="UI/Topbar"]
-layout_mode = 2
-text = "Open FEZLVL"
-
-[node name="Close File" type="Button" parent="UI/Topbar"]
-layout_mode = 2
-text = "Close FEZLVL"
-
-[node name="Quit Editor" type="Button" parent="UI/Topbar"]
-layout_mode = 2
-text = "Quit Beret"
-
-[node name="Hide" type="MenuButton" parent="UI/Topbar"]
-layout_mode = 2
-text = "Hide objects..."
-flat = false
-
-[node name="Button" type="Button" parent="UI/Topbar"]
-layout_mode = 2
-text = "Set Asset Directories..."
-
-[node name="Selectbox" type="Control" parent="UI"]
-z_index = 10
-z_as_relative = false
-layout_mode = 2
-size_flags_vertical = 3
-mouse_filter = 1
-script = ExtResource("2_3gi0v")
 
 [node name="Popups" type="Node" parent="UI"]
 
@@ -66,6 +72,75 @@ access = 2
 filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
 use_native_dialog = true
 
+[node name="VBox" type="VBoxContainer" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Topbar" type="HBoxContainer" parent="UI/VBox"]
+layout_mode = 2
+
+[node name="Load File" type="Button" parent="UI/VBox/Topbar"]
+layout_mode = 2
+text = "Open FEZLVL"
+
+[node name="Close File" type="Button" parent="UI/VBox/Topbar"]
+layout_mode = 2
+text = "Close FEZLVL"
+
+[node name="Quit Editor" type="Button" parent="UI/VBox/Topbar"]
+layout_mode = 2
+text = "Quit Beret"
+
+[node name="Hide" type="MenuButton" parent="UI/VBox/Topbar"]
+layout_mode = 2
+text = "Hide objects..."
+flat = false
+
+[node name="Set Asset Dirs" type="Button" parent="UI/VBox/Topbar"]
+layout_mode = 2
+text = "Set Asset Directories..."
+
+[node name="Control" type="Control" parent="UI/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Console" type="RichTextLabel" parent="UI/VBox/Control"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 1.0
+grow_vertical = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.57
+mouse_filter = 1
+fit_content = true
+scroll_following = true
+shortcut_keys_enabled = false
+
+[node name="Select Box" type="Control" parent="UI/VBox/Control"]
+z_index = 10
+z_as_relative = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+mouse_filter = 1
+script = ExtResource("2_3gi0v")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI"]
+libraries = {
+&"": SubResource("AnimationLibrary_lovj8")
+}
+
 [node name="Pivot" type="Node3D" parent="."]
 
 [node name="Camera" type="Camera3D" parent="Pivot"]
@@ -76,6 +151,9 @@ size = 10.0
 
 [node name="Area3D" type="Area3D" parent="Pivot"]
 top_level = true
+collision_mask = 31
+input_ray_pickable = false
+priority = 1
 
 [node name="Selection Shape" type="CollisionShape3D" parent="Pivot/Area3D"]
 shape = SubResource("BoxShape3D_72b8f")
@@ -85,9 +163,13 @@ environment = ExtResource("3_3gi0v")
 
 [node name="Objects" type="Node" parent="."]
 
-[connection signal="pressed" from="UI/Topbar/Load File" to="." method="_ui_load_pressed"]
-[connection signal="pressed" from="UI/Topbar/Close File" to="." method="_ui_close_file"]
-[connection signal="pressed" from="UI/Topbar/Quit Editor" to="." method="_ui_quit_editor"]
-[connection signal="pressed" from="UI/Topbar/Button" to="." method="_ui_set_dirs"]
-[connection signal="rectChanged" from="UI/Selectbox" to="." method="_ui_selectbox_changed"]
+[node name="Sounds" type="AudioStreamPlayer" parent="."]
+
 [connection signal="file_selected" from="UI/Popups/Load Diag" to="." method="_ui_load_file"]
+[connection signal="pressed" from="UI/VBox/Topbar/Load File" to="." method="_ui_load_pressed"]
+[connection signal="pressed" from="UI/VBox/Topbar/Close File" to="." method="_ui_close_file"]
+[connection signal="pressed" from="UI/VBox/Topbar/Quit Editor" to="." method="_ui_quit_editor"]
+[connection signal="pressed" from="UI/VBox/Topbar/Set Asset Dirs" to="." method="_ui_set_dirs"]
+[connection signal="rectChanged" from="UI/VBox/Control/Select Box" to="." method="_ui_selectbox_changed"]
+[connection signal="body_entered" from="Pivot/Area3D" to="." method="_area_body_entered"]
+[connection signal="body_exited" from="Pivot/Area3D" to="." method="_area_body_exited"]

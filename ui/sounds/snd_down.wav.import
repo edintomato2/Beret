@@ -2,13 +2,13 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://be7334k2n2ond"
-path="res://.godot/imported/cancel.wav-5e00d8ff6c2782901220f3c110bb48ff.sample"
+uid="uid://cbxdlh86gx7h1"
+path="res://.godot/imported/snd_down.wav-d926be28b259f1a6dffc2c7f8f282e00.sample"
 
 [deps]
 
-source_file="res://ui/Sounds/cancel.wav"
-dest_files=["res://.godot/imported/cancel.wav-5e00d8ff6c2782901220f3c110bb48ff.sample"]
+source_file="res://ui/sounds/snd_down.wav"
+dest_files=["res://.godot/imported/snd_down.wav-d926be28b259f1a6dffc2c7f8f282e00.sample"]
 
 [params]
 

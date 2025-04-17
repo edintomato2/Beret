@@ -2,13 +2,13 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://1166rdtsq3wx"
-path="res://.godot/imported/rotateleft.wav-e74f6cc3bc030ef12c9ce879c541fc9d.sample"
+uid="uid://5ybwwb7di2jv"
+path="res://.godot/imported/snd_rt.wav-538666f0e7b8aa4defffbe6331fff66f.sample"
 
 [deps]
 
-source_file="res://ui/Sounds/rotateleft.wav"
-dest_files=["res://.godot/imported/rotateleft.wav-e74f6cc3bc030ef12c9ce879c541fc9d.sample"]
+source_file="res://ui/sounds/snd_rt.wav"
+dest_files=["res://.godot/imported/snd_rt.wav-538666f0e7b8aa4defffbe6331fff66f.sample"]
 
 [params]
 
