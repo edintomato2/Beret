@@ -10,6 +10,7 @@ extends Node
 
 var _pivot_anim = false ### Flag for if the camera's pivot is in an animation or not.
 var _total_pitch = 0.0 ### Total pitch for 3d orbit.
+var _ui_tween
 
 var _selected: Array ### Selected objects.
 var  _history: Array ### History. Stored as array with array of what was done (move obj, delete obj)
@@ -64,11 +65,13 @@ func _editor_setup() -> void:
 	$"UI/VBox/Topbar/Quit Editor".shortcut = ui_quit
 
 func _editor_control() -> void:
-	if Input.is_action_just_released("editor_delete", true): _editor_history("delete", _selected)
+	if Input.is_action_just_released("editor_delete", true): _editor_history("delete", _area.get_overlapping_bodies())
+	if Input.is_action_just_released("editor_select_cancel", true): _editor_history("deselect", _area.get_overlapping_bodies())
 
 func _editor_history(move: String, array: Array) -> void: # Undo/Redo history.
 	match move:
 		"delete": for obj in array: obj.hide(); _ui_sounds("snd_cancel")
+		"deselect": _area.scale = Vector3(0.0001, 0.0001, 0.0001); _area.global_position = Vector3.ZERO
 	_history.append([move, array.duplicate()])
 
 ## -=-= Camera control. =-=-
@@ -172,9 +175,6 @@ func _cam_wasd() -> void: ## Keyboard movement.
 	_cam_tween_ctrl("global_position", _pvt.global_position + (_pvt.global_basis * move_target), 0.1)
 
 # -=-= Mouse control. =-=-
-func _mouse_select() -> void:
-	pass
-
 func _mouse_place() -> void: ## Handle placement and editing of objects.
 	## Below could probably be handled by assigning mouse interactions for every obj 
 	### Mouse Button 1 Controls
@@ -234,7 +234,7 @@ func _ui_hide_dropdown_setup() -> void:
 		target.get_popup().set_item_checked(i, true)
 
 func _ui_hide_dropdown_connect(index: int) -> void:
-	var target: MenuButton = $UI/Topbar/Hide
+	var target: MenuButton = $UI/VBox/Topbar/Hide
 	
 	var wanna_hide = target.get_popup().get_item_text(index)
 	target.get_popup().toggle_item_checked(index)
@@ -253,19 +253,23 @@ func _ui_sounds(sound: String) -> void:
 	$Sounds.play()
 
 func _ui_load_file(path: String) -> void: ## Remove all objects and (re)load.
+	_ui_spinny_loady("fadein")
 	_close_fezlvl()
 	_load_fezlvl(path)
+	_ui_console("Level loaded.")
+	_ui_spinny_loady("fadeout")
 	_ui_sounds("snd_ok")
 
 func _ui_load_pressed() -> void: $"UI/Popups/Load Diag".show()
 
 func _ui_close_file() -> void:
-	print("Closing level.")
 	_close_fezlvl()
+	_ui_console("Level closed.")
 	_ui_sounds("snd_cancel")
 
 func _ui_quit_editor() -> void:
 	_close_fezlvl() ## Close safely! And try not to crash my GPU!
+	_ui_console("Goodbye!")
 	_ui_sounds("snd_cancel")
 	get_tree().quit()
 
@@ -294,6 +298,21 @@ func _area_body_exited(body: Node3D) -> void:
 	_selected.erase(body.get_parent())
 
 func _ui_console(write: String) -> void:
-	$UI/AnimationPlayer.play("ui_console_fade")
-	$UI/VBox/Control/Console.append_text(write)
+	var console: RichTextLabel = $UI/VBox/Control/Console
 	
+	if _ui_tween:
+		_ui_tween.kill()
+		console.self_modulate = Color.WHITE
+	
+	_ui_tween = create_tween()
+	console.append_text(write + "\n")
+	_ui_tween.tween_property(console, "self_modulate", Color(1, 1, 1, 0), 8)
+
+func _ui_spinny_loady(state: String) -> void: # May need to be on a separate thread to look right
+	var anim: AnimationPlayer = $UI/AnimationPlayer
+	match state:
+		"fadein", "loop":
+			anim.queue("ui_animations/ui_load_fadein")
+			anim.queue("ui_animations/ui_load_loop")
+		"fadeout":
+			anim.play("ui_animations/ui_load_fadeout")

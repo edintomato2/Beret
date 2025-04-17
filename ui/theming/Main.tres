@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=2 format=3 uid="uid://cd7ntvqe12ygn"]
 
-[ext_resource type="FontFile" uid="uid://dsnch7rpdgtnj" path="res://ui/pixel by Acemond.ttf" id="1_uvo8y"]
+[ext_resource type="FontFile" uid="uid://dsnch7rpdgtnj" path="res://ui/theming/pixel by Acemond.ttf" id="1_uvo8y"]
 
 [resource]
 Button/fonts/font = ExtResource("1_uvo8y")

@@ -1,12 +1,12 @@
 extends VBoxContainer
 
 # Sounds
-var soundDown = preload("res://ui/Sounds/cursordownleft.wav")
-var soundUp = preload("res://ui/Sounds/cursorupright.wav")
-var soundOK = preload("res://ui/Sounds/ok.wav")
-var soundCancel = preload("res://ui/Sounds/cancel.wav")
-var soundLeft = preload("res://ui/Sounds/rotateleft.wav")
-var soundRight = preload("res://ui/Sounds/rotateright.wav")
+var soundDown = preload("res://ui/sounds/snd_down.wav")
+var soundUp = preload("res://ui/sounds/snd_up.wav")
+var soundOK = preload("res://ui/sounds/snd_ok.wav")
+var soundCancel = preload("res://ui/sounds/snd_cancel.wav")
+var soundLeft = preload("res://ui/sounds/snd_lt.wav")
+var soundRight = preload("res://ui/sounds/snd_rt.wav")
 
 # Position formatting
 var posFormat = "[%d, %d, %d], %d"

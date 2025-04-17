@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://c25hxbok5bsak"]
 
-[ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://ui/starback.png" id="1_kyaec"]
+[ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://ui/theming/starback.png" id="1_kyaec"]
 [ext_resource type="Texture2D" uid="uid://dsegnfbr7cgbc" path="res://main/logo.png" id="2_gmmxw"]
-[ext_resource type="FontFile" uid="uid://dsnch7rpdgtnj" path="res://ui/pixel by Acemond.ttf" id="2_lt6ij"]
+[ext_resource type="FontFile" uid="uid://dsnch7rpdgtnj" path="res://ui/theming/pixel by Acemond.ttf" id="2_lt6ij"]
 
 [sub_resource type="GDScript" id="GDScript_6mge5"]
 script/source = "extends Window

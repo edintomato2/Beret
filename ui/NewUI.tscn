@@ -2,44 +2,40 @@
 
 [ext_resource type="Script" uid="uid://ccrpvfy3t1k4j" path="res://ui/new_ui.gd" id="1_lovj8"]
 [ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://ui/selecting/select_box.gd" id="2_3gi0v"]
-[ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://main/DefaultEnv.tres" id="3_3gi0v"]
 [ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://ui/popups/SetPaths.tscn" id="3_rldmy"]
+[ext_resource type="AnimationLibrary" uid="uid://dfov33a8axuij" path="res://ui/animations.res" id="4_ggqg0"]
+[ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://ui/skyrender/DefaultEnv.tres" id="6_lovj8"]
 
-[sub_resource type="Animation" id="Animation_rldmy"]
-resource_name = "ui_console_fade"
-length = 8.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("VBox/Control/Console:self_modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 5, 8),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_ggqg0"]
+[sub_resource type="Animation" id="Animation_lovj8"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("VBox/Control/Console:self_modulate")
+tracks/0/path = NodePath(".:rotation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Color(1, 1, 1, 1)]
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.835294, 0.0588235, 0.0588235, 0)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_lovj8"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mm5ur"]
 _data = {
-&"RESET": SubResource("Animation_ggqg0"),
-&"ui_console_fade": SubResource("Animation_rldmy")
+&"RESET": SubResource("Animation_lovj8")
 }
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_72b8f"]
@@ -71,6 +67,14 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
 use_native_dialog = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI"]
+root_node = NodePath("../VBox/Control/Loading")
+libraries = {
+&"": SubResource("AnimationLibrary_mm5ur"),
+&"ui_animations": ExtResource("4_ggqg0")
+}
+speed_scale = 3.0
 
 [node name="VBox" type="VBoxContainer" parent="UI"]
 layout_mode = 1
@@ -109,17 +113,19 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Console" type="RichTextLabel" parent="UI/VBox/Control"]
+z_index = -2
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
-offset_right = 1.0
+offset_right = 200.0
+offset_bottom = -313.0
 grow_vertical = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.57
 mouse_filter = 1
-fit_content = true
+scroll_active = false
 scroll_following = true
 shortcut_keys_enabled = false
 
@@ -136,10 +142,21 @@ size_flags_vertical = 3
 mouse_filter = 1
 script = ExtResource("2_3gi0v")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI"]
-libraries = {
-&"": SubResource("AnimationLibrary_lovj8")
-}
+[node name="Loading" type="ColorRect" parent="UI/VBox/Control"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -90.0
+offset_top = -90.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 0
+grow_vertical = 0
+pivot_offset = Vector2(30, 30)
+color = Color(0.835294, 0.0588235, 0.0588235, 0)
 
 [node name="Pivot" type="Node3D" parent="."]
 
@@ -158,12 +175,12 @@ priority = 1
 [node name="Selection Shape" type="CollisionShape3D" parent="Pivot/Area3D"]
 shape = SubResource("BoxShape3D_72b8f")
 
-[node name="Background" type="WorldEnvironment" parent="."]
-environment = ExtResource("3_3gi0v")
-
 [node name="Objects" type="Node" parent="."]
 
 [node name="Sounds" type="AudioStreamPlayer" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("6_lovj8")
 
 [connection signal="file_selected" from="UI/Popups/Load Diag" to="." method="_ui_load_file"]
 [connection signal="pressed" from="UI/VBox/Topbar/Load File" to="." method="_ui_load_pressed"]

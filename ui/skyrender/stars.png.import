@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dwbicf3xmqxgd"
-path.s3tc="res://.godot/imported/starback.png-73b02884cb0721c9cbe9de32ee08bb66.s3tc.ctex"
+uid="uid://cd5hqb5feluwe"
+path.s3tc="res://.godot/imported/stars.png-73b6838547d91a4ca79302216ea04fca.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://ui/starback.png"
-dest_files=["res://.godot/imported/starback.png-73b02884cb0721c9cbe9de32ee08bb66.s3tc.ctex"]
+source_file="res://ui/skyrender/stars.png"
+dest_files=["res://.godot/imported/stars.png-73b6838547d91a4ca79302216ea04fca.s3tc.ctex"]
 
 [params]
 

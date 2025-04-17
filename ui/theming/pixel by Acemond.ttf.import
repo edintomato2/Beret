@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://dsnch7rpdgtnj"
-path="res://.godot/imported/pixel by Acemond.ttf-363e9186598caf3d5f1581502ce32702.fontdata"
+path="res://.godot/imported/pixel by Acemond.ttf-5496795d6767e9b859ae4e21150d87c1.fontdata"
 
 [deps]
 
-source_file="res://ui/pixel by Acemond.ttf"
-dest_files=["res://.godot/imported/pixel by Acemond.ttf-363e9186598caf3d5f1581502ce32702.fontdata"]
+source_file="res://ui/theming/pixel by Acemond.ttf"
+dest_files=["res://.godot/imported/pixel by Acemond.ttf-5496795d6767e9b859ae4e21150d87c1.fontdata"]
 
 [params]
 
