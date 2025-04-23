@@ -47,7 +47,8 @@ static func load_trileset(trileset_name: String) -> Array: # Load trilesets as a
 	
 	return [meshDict, mat, readTS.data]
 
-static func load_triles(triles: Array, trileset: Array) -> Array: # Load trile(s) as Node3Ds.
+static func load_triles(triles: Array, trileset: Array) -> Array:
+	# Load trile(s) as Node3Ds.
 	var loaded_triles := []
 	for trileInst in triles:
 		var id = str(trileInst["Id"]).rstrip(".0")

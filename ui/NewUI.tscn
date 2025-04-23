@@ -99,22 +99,27 @@ grow_vertical = 2
 
 [node name="Topbar" type="HBoxContainer" parent="UI/VBox"]
 layout_mode = 2
+mouse_filter = 0
 
 [node name="Load File" type="Button" parent="UI/VBox/Topbar"]
 layout_mode = 2
+focus_mode = 0
 text = "Open FEZLVL"
 
 [node name="New File" type="Button" parent="UI/VBox/Topbar"]
 layout_mode = 2
+focus_mode = 0
 text = "New FEZLVL"
 
 [node name="Close File" type="Button" parent="UI/VBox/Topbar"]
 layout_mode = 2
+focus_mode = 0
 disabled = true
 text = "Close FEZLVL"
 
 [node name="Quit Editor" type="Button" parent="UI/VBox/Topbar"]
 layout_mode = 2
+focus_mode = 0
 text = "Quit Beret"
 
 [node name="Hide" type="MenuButton" parent="UI/VBox/Topbar"]
@@ -125,16 +130,19 @@ flat = false
 
 [node name="Set Asset Dirs" type="Button" parent="UI/VBox/Topbar"]
 layout_mode = 2
+focus_mode = 0
 text = "Set Asset Directories..."
 
 [node name="Save File" type="Button" parent="UI/VBox/Topbar"]
 layout_mode = 2
+focus_mode = 0
 disabled = true
 text = "Save FEZLVL As"
 
 [node name="Control" type="Control" parent="UI/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 1
 
 [node name="Console" type="RichTextLabel" parent="UI/VBox/Control"]
 z_index = -2
@@ -184,13 +192,21 @@ color = Color(0.835294, 0.0588235, 0.0588235, 0)
 
 [node name="Bottombar" type="HBoxContainer" parent="UI/VBox"]
 layout_mode = 2
+mouse_filter = 0
 
-[node name="PalSelect" type="OptionButton" parent="UI/VBox/Bottombar"]
+[node name="PalSet" type="OptionButton" parent="UI/VBox/Bottombar"]
 layout_mode = 2
+focus_mode = 0
+disabled = true
 
 [node name="Palette" type="ItemList" parent="UI/VBox/Bottombar"]
 layout_mode = 2
 size_flags_horizontal = 3
+focus_mode = 1
+max_columns = 0
+same_column_width = true
+icon_mode = 0
+icon_scale = 2.5
 
 [node name="Info" type="Label" parent="UI/VBox/Bottombar"]
 layout_mode = 2
@@ -232,5 +248,7 @@ environment = ExtResource("6_lovj8")
 [connection signal="pressed" from="UI/VBox/Topbar/Set Asset Dirs" to="." method="_ui_set_dirs"]
 [connection signal="pressed" from="UI/VBox/Topbar/Save File" to="." method="_ui_save_pressed"]
 [connection signal="rectChanged" from="UI/VBox/Control/Select Box" to="." method="_ui_selectbox_changed"]
+[connection signal="item_selected" from="UI/VBox/Bottombar/PalSet" to="." method="_ui_palette_change"]
+[connection signal="item_selected" from="UI/VBox/Bottombar/Palette" to="." method="_ui_palette_item_selected"]
 [connection signal="body_entered" from="Pivot/Area3D" to="." method="_area_body_entered"]
 [connection signal="body_exited" from="Pivot/Area3D" to="." method="_area_body_exited"]

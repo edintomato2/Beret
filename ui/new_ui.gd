@@ -25,6 +25,10 @@ const     _snd_rt = preload("res://ui/sounds/snd_rt.wav")
 const     _snd_up = preload("res://ui/sounds/snd_up.wav")
 const   _snd_down = preload("res://ui/sounds/snd_down.wav")
 
+### Palette Control
+var _palette_active: String = "Select"
+var _palette_index: int
+
 ## -=-= FEZLVL vars. =-=-
 const fzld = preload("res://main/new_saveload/fezlvl_load.gd")
 var fezlvl: Dictionary
@@ -45,7 +49,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	_cam_control(event)
 	
 	# Mouse specific code
-	_mouse_place()
+	_mouse_place(event)
 	
 	# Editor specific control
 	_editor_control()
@@ -180,11 +184,25 @@ func _cam_wasd() -> void: ## Keyboard movement.
 	_cam_tween_ctrl("global_position", _pvt.global_position + (_pvt.global_basis * move_target), 0.1)
 
 # -=-= Mouse control. =-=-
-func _mouse_place() -> void: ## Handle placement and editing of objects.
+func _mouse_place(event: InputEvent) -> void: ## Handle placement and editing of objects.
 	## Below could probably be handled by assigning mouse interactions for every obj 
-	### Mouse Button 1 Controls
-	#### M1 click = select object
-	#### M1 drag = select objects
+	if (event is InputEventMouseButton) and (event.button_index == 1):
+	#if event.is_action_pressed("mouse_select", true):
+	#if Input.is_action_just_pressed("mouse_select", true): 
+		var palette: ItemList = $UI/VBox/Bottombar/Palette
+		match _palette_active:
+			"Triles":
+				var placement: Dictionary
+				var pos = _cam.project_position(event.position, 10)
+				placement["Id"] = palette.get_item_metadata(_palette_index)
+				placement["Name"] = palette.get_item_text(_palette_index)
+				placement["Position"] = fzld._vec2arr(pos.round())
+				placement["Emplacement"] = fzld._vec2arr(pos)
+				placement["Phi"] = 0
+				
+				var obj = fzld.load_triles([placement], fezts)[0]
+				$Objects.add_child(obj)
+				obj.show()
 	
 	### Mouse Button 2 Controls
 	#### M2 click = edit obj properties
@@ -218,11 +236,21 @@ func _close_fezlvl() -> void:
 	_pvt.global_position = Vector3.ZERO
 	_pvt.rotation_degrees = Vector3.ZERO
 	_ui_buttons_disabled(true)
+	var palset: OptionButton = $UI/VBox/Bottombar/PalSet
+	palset.select(0)
 
 ## -=-= UI control and signal links. =-=-
 func _ui_setup() -> void:
 	_ui_hide_dropdown_setup()
 	_ui_console("Welcome to Beret!")
+	_ui_palette_selector_setup()
+	
+func _ui_palette_selector_setup() -> void:
+	var palset: OptionButton = $UI/VBox/Bottombar/PalSet
+	var items = ["Select", "Build", "Triles", "AOs", "NPCs", "Volumes", "Background Planes"]
+	
+	for i in items:
+		palset.add_item(i)
 
 func _ui_hide_dropdown_setup() -> void:
 	var target: MenuButton = $UI/VBox/Topbar/Hide
@@ -326,8 +354,7 @@ func _ui_spinny_loady(state: String) -> void: # May need to be on a separate thr
 
 func _ui_save_file(path: String) -> void:
 	_ui_sounds("snd_ok")
-	var clean = path.get_slice(".", 0)
-	fzld.save_fezlvl(clean, $Objects.get_children(), fezts[2]["Name"])
+	fzld.save_fezlvl(path.get_slice(".", 0), $Objects.get_children(), fezts[2]["Name"])
 
 func _ui_save_pressed() -> void:
 	if _save_path.is_empty(): $"UI/Popups/Save File".show()
@@ -340,6 +367,58 @@ func _ui_new_file(path: String) -> void:
 	_ui_buttons_disabled(false)
 
 func _ui_buttons_disabled(state: bool):
+	$UI/VBox/Bottombar/PalSet.disabled = state
 	$"UI/VBox/Topbar/Save File".disabled = state
 	$"UI/VBox/Topbar/Close File".disabled = state
 	$UI/VBox/Topbar/Hide.disabled = state
+
+func _ui_palette_change(index: int) -> void:
+	var palset: OptionButton = $UI/VBox/Bottombar/PalSet
+	_palette_active = palset.get_item_text(index)
+	_ui_load_palette(_palette_active)
+
+func _ui_load_palette(list: String) -> void:
+	var palette: ItemList = $UI/VBox/Bottombar/Palette
+	var selbox: Control = $"UI/VBox/Control/Select Box"
+	palette.clear()
+	
+	# TODO: Probably dont want to reload the palette every time we choose which palette to look at.
+	match list:
+		"Select": selbox.process_mode = Node.PROCESS_MODE_INHERIT
+		"Build": pass
+		"Triles":
+			selbox.process_mode = Node.PROCESS_MODE_DISABLED
+			
+			const TRILE_SIZE = 18
+			var tex: Texture2D = fezts[1].albedo_texture
+			var trileInfo: Dictionary = fezts[2]["Triles"]
+			
+			var w = tex.get_width()
+			var h = tex.get_height()
+			
+			# Trixel Engine defines the positions of textures as an "Atlas Offset" multiplied by image
+			# width and height. We'll implement the same thing here to find both the trile texture and its
+			# representative name.
+			
+			for i in trileInfo:
+				## Calculate texture offset
+				var offsetX = floor(trileInfo[i]["AtlasOffset"][0] * w)
+				var offsetY = floor(trileInfo[i]["AtlasOffset"][1] * h)
+				var atl = AtlasTexture.new()
+				
+				## Set up texture
+				atl.atlas = tex
+				atl.region = Rect2(offsetX, offsetY, TRILE_SIZE, TRILE_SIZE)
+				atl.filter_clip = true
+				
+				## Set metadata as ID and name as tooltip.
+				var idx = palette.add_icon_item(atl, true)
+				palette.set_item_metadata(idx, i) 
+				palette.set_item_tooltip(idx, trileInfo[i]["Name"])
+			
+		"AOs": pass
+		"NPCs": pass
+		"Volumes": pass
+		"Background Planes": pass
+
+func _ui_palette_item_selected(index: int) -> void: _palette_index = index
