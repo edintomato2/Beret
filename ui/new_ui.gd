@@ -29,6 +29,7 @@ const   _snd_down = preload("res://ui/sounds/snd_down.wav")
 const fzld = preload("res://main/new_saveload/fezlvl_load.gd")
 var fezlvl: Dictionary
 var fezts: Array
+var _save_path: String ## Where we'll save the FEZLVL.
 
 func _ready() -> void:
 	_editor_setup()
@@ -63,6 +64,10 @@ func _editor_setup() -> void:
 	# TODO: Add "save before closing" diag box
 	ui_quit.events = InputMap.action_get_events("editor_quit")
 	$"UI/VBox/Topbar/Quit Editor".shortcut = ui_quit
+	
+	var ui_save = Shortcut.new() ## Save a FEZLVL.
+	ui_save.events = InputMap.action_get_events("editor_save")
+	$"UI/VBox/Topbar/Save File".shortcut = ui_save
 
 func _editor_control() -> void:
 	if Input.is_action_just_released("editor_delete", true): _editor_history("delete", _area.get_overlapping_bodies())
@@ -70,7 +75,7 @@ func _editor_control() -> void:
 
 func _editor_history(move: String, array: Array) -> void: # Undo/Redo history.
 	match move:
-		"delete": for obj in array: obj.hide(); _ui_sounds("snd_cancel")
+		"delete": for obj in array: obj.get_parent().hide();
 		"deselect": _area.scale = Vector3(0.0001, 0.0001, 0.0001); _area.global_position = Vector3.ZERO
 	_history.append([move, array.duplicate()])
 
@@ -212,6 +217,7 @@ func _close_fezlvl() -> void:
 	for n in $Objects.get_child_count(): $Objects.get_child(n).queue_free()
 	_pvt.global_position = Vector3.ZERO
 	_pvt.rotation_degrees = Vector3.ZERO
+	_ui_buttons_disabled(true)
 
 ## -=-= UI control and signal links. =-=-
 func _ui_setup() -> void:
@@ -259,8 +265,9 @@ func _ui_load_file(path: String) -> void: ## Remove all objects and (re)load.
 	_ui_console("Level loaded.")
 	_ui_spinny_loady("fadeout")
 	_ui_sounds("snd_ok")
+	_ui_buttons_disabled(false)
 
-func _ui_load_pressed() -> void: $"UI/Popups/Load Diag".show()
+func _ui_load_pressed() -> void: $"UI/Popups/Load File".show()
 
 func _ui_close_file() -> void:
 	_close_fezlvl()
@@ -316,3 +323,23 @@ func _ui_spinny_loady(state: String) -> void: # May need to be on a separate thr
 			anim.queue("ui_animations/ui_load_loop")
 		"fadeout":
 			anim.play("ui_animations/ui_load_fadeout")
+
+func _ui_save_file(path: String) -> void:
+	_ui_sounds("snd_ok")
+	var clean = path.get_slice(".", 0)
+	fzld.save_fezlvl(clean, $Objects.get_children(), fezts[2]["Name"])
+
+func _ui_save_pressed() -> void:
+	if _save_path.is_empty(): $"UI/Popups/Save File".show()
+	else: _ui_save_file(_save_path)
+
+func _ui_on_new_file_pressed() -> void: $"UI/Popups/New File".show()
+
+func _ui_new_file(path: String) -> void:
+	fezts = fzld.load_trileset(path.get_file().get_slice(".", 0))
+	_ui_buttons_disabled(false)
+
+func _ui_buttons_disabled(state: bool):
+	$"UI/VBox/Topbar/Save File".disabled = state
+	$"UI/VBox/Topbar/Close File".disabled = state
+	$UI/VBox/Topbar/Hide.disabled = state

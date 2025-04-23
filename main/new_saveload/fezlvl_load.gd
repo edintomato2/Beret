@@ -1,4 +1,6 @@
-# Import all objects in a FEZLVL file.
+# Import all objects in a FEZLVL file to a Godot scene,
+# and save all objects in a Godot scene to a FEZLVL.
+
 ## Known objects:
 ## - "trile sets": We have an object file with a bunch of triles all at 0,0,0. Associated .png (texture), .apng (emissive), and .json (descriptor)
 ## - "art objects": Any object, with associated .png, .apng, and .json
@@ -11,7 +13,10 @@ extends Object
 class_name fezlvl_load
 
 const vol_color = Color(1, 0.270588, 0, 0.4)
-const click_script = preload("res://main/new_saveload/clickable_objects.gd")
+# const click_script = preload("res://main/new_saveload/clickable_objects.gd")
+
+# save_fezlvl overwrites.
+const _aoActor = { "Inactive": false, "ContainedTrile": "None", "AttachedGroup": null, "SpinView": "None", "SpinEvery": 0, "SpinOffset": 0, "OffCenter": false, "RotationCenter": [0, 0, 0], "VibrationPattern": [], "CodePattern": [], "Segment": { "Destination": [0, 0, 0], "Duration": 1, "WaitTimeOnStart": 0, "WaitTimeOnFinish": 0, "Acceleration": 0, "Deceleration": 0, "JitterFactor": 0, "Orientation": [0, 0, 0, 1], "CustomData": null }, "NextNode": null, "DestinationLevel": "", "TreasureMapName": "", "InvisibleSides": [], "TimeswitchWindBackSpeed": 0}
 
 static func load_fezlvl(path: String) -> Variant: # Read fezlvl.json, return the JSON if valid.
 	var readLvl = JSON.new()
@@ -78,7 +83,7 @@ static func load_triles(triles: Array, trileset: Array) -> Array: # Load trile(s
 			colBod.shape = colShape
 			statBod.position = cent
 			
-			statBod.set_script(click_script)
+			#statBod.set_script(click_script)
 			statBod.collision_layer = 2
 			statBod.call_deferred("add_child", colBod)
 			trile.add_child(statBod)
@@ -147,7 +152,7 @@ static func load_npcs(npcs: Dictionary) -> Array: # Load NPCs as AnimatedSprite3
 		var colBod = CollisionShape3D.new()
 		var colShape = SphereShape3D.new()
 		
-		statBod.set_script(click_script)
+		#statBod.set_script(click_script)
 		statBod.collision_layer = 8
 		colShape.radius = 0.05
 		colBod.shape = colShape
@@ -194,7 +199,7 @@ static func load_bkgplns(bkgplns: Dictionary) -> Array: # Load background planes
 		mat.set_distance_fade(BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER)
 		mat.set_distance_fade_max_distance(3)
 		
-		inst.position = _arr2vec(bkgplns[i]["Position"]) - Vector3(0.5, 0.499, 0.5)
+		inst.position = _arr2vec(bkgplns[i]["Position"]) - Vector3i(0.5, 0.499, 0.5)
 		inst.quaternion = _arr2quat(bkgplns[i]["Rotation"])
 		inst.layers = 16
 		inst.set_surface_override_material(0, mat)
@@ -210,7 +215,7 @@ static func load_bkgplns(bkgplns: Dictionary) -> Array: # Load background planes
 		colShape.size = ab.size
 		colBod.shape = colShape
 		
-		statBod.set_script(click_script)
+		#statBod.set_script(click_script)
 		statBod.collision_layer = 16
 		statBod.position = cent
 		
@@ -270,7 +275,7 @@ static func load_vols(vols: Dictionary) -> Array: # Load volumes as Node3Ds.
 		
 		statBod.scale = volModel.scale
 		
-		statBod.set_script(click_script)
+		#statBod.set_script(click_script)
 		statBod.collision_layer = 2
 		statBod.call_deferred("add_child", colBod)
 		
@@ -298,7 +303,7 @@ static func load_gomez(dict: Dictionary) -> Array: # Load in player start as Gom
 	colShape.radius = 0.05
 	colBod.shape = colShape
 	
-	statBod.set_script(click_script)
+	#statBod.set_script(click_script)
 	statBod.call_deferred("add_child", colBod)
 	gomez.add_child(statBod)
 	
@@ -346,7 +351,7 @@ static func _loadObj(filepath: String, type: int): # Internal object loader.
 	colShape.size = ab.size
 	colBod.shape = colShape
 	
-	statBod.set_script(click_script)
+	#statBod.set_script(click_script)
 	statBod.collision_layer = type
 	statBod.position = cent
 	
@@ -354,6 +359,99 @@ static func _loadObj(filepath: String, type: int): # Internal object loader.
 	m.add_child(statBod)
 	return m
 
+static func save_fezlvl(path: String, objects: Array, trileset: String) -> void: # Save FEZLVL data.
+	var readTemp = JSON.new()
+	var err = readTemp.parse(FileAccess.get_file_as_string("res://main/new_saveload/template.fezlvl.json"))
+	if err != OK: push_error("Couldn't read template.fezlvl.json, WTF? Error: " + err); return
+		
+	var filename = path.get_file()
+	var template = readTemp.data
+	var offset = _find_lvl_offset(objects)
+	var size =   _find_lvl_size(objects)
+	
+	# Get all of Loader's children.
+	for obj in objects:
+		if not obj.visible: continue
+		var type = obj.get_meta("Type")
+		
+		match type:
+			"Trile":
+				var pos = _vec2arr(obj.global_position + offset) 
+				var emp = [round(pos[0]), round(pos[1]), round(pos[2])]
+				
+				# Keep rotation to 0,3
+				var phi = (180 - abs(obj.rotation_degrees.y)) / 90 as int
+				
+				var actset = null
+				
+				var trileDict = { "Emplacement": emp,
+								"Position": pos,
+								"Phi": phi,
+								"Id": int(obj.get_meta("Id")),
+								"ActorSettings": actset}
+								
+				template["Triles"].append(trileDict)
+				pass
+				
+			"AO":
+				var aoName = obj.get_meta("Name")
+				var pos     = _vec2arr(obj.global_position + Vector3(0.5, 0.5, 0.5) + offset)
+				var rot     = [obj.quaternion.x, obj.quaternion.y, obj.quaternion.z, obj.quaternion.w]
+				var aoScale = _vec2arr(obj.scale)
+				var actset  = _aoActor
+				
+				var aoDict = { "Name": aoName.to_upper(),
+								"Position": pos,
+								"Rotation": rot,
+								"Scale": aoScale,
+								"ActorSettings": actset}
+				var arrIdx = template["ArtObjects"].size() + 1
+				var metaDict = { str(arrIdx) : aoDict}
+				
+				template["ArtObjects"].merge(metaDict)
+				pass
+				
+			"StartingPoint":
+				var id = _add_lvl_offset(obj.get_meta("Id"), _vec2arr(offset))
+				var face = obj.get_meta("Face")
+				var spDict = { "Id": [id[0] as int, id[1] as int, id[2] as int], "Face": face}
+				
+				template["StartingPosition"] = spDict
+				pass
+	
+	template["Name"] = filename.to_upper()
+	template["TrileSetName"] = trileset.to_upper()
+	template["Size"] = _vec2arr(size)
+	
+	var writeLVL := JSON.stringify(template, "\t", false, false)
+	writeLVL = writeLVL.replace('.0,', ','); # Get rid of floatiness. Come on, Godot devs.
+	writeLVL = writeLVL.replace('.0\n', '\n');
+	
+	var file = FileAccess.open(path + ".fezlvl.json", FileAccess.WRITE)
+	file.store_string(writeLVL)
+	file.close()
+	print("Saved level.")
+
 # Helper functions.
-static func _arr2vec(arr: Array) -> Vector3: return Vector3(arr[0], arr[1], arr[2])
+static func _arr2vec(arr: Array) -> Vector3i: return Vector3i(arr[0], arr[1], arr[2])
 static func _arr2quat(arr: Array) -> Quaternion: return Quaternion(arr[0], arr[1], arr[2], arr[3])
+static func _vec2arr(vector: Vector3) -> Array: return [vector.x, vector.y, vector.z]
+
+static func _find_lvl_offset(arr: Array[Node]) -> Vector3: # Find the level offset
+	var offset = Vector3.ZERO
+	for i in range(0,3): # X, Y, Z
+		for o in arr:
+			if o.global_position[i] < offset[i]: offset[i] = o.global_position[i]
+	return offset
+
+static func _add_lvl_offset(startPos, offset: Array): # Offset start position
+	for pos in range(0,3):
+		startPos[pos] += (abs(offset[pos]))
+	return startPos
+
+static func _find_lvl_size(arr: Array[Node]) -> Vector3: # Find the level size
+	var size = Vector3.ONE
+	for i in range(0,3): # X, Y, Z
+		for o in arr:
+			if o.global_position[i] > size[i]: size[i] = o.global_position[i]
+	return size.round()
