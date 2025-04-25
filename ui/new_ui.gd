@@ -190,17 +190,28 @@ func _mouse_place(event: InputEvent) -> void: ## Handle placement and editing of
 	#if event.is_action_pressed("mouse_select", true):
 	#if Input.is_action_just_pressed("mouse_select", true): 
 		var palette: ItemList = $UI/VBox/Bottombar/Palette
+		var placement: Dictionary
+		var pos = _cam.project_position(event.position, 10)
+		
 		match _palette_active:
 			"Triles":
-				var placement: Dictionary
-				var pos = _cam.project_position(event.position, 10)
 				placement["Id"] = palette.get_item_metadata(_palette_index)
 				placement["Name"] = palette.get_item_text(_palette_index)
 				placement["Position"] = fzld._vec2arr(pos.round())
 				placement["Emplacement"] = fzld._vec2arr(pos)
-				placement["Phi"] = 0
+				placement["Phi"] = acos(_pvt.quaternion.w)
 				
 				var obj = fzld.load_triles([placement], fezts)[0]
+				$Objects.add_child(obj)
+				obj.show()
+			"AOs":
+				placement["Name"] = palette.get_item_tooltip(_palette_index)
+				placement["Position"] = fzld._vec2arr(pos)
+				var rot = _pvt.quaternion
+				placement["Rotation"] = [rot.x, rot.y, rot.z, rot.w]
+				placement["Scale"] = [1, 1, 1]
+				
+				var obj = fzld.load_aos({"1": placement})[0]
 				$Objects.add_child(obj)
 				obj.show()
 	
@@ -381,14 +392,13 @@ func _ui_load_palette(list: String) -> void:
 	var palette: ItemList = $UI/VBox/Bottombar/Palette
 	var selbox: Control = $"UI/VBox/Control/Select Box"
 	palette.clear()
+	selbox.process_mode = Node.PROCESS_MODE_DISABLED
 	
 	# TODO: Probably dont want to reload the palette every time we choose which palette to look at.
 	match list:
 		"Select": selbox.process_mode = Node.PROCESS_MODE_INHERIT
 		"Build": pass
 		"Triles":
-			selbox.process_mode = Node.PROCESS_MODE_DISABLED
-			
 			const TRILE_SIZE = 18
 			var tex: Texture2D = fezts[1].albedo_texture
 			var trileInfo: Dictionary = fezts[2]["Triles"]
@@ -416,7 +426,31 @@ func _ui_load_palette(list: String) -> void:
 				palette.set_item_metadata(idx, i) 
 				palette.set_item_tooltip(idx, trileInfo[i]["Name"])
 			
-		"AOs": pass
+		"AOs":
+			# AOs are 6-sided textures. Just get out the first texture.
+			var directory = Settings.dict["AssetDirs"][Settings.idx] + "art objects/"
+			var dir = DirAccess.open(directory)
+			dir.list_dir_begin()
+			var filename = dir.get_next()
+			while filename != "":
+				if filename.ends_with(".png"):
+					# Get AO name from file name
+					var img = Image.load_from_file(directory + filename) # Load texture
+					var tex = ImageTexture.create_from_image(img)
+					var atlas = AtlasTexture.new()
+					var aoname: String = filename.to_upper().get_slice(".", 0)
+					
+					atlas.atlas = tex
+					atlas.region = Rect2(0, 0, img.get_width() / 6, img.get_height())
+					atlas.filter_clip = true
+					
+					var iconIdx = palette.add_icon_item(atlas, true)
+					
+					palette.set_item_tooltip(iconIdx, aoname) # Set name as tooltip.
+					palette.set_item_metadata(iconIdx, aoname)
+					
+				filename = dir.get_next()
+			pass
 		"NPCs": pass
 		"Volumes": pass
 		"Background Planes": pass

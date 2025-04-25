@@ -372,16 +372,13 @@ static func save_fezlvl(path: String, objects: Array, trileset: String) -> void:
 	
 	# Get all of Loader's children.
 	for obj in objects:
-		if not obj.visible: continue
-		var type = obj.get_meta("Type")
+		if not obj.visible: continue # Ignore "deleted" objects
 		
-		match type:
+		match obj.get_meta("Type"):
 			"Trile":
 				var pos = _vec2arr(obj.global_position + offset) 
 				var emp = [round(pos[0]), round(pos[1]), round(pos[2])]
-				
-				# Keep rotation to 0,3
-				var phi = (180 - abs(obj.rotation_degrees.y)) / 90 as int
+				var phi = acos(obj.quaternion.w) # Per FEZMod-Legacy/.../EditorUtils.cs. Thx 0x0ade! 
 				
 				var actset = null
 				
@@ -418,6 +415,10 @@ static func save_fezlvl(path: String, objects: Array, trileset: String) -> void:
 				var spDict = { "Id": [id[0] as int, id[1] as int, id[2] as int], "Face": face}
 				
 				template["StartingPosition"] = spDict
+				pass
+				
+			"bkgpln":
+				
 				pass
 	
 	template["Name"] = filename.to_upper()

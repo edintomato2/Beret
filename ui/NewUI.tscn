@@ -202,7 +202,7 @@ disabled = true
 [node name="Palette" type="ItemList" parent="UI/VBox/Bottombar"]
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 1
+focus_mode = 0
 max_columns = 0
 same_column_width = true
 icon_mode = 0
