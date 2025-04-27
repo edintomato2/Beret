@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dvki037st0vqu"]
+[gd_scene load_steps=13 format=3 uid="uid://dvki037st0vqu"]
 
 [ext_resource type="Script" uid="uid://ccrpvfy3t1k4j" path="res://ui/new_ui.gd" id="1_lovj8"]
 [ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://ui/selecting/select_box.gd" id="2_3gi0v"]
 [ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://ui/popups/SetPaths.tscn" id="3_rldmy"]
 [ext_resource type="AnimationLibrary" uid="uid://dfov33a8axuij" path="res://ui/animations.res" id="4_ggqg0"]
+[ext_resource type="Material" uid="uid://bsu01pnv0uo8n" path="res://editor/materials/wireframe.tres" id="5_lovj8"]
 [ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://ui/skyrender/DefaultEnv.tres" id="6_lovj8"]
 
 [sub_resource type="Animation" id="Animation_lovj8"]
@@ -39,6 +40,15 @@ _data = {
 }
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_72b8f"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lovj8"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lovj8"]
+material = ExtResource("5_lovj8")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mm5ur"]
 
 [node name="NewUI" type="Node"]
 script = ExtResource("1_lovj8")
@@ -214,29 +224,54 @@ text = "0, 0, 0
 Facing: Front"
 horizontal_alignment = 1
 
-[node name="Pivot" type="Node3D" parent="."]
+[node name="Sounds" type="AudioStreamPlayer" parent="UI"]
 
-[node name="Camera" type="Camera3D" parent="Pivot"]
+[node name="Editor" type="Node3D" parent="."]
+
+[node name="Pivot" type="Node3D" parent="Editor"]
+
+[node name="Camera" type="Camera3D" parent="Editor/Pivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 current = true
-fov = 55.0
 size = 10.0
 
-[node name="Area3D" type="Area3D" parent="Pivot"]
+[node name="Area3D" type="Area3D" parent="Editor/Pivot"]
 top_level = true
-collision_mask = 31
+collision_mask = 30
 input_ray_pickable = false
 priority = 1
 
-[node name="Selection Shape" type="CollisionShape3D" parent="Pivot/Area3D"]
+[node name="Selection Shape" type="CollisionShape3D" parent="Editor/Pivot/Area3D"]
 shape = SubResource("BoxShape3D_72b8f")
+debug_fill = false
 
-[node name="Objects" type="Node" parent="."]
+[node name="Objects" type="Node" parent="Editor"]
 
-[node name="Sounds" type="AudioStreamPlayer" parent="."]
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Editor"]
 environment = ExtResource("6_lovj8")
+
+[node name="Level BoundaryOld" type="CSGCombiner3D" parent="Editor"]
+visible = false
+operation = 2
+use_collision = true
+
+[node name="Outer" type="CSGBox3D" parent="Editor/Level BoundaryOld"]
+use_collision = true
+material = ExtResource("5_lovj8")
+
+[node name="Inner" type="CSGBox3D" parent="Editor/Level BoundaryOld"]
+operation = 2
+size = Vector3(0.999, 0.999, 0.999)
+material = SubResource("StandardMaterial3D_lovj8")
+
+[node name="Level Boundary" type="MeshInstance3D" parent="Editor"]
+visible = false
+mesh = SubResource("BoxMesh_lovj8")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Editor/Level Boundary"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Editor/Level Boundary/StaticBody3D"]
+shape = SubResource("BoxShape3D_mm5ur")
 
 [connection signal="file_selected" from="UI/Popups/Load File" to="." method="_ui_load_file"]
 [connection signal="file_selected" from="UI/Popups/Save File" to="." method="_ui_save_file"]
@@ -250,5 +285,5 @@ environment = ExtResource("6_lovj8")
 [connection signal="rectChanged" from="UI/VBox/Control/Select Box" to="." method="_ui_selectbox_changed"]
 [connection signal="item_selected" from="UI/VBox/Bottombar/PalSet" to="." method="_ui_palette_change"]
 [connection signal="item_selected" from="UI/VBox/Bottombar/Palette" to="." method="_ui_palette_item_selected"]
-[connection signal="body_entered" from="Pivot/Area3D" to="." method="_area_body_entered"]
-[connection signal="body_exited" from="Pivot/Area3D" to="." method="_area_body_exited"]
+[connection signal="body_entered" from="Editor/Pivot/Area3D" to="." method="_area_body_entered"]
+[connection signal="body_exited" from="Editor/Pivot/Area3D" to="." method="_area_body_exited"]

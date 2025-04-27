@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bsu01pnv0uo8n"]
+
+[ext_resource type="Shader" uid="uid://busv1td82cb87" path="res://editor/materials/wireframe.gdshader" id="1_isw66"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_isw66")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/outline_width = 0.0

@@ -3,10 +3,10 @@
 extends Node
 
 ## -=-= UI vars. =-=-
-@onready var  _pvt: Node3D = $Pivot
-@onready var  _cam: Camera3D = $Pivot/Camera
+@onready var  _pvt: Node3D = $Editor/Pivot
+@onready var  _cam: Camera3D = $Editor/Pivot/Camera
 #@onready var  _bkg: WorldEnvironment = $Background
-@onready var _area: Area3D = $"Pivot/Area3D"
+@onready var _area: Area3D = $Editor/Pivot/Area3D
 
 var _pivot_anim = false ### Flag for if the camera's pivot is in an animation or not.
 var _total_pitch = 0.0 ### Total pitch for 3d orbit.
@@ -37,19 +37,17 @@ var _save_path: String ## Where we'll save the FEZLVL.
 
 func _ready() -> void:
 	_editor_setup()
-	_cam_setup()
+	_editor_cam_setup()
 	_ui_setup()
-
-func _process(_delta: float) -> void: pass
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Camera specific code
 	if Input.is_action_just_released("cam_orbit", true): Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	if Input.is_action_just_released("cam_pan", true): Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	_cam_control(event)
+	_editor_cam_control(event)
 	
 	# Mouse specific code
-	_mouse_place(event)
+	_editor_mouse_control(event)
 	
 	# Editor specific control
 	_editor_control()
@@ -83,24 +81,34 @@ func _editor_history(move: String, array: Array) -> void: # Undo/Redo history.
 		"deselect": _area.scale = Vector3(0.0001, 0.0001, 0.0001); _area.global_position = Vector3.ZERO
 	_history.append([move, array.duplicate()])
 
+func _editor_set_level_size(size: Vector3) -> void:
+	var boundary = $"Editor/Level Boundary"
+	boundary.scale = size
+	var pos = lerp(Vector3.ZERO, size, 0.5)
+	boundary.global_position = pos
+	boundary.show()
+	pos.y = 0.0
+	_cam.global_position.z = pos.z * 2
+	_pvt.global_position = pos
+
 ## -=-= Camera control. =-=-
 ### Movement is modeled after Godot's editor, with some FEZification extras added.
-func _cam_setup() -> void:
+func _editor_cam_setup() -> void:
 	_cam.size = 10.0
 	_cam.fov = 55.0
 
-func _cam_control(event: InputEvent) -> void:
-	_cam_qe()
-	_cam_wasd()
-	if Input.is_action_just_pressed("cam_projection", true): _cam_proj_switch()
+func _editor_cam_control(event: InputEvent) -> void:
+	_editor_cam_qe()
+	_editor_cam_wasd()
+	if Input.is_action_just_pressed("cam_projection", true): _editor_cam_proj_switch()
 	
 	### Mouse Button 3 Controls (all require mouse movement)	
 	if event is InputEventMouseMotion:
-		if Input.is_action_pressed("cam_orbit", true): _cam_orbit(event.relative)
-		if Input.is_action_pressed("cam_pan", true): _cam_pan(event.relative)
-		if Input.is_action_pressed("cam_zoom", true): _cam_zoom(event.relative)
+		if Input.is_action_pressed("cam_orbit", true): _editor_cam_orbit(event.relative)
+		if Input.is_action_pressed("cam_pan", true): _editor_cam_pan(event.relative)
+		if Input.is_action_pressed("cam_zoom", true): _editor_cam_zoom(event.relative)
 
-func _cam_orbit(mousePos: Vector2) -> void:
+func _editor_cam_orbit(mousePos: Vector2) -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	var _mouse_position = mousePos
 	_mouse_position *= 0.25
@@ -115,7 +123,7 @@ func _cam_orbit(mousePos: Vector2) -> void:
 	_pvt.rotate_y(deg_to_rad(-yaw))
 	_pvt.rotate_object_local(Vector3(1,0,0), deg_to_rad(-pitch))
 
-func _cam_pan(mouseVel: Vector2) -> void:
+func _editor_cam_pan(mouseVel: Vector2) -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	# Now that we have the velocity of the mouse, we need to move the camera depending on its
 	# orientation. We'll ignore the z-axis, and just focus on the x and y.
@@ -126,7 +134,7 @@ func _cam_pan(mouseVel: Vector2) -> void:
 	#var _sens = (sensitivity / get_size()) # TODO: The greater the zoom, the slower the panning speed
 	_pvt.translate_object_local((xDir + yDir) * 0.05)
 
-func _cam_zoom(mouseVel: Vector2) -> void:
+func _editor_cam_zoom(mouseVel: Vector2) -> void:
 	### We only care about the vertical component of the vector.
 	match _cam.projection:
 		_cam.PROJECTION_ORTHOGONAL:
@@ -136,23 +144,24 @@ func _cam_zoom(mouseVel: Vector2) -> void:
 			var cam_move = _cam.fov + (mouseVel.y * 0.5)
 			if (cam_move > 10.0) and (cam_move < 120.0): _cam.fov = cam_move
 
-func _cam_qe() -> void: ## Q + E camera rotation, like in FEZ.
+func _editor_cam_qe() -> void: ## Q + E camera rotation, like in FEZ.
 	if _pivot_anim: return
 	
 	if Input.is_action_just_pressed("cam_closest_face", true):
 		var temp = Vector3.ZERO
 		temp.y = snappedf(_pvt.rotation_degrees.y, 90)
-		_cam_tween_ctrl("rotation_degrees", temp, 0.3)
+		_editor_cam_tween_ctrl("rotation_degrees", temp, 0.3)
 		_ui_sounds("snd_ok")
-	if Input.is_action_just_pressed("cam_lt", true): _cam_tween_ctrl("rotation_degrees", Vector3(0, -90, 0) + _pvt.rotation_degrees, 0.2); _ui_sounds("snd_lt")
-	if Input.is_action_just_pressed("cam_rt", true): _cam_tween_ctrl("rotation_degrees", Vector3(0, 90, 0) + _pvt.rotation_degrees, 0.2); _ui_sounds("snd_rt")
+		
+	if Input.is_action_just_pressed("cam_lt", true): _editor_cam_tween_ctrl("rotation_degrees", Vector3(0, -90, 0) + _pvt.rotation_degrees, 0.2); _ui_sounds("snd_lt")
+	if Input.is_action_just_pressed("cam_rt", true): _editor_cam_tween_ctrl("rotation_degrees", Vector3(0, 90, 0) + _pvt.rotation_degrees, 0.2); _ui_sounds("snd_rt")
 
-func _cam_proj_switch() -> void:
+func _editor_cam_proj_switch() -> void:
 	match _cam.projection:
 		_cam.PROJECTION_PERSPECTIVE: _cam.projection = Camera3D.PROJECTION_ORTHOGONAL; _ui_sounds("snd_rt")
 		_cam.PROJECTION_ORTHOGONAL: _cam.projection = Camera3D.PROJECTION_PERSPECTIVE; _ui_sounds("snd_lt")
 
-func _cam_tween_ctrl(prop: String, target: Variant, duration: float) -> void:
+func _editor_cam_tween_ctrl(prop: String, target: Variant, duration: float) -> void:
 	if _pivot_anim: return
 	
 	_pivot_anim = true
@@ -168,56 +177,74 @@ func _cam_tween_ctrl(prop: String, target: Variant, duration: float) -> void:
 	)
 
 	await tween.finished
+	
 	_pivot_anim = false
 
-func _cam_wasd() -> void: ## Keyboard movement.
+func _editor_cam_wasd() -> void: ## Keyboard movement.
 	var move_target = Vector3.ZERO
 	
 	if _pivot_anim: return
 	
 	if Input.is_action_just_pressed("ui_up", true): move_target += Vector3.UP; _ui_sounds("snd_up")
 	if Input.is_action_just_pressed("ui_down", true): move_target += Vector3.DOWN; _ui_sounds("snd_down")
-	if Input.is_action_just_pressed("ui_right", true): move_target += Vector3.RIGHT; _ui_sounds("snd_up")
-	if Input.is_action_just_pressed("ui_left", true): move_target += Vector3.LEFT; _ui_sounds("snd_down")
+	#if Input.is_action_just_pressed("ui_right", true): move_target += Vector3.RIGHT; _ui_sounds("snd_up")
+	#if Input.is_action_just_pressed("ui_left", true): move_target += Vector3.LEFT; _ui_sounds("snd_down")
 	
 	if move_target == Vector3.ZERO: return
-	_cam_tween_ctrl("global_position", _pvt.global_position + (_pvt.global_basis * move_target), 0.1)
+	_editor_cam_tween_ctrl("global_position", _pvt.global_position + (_pvt.global_basis * move_target), 0.1)
 
 # -=-= Mouse control. =-=-
-func _mouse_place(event: InputEvent) -> void: ## Handle placement and editing of objects.
+func _editor_mouse_control(event: InputEvent) -> void: ## Handle placement and editing of objects.
 	## Below could probably be handled by assigning mouse interactions for every obj 
-	if (event is InputEventMouseButton) and (event.button_index == 1):
-	#if event.is_action_pressed("mouse_select", true):
-	#if Input.is_action_just_pressed("mouse_select", true): 
+	if Input.is_action_just_pressed("mouse_select", true):
+		## Set up general placement info
 		var palette: ItemList = $UI/VBox/Bottombar/Palette
-		var placement: Dictionary
-		var pos = _cam.project_position(event.position, 10)
+		var placement: Dictionary = {"Name": palette.get_item_tooltip(_palette_index)}
+		var obj: Node3D
+		
+		## "Minecraft Placement" setup
+		### Left click to place objects. They will build on the last hit object or the level size barrier.
+		var space_state = _cam.get_world_3d().direct_space_state
+		
+		var from = _cam.project_ray_origin(event.position)
+		var to = from + _cam.project_ray_normal(event.position) * 1000.0
+		
+		var query = PhysicsRayQueryParameters3D.create(
+					from,
+					to,
+					0xFFFFFFFF,
+					[])
+		query.hit_from_inside = false
+		var result: Dictionary = space_state.intersect_ray(query)
+		print(result)
+		
+		if result.is_empty(): return
+		
+		var offset = Vector3.ZERO
+		if result["collider"] == $"Editor/Level Boundary": offset = Vector3(0.5, 0.5, 0.5)
+		var pos = result["position"] + (_cam.global_basis * offset)
 		
 		match _palette_active:
 			"Triles":
 				placement["Id"] = palette.get_item_metadata(_palette_index)
-				placement["Name"] = palette.get_item_text(_palette_index)
 				placement["Position"] = fzld._vec2arr(pos.round())
 				placement["Emplacement"] = fzld._vec2arr(pos)
-				placement["Phi"] = acos(_pvt.quaternion.w)
+				placement["Phi"] = snappedf(abs(_pvt.rotation_degrees.y), 90)
 				
-				var obj = fzld.load_triles([placement], fezts)[0]
-				$Objects.add_child(obj)
-				obj.show()
+				obj = fzld.load_triles([placement], fezts)[0]
+				
 			"AOs":
-				placement["Name"] = palette.get_item_tooltip(_palette_index)
 				placement["Position"] = fzld._vec2arr(pos)
 				var rot = _pvt.quaternion
 				placement["Rotation"] = [rot.x, rot.y, rot.z, rot.w]
 				placement["Scale"] = [1, 1, 1]
 				
-				var obj = fzld.load_aos({"1": placement})[0]
-				$Objects.add_child(obj)
-				obj.show()
+				obj = fzld.load_aos({"1": placement})[0]
+		$Editor/Objects.add_child(obj)
+		obj.show()
 	
 	### Mouse Button 2 Controls
 	#### M2 click = edit obj properties
-	pass
 
 ## -=-= FEZLVL loading. =-=-
 func _load_fezlvl(path: String) -> void:
@@ -237,18 +264,20 @@ func _load_fezlvl(path: String) -> void:
 	var super_array = triles + aos + npcs + bkgplns + vols + gomez
 	
 	for i in super_array:
-		$Objects.add_child(i)
+		$Editor/Objects.add_child(i)
 		i.visible = true
 		
-	_pvt.global_position = gomez[0].global_position
+	#_pvt.global_position = gomez[0].global_position
+	_editor_set_level_size(fzld.load_size(fezlvl["Size"]))
 
 func _close_fezlvl() -> void:
-	for n in $Objects.get_child_count(): $Objects.get_child(n).queue_free()
+	for n in $Editor/Objects.get_child_count(): $Editor/Objects.get_child(n).queue_free()
 	_pvt.global_position = Vector3.ZERO
 	_pvt.rotation_degrees = Vector3.ZERO
 	_ui_buttons_disabled(true)
 	var palset: OptionButton = $UI/VBox/Bottombar/PalSet
 	palset.select(0)
+	$"Editor/Level Boundary".hide()
 
 ## -=-= UI control and signal links. =-=-
 func _ui_setup() -> void:
@@ -285,17 +314,25 @@ func _ui_hide_dropdown_connect(index: int) -> void:
 	target.get_popup().toggle_item_checked(index)
 	
 	var state = target.get_popup().is_item_checked(index)
-	get_tree().call_group(wanna_hide, "set_visible", state)
+	
+	var layer: int
+	match wanna_hide:
+		"Triles": layer = 2
+		"AOs": layer = 3
+		"NPCs": layer = 4
+		"Background Planes": layer = 5
+		"Volumes": layer = 6
+	_cam.set_cull_mask_value(layer, state)
 
 func _ui_sounds(sound: String) -> void:
 	match sound:
-		"snd_ok":     $Sounds.set_stream(_snd_ok)
-		"snd_lt":     $Sounds.set_stream(_snd_lt)
-		"snd_rt":     $Sounds.set_stream(_snd_rt)
-		"snd_up":     $Sounds.set_stream(_snd_up)
-		"snd_down":   $Sounds.set_stream(_snd_down)
-		"snd_cancel": $Sounds.set_stream(_snd_cancel)
-	$Sounds.play()
+		"snd_ok":     $UI/Sounds.set_stream(_snd_ok)
+		"snd_lt":     $UI/Sounds.set_stream(_snd_lt)
+		"snd_rt":     $UI/Sounds.set_stream(_snd_rt)
+		"snd_up":     $UI/Sounds.set_stream(_snd_up)
+		"snd_down":   $UI/Sounds.set_stream(_snd_down)
+		"snd_cancel": $UI/Sounds.set_stream(_snd_cancel)
+	$UI/Sounds.play()
 
 func _ui_load_file(path: String) -> void: ## Remove all objects and (re)load.
 	_ui_spinny_loady("fadein")
@@ -365,7 +402,7 @@ func _ui_spinny_loady(state: String) -> void: # May need to be on a separate thr
 
 func _ui_save_file(path: String) -> void:
 	_ui_sounds("snd_ok")
-	fzld.save_fezlvl(path.get_slice(".", 0), $Objects.get_children(), fezts[2]["Name"])
+	fzld.save_fezlvl(path.get_slice(".", 0), $Editor/Objects.get_children(), fezts[2]["Name"], fzld.load_size(fezlvl["Size"]))
 
 func _ui_save_pressed() -> void:
 	if _save_path.is_empty(): $"UI/Popups/Save File".show()

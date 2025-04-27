@@ -24,6 +24,8 @@ static func load_fezlvl(path: String) -> Variant: # Read fezlvl.json, return the
 	if err != OK: push_error(readLvl.get_error_message())
 	return readLvl.data
 
+static func load_size(size: Array) -> Vector3: return _arr2vec(size)
+
 static func load_trileset(trileset_name: String) -> Array: # Load trilesets as an Array.
 	## Get clean path name.
 	var dir = Settings.dict["AssetDirs"][Settings.idx] + "trile sets/"
@@ -200,7 +202,7 @@ static func load_bkgplns(bkgplns: Dictionary) -> Array: # Load background planes
 		mat.set_distance_fade(BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER)
 		mat.set_distance_fade_max_distance(3)
 		
-		inst.position = _arr2vec(bkgplns[i]["Position"]) - Vector3i(0.5, 0.499, 0.5)
+		inst.position = _arr2vec(bkgplns[i]["Position"]) - Vector3(0.5, 0.5, 0.5)
 		inst.quaternion = _arr2quat(bkgplns[i]["Rotation"])
 		inst.layers = 16
 		inst.set_surface_override_material(0, mat)
@@ -360,7 +362,7 @@ static func _loadObj(filepath: String, type: int): # Internal object loader.
 	m.add_child(statBod)
 	return m
 
-static func save_fezlvl(path: String, objects: Array, trileset: String) -> void: # Save FEZLVL data.
+static func save_fezlvl(path: String, objects: Array, trileset: String, size: Vector3) -> void: # Save FEZLVL data.
 	var readTemp = JSON.new()
 	var err = readTemp.parse(FileAccess.get_file_as_string("res://main/new_saveload/template.fezlvl.json"))
 	if err != OK: push_error("Couldn't read template.fezlvl.json, WTF? Error: " + err); return
@@ -368,7 +370,6 @@ static func save_fezlvl(path: String, objects: Array, trileset: String) -> void:
 	var filename = path.get_file()
 	var template = readTemp.data
 	var offset = _find_lvl_offset(objects)
-	var size =   _find_lvl_size(objects)
 	
 	# Get all of Loader's children.
 	for obj in objects:
@@ -435,7 +436,7 @@ static func save_fezlvl(path: String, objects: Array, trileset: String) -> void:
 	print("Saved level.")
 
 # Helper functions.
-static func _arr2vec(arr: Array) -> Vector3i: return Vector3i(arr[0], arr[1], arr[2])
+static func _arr2vec(arr: Array) -> Vector3: return Vector3(arr[0], arr[1], arr[2])
 static func _arr2quat(arr: Array) -> Quaternion: return Quaternion(arr[0], arr[1], arr[2], arr[3])
 static func _vec2arr(vector: Vector3) -> Array: return [vector.x, vector.y, vector.z]
 
