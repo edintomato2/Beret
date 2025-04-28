@@ -372,7 +372,8 @@ static func save_fezlvl(path: String, objects: Array, trileset: String, size: Ve
 	var offset = _find_lvl_offset(objects)
 	
 	# Get all of Loader's children.
-	for obj in objects:
+	for obj2 in objects:
+		var obj = obj2.get_parent()
 		if not obj.visible: continue # Ignore "deleted" objects
 		
 		match obj.get_meta("Type"):

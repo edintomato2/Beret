@@ -1,0 +1,78 @@
+[gd_scene load_steps=4 format=3 uid="uid://ncptfj1tqkke"]
+
+[ext_resource type="LabelSettings" uid="uid://bmw81fb8twy4k" path="res://ui/popups/label_settings.tres" id="1_2i2bv"]
+[ext_resource type="Script" uid="uid://80m82xf4karo" path="res://ui/popups/new_level_setup.gd" id="1_dok08"]
+[ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://ui/theming/starback.png" id="1_ylru7"]
+
+[node name="New Level Setup" type="Window"]
+title = "New Level"
+initial_position = 1
+size = Vector2i(800, 500)
+script = ExtResource("1_dok08")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Control/CenterContainer"]
+layout_mode = 2
+texture = ExtResource("1_ylru7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer"]
+layout_mode = 2
+
+[node name="Trileset" type="CenterContainer" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer/Trileset"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/CenterContainer/VBoxContainer/Trileset/HBoxContainer"]
+layout_mode = 2
+text = "Trileset:"
+label_settings = ExtResource("1_2i2bv")
+
+[node name="OptionButton" type="OptionButton" parent="Control/CenterContainer/VBoxContainer/Trileset/HBoxContainer"]
+layout_mode = 2
+selected = 0
+
+[node name="Level Size" type="CenterContainer" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer/Level Size"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/CenterContainer/VBoxContainer/Level Size/HBoxContainer"]
+layout_mode = 2
+text = "Level Size:"
+label_settings = ExtResource("1_2i2bv")
+
+[node name="LineEdit" type="LineEdit" parent="Control/CenterContainer/VBoxContainer/Level Size/HBoxContainer"]
+layout_mode = 2
+placeholder_text = "X, Y, Z"
+
+[node name="Info" type="CenterContainer" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer/Info"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/CenterContainer/VBoxContainer/Info/HBoxContainer"]
+layout_mode = 2
+text = "Press enter to confirm."
+label_settings = ExtResource("1_2i2bv")
+
+[connection signal="item_selected" from="Control/CenterContainer/VBoxContainer/Trileset/HBoxContainer/OptionButton" to="." method="_on_trileset_selected"]
+[connection signal="text_submitted" from="Control/CenterContainer/VBoxContainer/Level Size/HBoxContainer/LineEdit" to="." method="_on_level_size_text_submitted"]

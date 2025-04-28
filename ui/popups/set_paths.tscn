@@ -7,7 +7,7 @@
 
 [sub_resource type="Theme" id="Theme_x2ok3"]
 
-[node name="SetPaths" type="Window"]
+[node name="Set Paths" type="Window"]
 title = "Set Asset Paths"
 initial_position = 1
 size = Vector2i(800, 500)

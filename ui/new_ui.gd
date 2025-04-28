@@ -14,6 +14,7 @@ var _ui_tween
 
 var _selected: Array ### Selected objects.
 var  _history: Array ### History. Stored as array with array of what was done (move obj, delete obj)
+var _boundary := {"clicked_at": Vector3.ZERO} ### Boundary information.
 
 const _mat_selected = preload("res://ui/selecting/obj_selected.tres") ### "Selected" look of objects.
 
@@ -130,8 +131,6 @@ func _editor_cam_pan(mouseVel: Vector2) -> void:
 	var yDir = _cam.transform.basis.y * mouseVel.y
 	var xDir = _cam.transform.basis.x * -mouseVel.x
 	
-	#get_node(_raycast).global_position = _box.global_position
-	#var _sens = (sensitivity / get_size()) # TODO: The greater the zoom, the slower the panning speed
 	_pvt.translate_object_local((xDir + yDir) * 0.05)
 
 func _editor_cam_zoom(mouseVel: Vector2) -> void:
@@ -207,22 +206,28 @@ func _editor_mouse_control(event: InputEvent) -> void: ## Handle placement and e
 		var space_state = _cam.get_world_3d().direct_space_state
 		
 		var from = _cam.project_ray_origin(event.position)
-		var to = from + _cam.project_ray_normal(event.position) * 1000.0
+		var to = from + _cam.project_ray_normal(event.position) * 500.0
 		
 		var query = PhysicsRayQueryParameters3D.create(
 					from,
-					to,
-					0xFFFFFFFF,
-					[])
-		query.hit_from_inside = false
+					to)
 		var result: Dictionary = space_state.intersect_ray(query)
-		print(result)
 		
-		if result.is_empty(): return
+		### If we don't hit any objects, flip the ray to get the farthest point of the level boundary.
 		
 		var offset = Vector3.ZERO
-		if result["collider"] == $"Editor/Level Boundary": offset = Vector3(0.5, 0.5, 0.5)
-		var pos = result["position"] + (_cam.global_basis * offset)
+		if result.is_empty():
+			query = PhysicsRayQueryParameters3D.create(
+					to,
+					from)
+			query.collide_with_areas = true
+					
+			result = space_state.intersect_ray(query)
+			if result.is_empty(): return # If we still don't hit anything, give up.
+			offset = Vector3.ONE
+		print(result)
+		
+		var pos = result["position"]
 		
 		match _palette_active:
 			"Triles":
@@ -402,16 +407,18 @@ func _ui_spinny_loady(state: String) -> void: # May need to be on a separate thr
 
 func _ui_save_file(path: String) -> void:
 	_ui_sounds("snd_ok")
-	fzld.save_fezlvl(path.get_slice(".", 0), $Editor/Objects.get_children(), fezts[2]["Name"], fzld.load_size(fezlvl["Size"]))
+	var bounds: Area3D = $"Editor/Level Boundary/Area3D"
+	fzld.save_fezlvl(path.get_slice(".", 0), bounds.get_overlapping_bodies(), fezts[2]["Name"], fzld.load_size(fezlvl["Size"]))
 
 func _ui_save_pressed() -> void:
 	if _save_path.is_empty(): $"UI/Popups/Save File".show()
 	else: _ui_save_file(_save_path)
 
-func _ui_on_new_file_pressed() -> void: $"UI/Popups/New File".show()
+func _ui_on_new_file_pressed() -> void: $"UI/Popups/New Level Setup".show()
 
-func _ui_new_file(path: String) -> void:
-	fezts = fzld.load_trileset(path.get_file().get_slice(".", 0))
+func _ui_new_file(level_size: Array, trile_set: String) -> void:
+	fezts = fzld.load_trileset(trile_set)
+	_editor_set_level_size(fzld.load_size(level_size))
 	_ui_buttons_disabled(false)
 
 func _ui_buttons_disabled(state: bool):
@@ -493,3 +500,5 @@ func _ui_load_palette(list: String) -> void:
 		"Background Planes": pass
 
 func _ui_palette_item_selected(index: int) -> void: _palette_index = index
+
+func _ui_go_to_pressed() -> void: _pvt.global_position = Vector3.ZERO

@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://dvki037st0vqu"]
+[gd_scene load_steps=15 format=3 uid="uid://dvki037st0vqu"]
 
 [ext_resource type="Script" uid="uid://ccrpvfy3t1k4j" path="res://ui/new_ui.gd" id="1_lovj8"]
 [ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://ui/selecting/select_box.gd" id="2_3gi0v"]
-[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://ui/popups/SetPaths.tscn" id="3_rldmy"]
+[ext_resource type="PackedScene" uid="uid://ncptfj1tqkke" path="res://ui/popups/new_level_setup.tscn" id="3_mm5ur"]
+[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://ui/popups/set_paths.tscn" id="3_rldmy"]
 [ext_resource type="AnimationLibrary" uid="uid://dfov33a8axuij" path="res://ui/animations.res" id="4_ggqg0"]
 [ext_resource type="Material" uid="uid://bsu01pnv0uo8n" path="res://editor/materials/wireframe.tres" id="5_lovj8"]
 [ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://ui/skyrender/DefaultEnv.tres" id="6_lovj8"]
@@ -39,11 +40,15 @@ _data = {
 &"RESET": SubResource("Animation_lovj8")
 }
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_72b8f"]
+[sub_resource type="InputEventKey" id="InputEventKey_lovj8"]
+device = -1
+ctrl_pressed = true
+keycode = 71
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lovj8"]
-transparency = 1
-albedo_color = Color(1, 1, 1, 0)
+[sub_resource type="Shortcut" id="Shortcut_mm5ur"]
+events = [SubResource("InputEventKey_lovj8")]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_72b8f"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_lovj8"]
 material = ExtResource("5_lovj8")
@@ -63,7 +68,7 @@ grow_vertical = 2
 
 [node name="Popups" type="Node" parent="UI"]
 
-[node name="SetPaths" parent="UI/Popups" instance=ExtResource("3_rldmy")]
+[node name="Set Paths" parent="UI/Popups" instance=ExtResource("3_rldmy")]
 visible = false
 
 [node name="Load File" type="FileDialog" parent="UI/Popups"]
@@ -84,12 +89,8 @@ dialog_hide_on_ok = true
 access = 2
 use_native_dialog = true
 
-[node name="New File" type="FileDialog" parent="UI/Popups"]
-title = "Open a File"
-ok_button_text = "Open"
-file_mode = 0
-filters = PackedStringArray("*.fezts.json;FEZ Trilesets")
-use_native_dialog = true
+[node name="New Level Setup" parent="UI/Popups" instance=ExtResource("3_mm5ur")]
+visible = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="UI"]
 root_node = NodePath("../VBox/Control/Loading")
@@ -148,6 +149,11 @@ layout_mode = 2
 focus_mode = 0
 disabled = true
 text = "Save FEZLVL As"
+
+[node name="Go To Home" type="Button" parent="UI/VBox/Topbar"]
+layout_mode = 2
+shortcut = SubResource("Shortcut_mm5ur")
+text = "Go To Home"
 
 [node name="Control" type="Control" parent="UI/VBox"]
 layout_mode = 2
@@ -250,40 +256,30 @@ debug_fill = false
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Editor"]
 environment = ExtResource("6_lovj8")
 
-[node name="Level BoundaryOld" type="CSGCombiner3D" parent="Editor"]
-visible = false
-operation = 2
-use_collision = true
-
-[node name="Outer" type="CSGBox3D" parent="Editor/Level BoundaryOld"]
-use_collision = true
-material = ExtResource("5_lovj8")
-
-[node name="Inner" type="CSGBox3D" parent="Editor/Level BoundaryOld"]
-operation = 2
-size = Vector3(0.999, 0.999, 0.999)
-material = SubResource("StandardMaterial3D_lovj8")
-
 [node name="Level Boundary" type="MeshInstance3D" parent="Editor"]
 visible = false
 mesh = SubResource("BoxMesh_lovj8")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Editor/Level Boundary"]
+[node name="Area3D" type="Area3D" parent="Editor/Level Boundary"]
+collision_mask = 30
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Editor/Level Boundary/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Editor/Level Boundary/Area3D"]
 shape = SubResource("BoxShape3D_mm5ur")
+debug_color = Color(0.53, 0.1696, 0.45792, 0.686275)
 
 [connection signal="file_selected" from="UI/Popups/Load File" to="." method="_ui_load_file"]
 [connection signal="file_selected" from="UI/Popups/Save File" to="." method="_ui_save_file"]
-[connection signal="file_selected" from="UI/Popups/New File" to="." method="_ui_new_file"]
+[connection signal="level_setup" from="UI/Popups/New Level Setup" to="." method="_ui_new_file"]
 [connection signal="pressed" from="UI/VBox/Topbar/Load File" to="." method="_ui_load_pressed"]
 [connection signal="pressed" from="UI/VBox/Topbar/New File" to="." method="_ui_on_new_file_pressed"]
 [connection signal="pressed" from="UI/VBox/Topbar/Close File" to="." method="_ui_close_file"]
 [connection signal="pressed" from="UI/VBox/Topbar/Quit Editor" to="." method="_ui_quit_editor"]
 [connection signal="pressed" from="UI/VBox/Topbar/Set Asset Dirs" to="." method="_ui_set_dirs"]
 [connection signal="pressed" from="UI/VBox/Topbar/Save File" to="." method="_ui_save_pressed"]
+[connection signal="pressed" from="UI/VBox/Topbar/Go To Home" to="." method="_ui_go_to_pressed"]
 [connection signal="rectChanged" from="UI/VBox/Control/Select Box" to="." method="_ui_selectbox_changed"]
 [connection signal="item_selected" from="UI/VBox/Bottombar/PalSet" to="." method="_ui_palette_change"]
 [connection signal="item_selected" from="UI/VBox/Bottombar/Palette" to="." method="_ui_palette_item_selected"]
 [connection signal="body_entered" from="Editor/Pivot/Area3D" to="." method="_area_body_entered"]
 [connection signal="body_exited" from="Editor/Pivot/Area3D" to="." method="_area_body_exited"]
+[connection signal="input_event" from="Editor/Level Boundary/Area3D" to="." method="_editor_boundary_clicked"]
