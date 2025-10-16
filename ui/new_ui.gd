@@ -33,7 +33,7 @@ var _palette_index: int
 ## -=-= FEZLVL vars. =-=-
 const fzld = preload("res://main/new_saveload/fezlvl_load.gd")
 var fezlvl: Dictionary
-var fezts: Array
+var fezts: Node
 var _save_path: String ## Where we'll save the FEZLVL.
 
 func _ready() -> void:
@@ -254,8 +254,31 @@ func _editor_mouse_control(event: InputEvent) -> void: ## Handle placement and e
 ## -=-= FEZLVL loading. =-=-
 func _load_fezlvl(path: String) -> void:
 	print("Loading level.")
-	fezlvl = fzld.load_fezlvl(path)
-	fezts = fzld.load_trileset(fezlvl["TrileSetName"])
+	
+	# Load JSON based on path.
+	var readLvl = JSON.new()
+	var err = readLvl.parse(FileAccess.get_file_as_string(path))
+	if err != OK: push_error(readLvl.get_error_message())
+	
+	fezlvl = readLvl.data
+	
+	# Load trileset. Since everything is now a glb, life is a lot easier. Thank you!
+	var fezts_dir = Settings.dict["AssetDirs"][Settings.idx] + "trile sets/"+ fezlvl["TrileSetName"].to_lower() + ".fezts.glb"
+	var gltf_document_load = GLTFDocument.new()
+	var gltf_state_load = GLTFState.new()
+	var error = gltf_document_load.append_from_file(fezts_dir, gltf_state_load)
+	
+	if error == OK:
+		var gltf_scene_root_node = gltf_document_load.generate_scene(gltf_state_load)
+		fezts = gltf_scene_root_node
+	else:
+		push_error("Couldn't load trileset (error code: %s)." % error_string(error))
+	
+	## Trilesets are now one big group of MeshInstance3Ds,
+	## with TrileIDs being in the metadata.
+	## To load triles, we can just instantiate a MeshInstance3D each trile.
+		
+		
 	
 	# Assign Arrays. Yes we're making a super big array with everything in it. No, I do not care if this is efficient or not.
 	var triles = fzld.load_triles(fezlvl["Triles"], fezts)
@@ -280,8 +303,6 @@ func _close_fezlvl() -> void:
 	_pvt.global_position = Vector3.ZERO
 	_pvt.rotation_degrees = Vector3.ZERO
 	_ui_buttons_disabled(true)
-	var palset: OptionButton = $UI/VBox/Bottombar/PalSet
-	palset.select(0)
 	$"Editor/Level Boundary".hide()
 
 ## -=-= UI control and signal links. =-=-
@@ -291,11 +312,8 @@ func _ui_setup() -> void:
 	_ui_palette_selector_setup()
 	
 func _ui_palette_selector_setup() -> void:
-	var palset: OptionButton = $UI/VBox/Bottombar/PalSet
+	var palset: TabContainer = $"UI/VBox/VSplitContainer/Bottombar/Object Tabs"
 	var items = ["Select", "Build", "Triles", "AOs", "NPCs", "Volumes", "Background Planes"]
-	
-	for i in items:
-		palset.add_item(i)
 
 func _ui_hide_dropdown_setup() -> void:
 	var target: MenuButton = $UI/VBox/Topbar/Hide
@@ -386,7 +404,7 @@ func _area_body_exited(body: Node3D) -> void:
 	_selected.erase(body.get_parent())
 
 func _ui_console(write: String) -> void:
-	var console: RichTextLabel = $UI/VBox/Control/Console
+	var console: RichTextLabel = $UI/VBox/VSplitContainer/HSplitContainer/Control/Console
 	
 	if _ui_tween:
 		_ui_tween.kill()
@@ -422,7 +440,6 @@ func _ui_new_file(level_size: Array, trile_set: String) -> void:
 	_ui_buttons_disabled(false)
 
 func _ui_buttons_disabled(state: bool):
-	$UI/VBox/Bottombar/PalSet.disabled = state
 	$"UI/VBox/Topbar/Save File".disabled = state
 	$"UI/VBox/Topbar/Close File".disabled = state
 	$UI/VBox/Topbar/Hide.disabled = state

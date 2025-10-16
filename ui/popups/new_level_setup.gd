@@ -10,6 +10,7 @@ func _ready() -> void:
 
 func _list_trilesets() -> void:
 	var selector: OptionButton = $Control/CenterContainer/VBoxContainer/Trileset/HBoxContainer/OptionButton
+	
 	var dir_list: PackedStringArray = DirAccess.get_files_at(Settings.dict["AssetDirs"][Settings.idx] + "trile sets/")
 	
 	if dir_list.is_empty():

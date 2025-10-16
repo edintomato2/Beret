@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://ui/theming/starback.png" id="1_ylru7"]
 
 [node name="New Level Setup" type="Window"]
+oversampling_override = 1.0
 title = "New Level"
 initial_position = 1
 size = Vector2i(800, 500)
@@ -46,7 +47,6 @@ label_settings = ExtResource("1_2i2bv")
 
 [node name="OptionButton" type="OptionButton" parent="Control/CenterContainer/VBoxContainer/Trileset/HBoxContainer"]
 layout_mode = 2
-selected = 0
 
 [node name="Level Size" type="CenterContainer" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode = 2

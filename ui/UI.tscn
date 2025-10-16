@@ -16,7 +16,7 @@
 [ext_resource type="Script" uid="uid://jqno1lx7215t" path="res://ui/Toolbar/NPCs.gd" id="13_xp4cg"]
 [ext_resource type="Script" uid="uid://uyf2jnnl158f" path="res://ui/cursor/CamControls.gd" id="14_w7gtq"]
 [ext_resource type="Material" uid="uid://cwmx5mt2bhij2" path="res://ui/UI.tres" id="15_y8qhk"]
-[ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://ui/selecting/select_box.gd" id="16_mo5eo"]
+[ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://scripts/ui/select_box.gd" id="16_mo5eo"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5nyl"]
 

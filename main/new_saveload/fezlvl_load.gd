@@ -10,7 +10,6 @@
 ## - Scripts: We need to do a lot of work on how scripting works in FEZ and what can be changed. For now, I'm leaving it out!
 
 extends Object
-class_name fezlvl_load
 
 const vol_color = Color(1, 0.270588, 0, 0.4)
 # const click_script = preload("res://main/new_saveload/clickable_objects.gd")
@@ -29,23 +28,21 @@ static func load_size(size: Array) -> Vector3: return _arr2vec(size)
 static func load_trileset(trileset_name: String) -> Array: # Load trilesets as an Array.
 	## Get clean path name.
 	var dir = Settings.dict["AssetDirs"][Settings.idx] + "trile sets/"
-	var path = dir + trileset_name.to_lower() + ".fezts"
+	var path = dir + trileset_name.to_lower() + ".fezts.glb"
 	
 	## Load every trile in a trileset as a Dictionary, with their ID being linked to their mesh.
-	var meshDict = ObjParse.load_obj(path + ".obj")
+	## FEZRepacker no longer by default exports as fezts!!!
+	# var meshDict = ObjParse.load_obj(path + ".obj")
+	var gltf_document_load = GLTFDocument.new()
+	var gltf_state_load = GLTFState.new()
+	var error = gltf_document_load.append_from_file(path, gltf_state_load)
+	if error == OK:
+		var gltf_scene_root_node = gltf_document_load.generate_scene(gltf_state_load)
+		print(gltf_scene_root_node.get_children())
+	else:
+		push_error("Couldn't load trileset (error code: %s)." % error_string(error))
 	
-	var mat = StandardMaterial3D.new()
-	var img = Image.load_from_file(path + ".png")
-	var tex = ImageTexture.create_from_image(img)
-	mat.albedo_texture = tex
-	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	mat.set_distance_fade(BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER)
-	mat.set_distance_fade_max_distance(3)
-	
-	## Load in fezts.json, which contains trile info.
-	var readTS = JSON.new()
-	var err = readTS.parse(FileAccess.get_file_as_string(path + ".json"))
-	if err != OK: push_error(readTS.get_error_message())
+	# var meshDict = GLTFDocument.append_from_file()
 	
 	return [meshDict, mat, readTS.data]
 
