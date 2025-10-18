@@ -39,6 +39,9 @@ func fezlvl_read(path: String) -> Error: ## Read contents from a FEZLVL file, an
 	var err_trs = place_triles(readLvl.data["Triles"])
 	if err_trs != OK: return err_trs
 	
+	var err_gomez = place_gomez(readLvl.data["StartingPosition"])
+	if err_gomez != OK: return err_gomez
+	
 	return OK
 
 func load_trileset(path: String) -> Error: ## Read a trileset from a path, and make it a child of the FEZLVL node.
@@ -105,6 +108,42 @@ func place_triles(tr_arr: Array) -> Error: ## Place triles specified in an array
 
 func place_npcs() -> Error: ## TODO: NPC placement
 	return ERR_DOES_NOT_EXIST
+
+func place_gomez(dict: Dictionary) -> Error: # Load in player start as Gomez, placed at level entrance.
+	## Set up his mesh and material.
+	var gomez = AnimatedSprite3D.new()
+	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations/"
+	var tex = GifManager.sprite_frames_from_file(dir + "gomez/idlewink.gif")
+	
+	gomez.billboard     = BaseMaterial3D.BILLBOARD_FIXED_Y
+	gomez.sprite_frames = tex
+	gomez.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	gomez.scale = Vector3(5, 5, 5)
+	
+	## Set up simple collisions for the cursor
+	var statBod = StaticBody3D.new()
+	var colBod = CollisionShape3D.new()
+	var colShape = SphereShape3D.new()
+	
+	colShape.radius = 0.05
+	colBod.shape = colShape
+	
+	statBod.call_deferred("add_child", colBod)
+	gomez.add_child(statBod)
+	
+	## Let my boy out into the world!
+	gomez.position = (array_to_vec3(dict["Id"]) + Vector3(0.5, 1.5, 0.5))
+	gomez.layers = 8
+	
+	gomez.set_meta("Type", "StartingPosition")
+	gomez.set_meta("Id", dict["Id"])
+	gomez.set_meta("Face", dict["Face"])
+	gomez.set_meta("Name", "Gomez")
+	gomez.play("gif")
+	gomez.name = "Gomez"
+	gomez.add_to_group("NPCs")
+	add_child(gomez)
+	return OK
 
 func array_to_vec3(arr: Array) -> Vector3: return Vector3(arr[0], arr[1], arr[2])
 func array_to_quat(arr: Array) -> Quaternion: return Quaternion(arr[0], arr[1], arr[2], arr[3])

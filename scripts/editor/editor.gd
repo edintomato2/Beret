@@ -38,24 +38,24 @@ func _editor_cam_qe() -> void: ## Q + E camera rotation, like in FEZ.
 	if Input.is_action_just_pressed("cam_closest_face", true):
 		var temp = Vector3.ZERO
 		temp.y = snappedf(_pvt.rotation_degrees.y, 90)
-		_editor_cam_tween_ctrl("rotation_degrees", temp, 0.3)
+		cam_tween_ctrl("rotation_degrees", temp, 0.3)
 		soundNode.play_sound("ok")
 		
-	if Input.is_action_just_pressed("cam_lt", true): _editor_cam_tween_ctrl("rotation_degrees", Vector3(0, -90, 0) + _pvt.rotation_degrees, 0.2); soundNode.play_sound("lt")
-	if Input.is_action_just_pressed("cam_rt", true): _editor_cam_tween_ctrl("rotation_degrees", Vector3(0, 90, 0) + _pvt.rotation_degrees, 0.2); soundNode.play_sound("rt")
+	if Input.is_action_just_pressed("cam_lt", true): cam_tween_ctrl("rotation_degrees", Vector3(0, -90, 0) + _pvt.rotation_degrees, 0.2); soundNode.play_sound("lt")
+	if Input.is_action_just_pressed("cam_rt", true): cam_tween_ctrl("rotation_degrees", Vector3(0, 90, 0) + _pvt.rotation_degrees, 0.2); soundNode.play_sound("rt")
 	
 func _editor_cam_wasd() -> void: ## Keyboard movement.
 	var move_target = Vector3.ZERO
 	
 	if _pivot_anim: return
 	
-	if Input.is_action_just_pressed("ui_up", true): move_target += Vector3.UP; soundNode.play_sound("up")
-	if Input.is_action_just_pressed("ui_down", true): move_target += Vector3.DOWN; soundNode.play_sound("down")
-	#if Input.is_action_just_pressed("ui_right", true): move_target += Vector3.RIGHT; _ui_sounds("snd_up")
-	#if Input.is_action_just_pressed("ui_left", true): move_target += Vector3.LEFT; _ui_sounds("snd_down")
+	if Input.is_action_pressed("ui_up", true): move_target += Vector3.UP; soundNode.play_sound("up")
+	if Input.is_action_pressed("ui_down", true): move_target += Vector3.DOWN; soundNode.play_sound("down")
+	if Input.is_action_pressed("ui_right", true): move_target += Vector3.RIGHT; soundNode.play_sound("up")
+	if Input.is_action_pressed("ui_left", true): move_target += Vector3.LEFT; soundNode.play_sound("down")
 	
 	if move_target == Vector3.ZERO: return
-	_editor_cam_tween_ctrl("global_position", _pvt.global_position + (_pvt.global_basis * move_target), 0.1)
+	cam_tween_ctrl("global_position", _pvt.global_position + (_pvt.global_basis * move_target), 0.1)
 
 func _editor_cam_proj_switch() -> void: ## Switch between orthographic and projection view.
 	match _cam.projection:
@@ -96,7 +96,7 @@ func _editor_cam_zoom(mouseVel: Vector2) -> void:
 			var cam_move = _cam.fov + (mouseVel.y * 0.5)
 			if (cam_move > 10.0) and (cam_move < 120.0): _cam.fov = cam_move
 
-func _editor_cam_tween_ctrl(prop: String, target: Variant, duration: float) -> void:
+func cam_tween_ctrl(prop: String, target: Variant, duration: float) -> void:
 	if _pivot_anim: return
 	
 	_pivot_anim = true

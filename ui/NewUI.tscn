@@ -77,7 +77,7 @@ material = ExtResource("5_lovj8")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("6_lovj8")
 
-[node name="UI" type="Control" parent="." node_paths=PackedStringArray("soundNode", "loaderNode")]
+[node name="UI" type="Control" parent="." node_paths=PackedStringArray("soundNode", "loaderNode", "editorNode")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -87,6 +87,7 @@ grow_vertical = 2
 script = ExtResource("2_84d2t")
 soundNode = NodePath("Sounds")
 loaderNode = NodePath("../Loader")
+editorNode = NodePath("../Editor")
 
 [node name="Popups" type="Node" parent="UI"]
 
@@ -115,14 +116,14 @@ use_native_dialog = true
 visible = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="UI"]
-root_node = NodePath("../VBox/VSplitContainer/HSplitContainer/Control/Loading")
+root_node = NodePath("../UI Elements/VSplitContainer/HSplitContainer/Control/Loading")
 libraries = {
 &"": SubResource("AnimationLibrary_mm5ur"),
 &"ui_animations": ExtResource("4_ggqg0")
 }
 speed_scale = 3.0
 
-[node name="VBox" type="VBoxContainer" parent="UI"]
+[node name="UI Elements" type="VBoxContainer" parent="UI"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -130,17 +131,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Topbar" type="HBoxContainer" parent="UI/VBox"]
+[node name="Topbar" type="HBoxContainer" parent="UI/UI Elements"]
 layout_mode = 2
 mouse_filter = 0
 
-[node name="File" type="MenuButton" parent="UI/VBox/Topbar"]
+[node name="File" type="MenuButton" parent="UI/UI Elements/Topbar"]
 layout_mode = 2
 text = "File"
 flat = false
 switch_on_hover = true
 
-[node name="Load File" type="Button" parent="UI/VBox/Topbar/File"]
+[node name="Load File" type="Button" parent="UI/UI Elements/Topbar/File"]
 visible = false
 layout_mode = 0
 offset_left = -422.0
@@ -150,7 +151,7 @@ focus_mode = 0
 shortcut = SubResource("Shortcut_mlaj1")
 text = "Open FEZLVL"
 
-[node name="New File" type="Button" parent="UI/VBox/Topbar/File"]
+[node name="New File" type="Button" parent="UI/UI Elements/Topbar/File"]
 visible = false
 layout_mode = 0
 offset_left = -309.0
@@ -159,7 +160,7 @@ offset_bottom = 31.0
 focus_mode = 0
 text = "New FEZLVL"
 
-[node name="Close File" type="Button" parent="UI/VBox/Topbar/File"]
+[node name="Close File" type="Button" parent="UI/UI Elements/Topbar/File"]
 visible = false
 layout_mode = 0
 offset_left = -204.0
@@ -169,7 +170,7 @@ focus_mode = 0
 disabled = true
 text = "Close FEZLVL"
 
-[node name="Quit Editor" type="Button" parent="UI/VBox/Topbar/File"]
+[node name="Quit Editor" type="Button" parent="UI/UI Elements/Topbar/File"]
 visible = false
 layout_mode = 0
 offset_left = -92.0
@@ -178,43 +179,43 @@ offset_bottom = 31.0
 focus_mode = 0
 text = "Quit Beret"
 
-[node name="Hide" type="MenuButton" parent="UI/VBox/Topbar"]
+[node name="Hide" type="MenuButton" parent="UI/UI Elements/Topbar"]
 layout_mode = 2
 disabled = true
 text = "Hide objects..."
 flat = false
 
-[node name="Set Asset Dirs" type="Button" parent="UI/VBox/Topbar"]
+[node name="Set Asset Dirs" type="Button" parent="UI/UI Elements/Topbar"]
 layout_mode = 2
 focus_mode = 0
 text = "Set Asset Directories..."
 
-[node name="Save File" type="Button" parent="UI/VBox/Topbar"]
+[node name="Save File" type="Button" parent="UI/UI Elements/Topbar"]
 layout_mode = 2
 focus_mode = 0
 disabled = true
 text = "Save FEZLVL As"
 
-[node name="Go To Home" type="Button" parent="UI/VBox/Topbar"]
+[node name="Go To Home" type="Button" parent="UI/UI Elements/Topbar"]
 layout_mode = 2
 shortcut = SubResource("Shortcut_mm5ur")
 text = "Go To Home"
 
-[node name="VSplitContainer" type="VSplitContainer" parent="UI/VBox"]
+[node name="VSplitContainer" type="VSplitContainer" parent="UI/UI Elements"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSplitContainer" type="HSplitContainer" parent="UI/VBox/VSplitContainer"]
+[node name="HSplitContainer" type="HSplitContainer" parent="UI/UI Elements/VSplitContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="UI/VBox/VSplitContainer/HSplitContainer"]
+[node name="Control" type="Control" parent="UI/UI Elements/VSplitContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 1
 
-[node name="Console" type="RichTextLabel" parent="UI/VBox/VSplitContainer/HSplitContainer/Control"]
+[node name="Console" type="RichTextLabel" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control"]
 z_index = -2
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 1
@@ -231,7 +232,7 @@ scroll_active = false
 scroll_following = true
 shortcut_keys_enabled = false
 
-[node name="Select Box" type="Control" parent="UI/VBox/VSplitContainer/HSplitContainer/Control"]
+[node name="Select Box" type="Control" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control"]
 z_index = 10
 z_as_relative = false
 layout_mode = 1
@@ -244,7 +245,7 @@ size_flags_vertical = 3
 mouse_filter = 1
 script = ExtResource("2_3gi0v")
 
-[node name="Loading" type="ColorRect" parent="UI/VBox/VSplitContainer/HSplitContainer/Control"]
+[node name="Loading" type="ColorRect" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -260,27 +261,27 @@ grow_vertical = 0
 pivot_offset = Vector2(30, 30)
 color = Color(0.835294, 0.0588235, 0.0588235, 0)
 
-[node name="Misc" type="PanelContainer" parent="UI/VBox/VSplitContainer/HSplitContainer"]
+[node name="Misc" type="PanelContainer" parent="UI/UI Elements/VSplitContainer/HSplitContainer"]
 layout_mode = 2
 
-[node name="Position" type="Label" parent="UI/VBox/VSplitContainer/HSplitContainer/Misc"]
+[node name="Position" type="Label" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Misc"]
 layout_mode = 2
 size_flags_vertical = 8
 text = "0, 0, 0
 Facing: Front"
 horizontal_alignment = 1
 
-[node name="Bottombar" type="HBoxContainer" parent="UI/VBox/VSplitContainer"]
+[node name="Bottombar" type="HBoxContainer" parent="UI/UI Elements/VSplitContainer"]
 layout_mode = 2
 mouse_filter = 0
 
-[node name="Object Tabs" type="TabContainer" parent="UI/VBox/VSplitContainer/Bottombar"]
+[node name="Object Tabs" type="TabContainer" parent="UI/UI Elements/VSplitContainer/Bottombar"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="Triles" type="ItemList" parent="UI/VBox/VSplitContainer/Bottombar/Object Tabs"]
+[node name="Triles" type="ItemList" parent="UI/UI Elements/VSplitContainer/Bottombar/Object Tabs"]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
@@ -291,6 +292,7 @@ icon_scale = 2.5
 metadata/_tab_index = 0
 
 [node name="Sounds" type="AudioStreamPlayer" parent="UI"]
+volume_db = -2.0
 script = ExtResource("8_mlaj1")
 soundOK = ExtResource("9_rcp71")
 soundCancel = ExtResource("10_ibrsc")
@@ -340,16 +342,16 @@ debug_color = Color(0.53, 0.1696, 0.45792, 0.686275)
 [connection signal="file_selected" from="UI/Popups/Load File" to="UI" method="_on_load_file_selected"]
 [connection signal="file_selected" from="UI/Popups/Save File" to="." method="_ui_save_file"]
 [connection signal="level_setup" from="UI/Popups/New Level Setup" to="." method="_ui_new_file"]
-[connection signal="pressed" from="UI/VBox/Topbar/File/Load File" to="." method="_ui_on_load_file_pressed"]
-[connection signal="pressed" from="UI/VBox/Topbar/File/Load File" to="." method="_ui_load_pressed"]
-[connection signal="pressed" from="UI/VBox/Topbar/File/New File" to="." method="_ui_on_new_file_pressed"]
-[connection signal="pressed" from="UI/VBox/Topbar/File/Close File" to="." method="_ui_close_file"]
-[connection signal="pressed" from="UI/VBox/Topbar/File/Quit Editor" to="." method="_ui_quit_editor"]
-[connection signal="pressed" from="UI/VBox/Topbar/Set Asset Dirs" to="." method="_ui_set_dirs"]
-[connection signal="pressed" from="UI/VBox/Topbar/Set Asset Dirs" to="UI" method="_on_set_asset_dirs_pressed"]
-[connection signal="pressed" from="UI/VBox/Topbar/Save File" to="." method="_ui_save_pressed"]
-[connection signal="pressed" from="UI/VBox/Topbar/Go To Home" to="." method="_ui_go_to_pressed"]
-[connection signal="rectChanged" from="UI/VBox/VSplitContainer/HSplitContainer/Control/Select Box" to="." method="_ui_selectbox_changed"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/File/Load File" to="." method="_ui_load_pressed"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/File/Load File" to="." method="_ui_on_load_file_pressed"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/File/New File" to="." method="_ui_on_new_file_pressed"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/File/Close File" to="." method="_ui_close_file"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/File/Quit Editor" to="." method="_ui_quit_editor"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/Set Asset Dirs" to="." method="_ui_set_dirs"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/Set Asset Dirs" to="UI" method="_on_set_asset_dirs_pressed"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/Save File" to="." method="_ui_save_pressed"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/Go To Home" to="." method="_ui_go_to_pressed"]
+[connection signal="rectChanged" from="UI/UI Elements/VSplitContainer/HSplitContainer/Control/Select Box" to="." method="_ui_selectbox_changed"]
 [connection signal="body_entered" from="Editor/Pivot/Area3D" to="." method="_area_body_entered"]
 [connection signal="body_exited" from="Editor/Pivot/Area3D" to="." method="_area_body_exited"]
 [connection signal="input_event" from="Editor/Level Boundary/Area3D" to="." method="_editor_boundary_clicked"]

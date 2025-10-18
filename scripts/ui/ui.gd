@@ -2,13 +2,14 @@ extends Control
 
 @export var soundNode: AudioStreamPlayer
 @export var loaderNode: Node
+@export var editorNode: Node3D
 
 func _ready() -> void:
 	_setup_file_dropdown()
 	pass
 
 func _setup_file_dropdown() -> void:
-	var fileDropdown: MenuButton = $VBox/Topbar/File
+	var fileDropdown: MenuButton = $"UI Elements/Topbar/File"
 	var list = {"Open FEZLVL" = (KEY_MASK_CTRL | KEY_O),
 				"New FEZLVL" = (KEY_MASK_CTRL | KEY_N),
 				"Close FEZLVL" = (KEY_MASK_CTRL | KEY_W),
@@ -36,6 +37,9 @@ func _on_set_asset_dirs_pressed() -> void:
 func _on_load_file_selected(path: String) -> void:
 	soundNode.play_sound("ok")
 	await loaderNode.fezlvl_read(path)
+	var gomez = loaderNode.get_node("Gomez")
+	editorNode.cam_tween_ctrl("global_position", gomez.global_position, 0.1)
+	
 	
 func tabs_triles_list() -> void:
 	
