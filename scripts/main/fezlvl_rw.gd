@@ -13,7 +13,6 @@
 extends Node
 
 ## Variables
-@export var objectsNode: Node
 var idTable: Dictionary
 
 func fezlvl_read(path: String) -> Error: ## Read contents from a FEZLVL file, and assemble the level.
@@ -43,6 +42,14 @@ func fezlvl_read(path: String) -> Error: ## Read contents from a FEZLVL file, an
 	if err_gomez != OK: return err_gomez
 	
 	return OK
+
+func fezlvl_close() -> void:
+	for n in get_children():
+		remove_child(n)
+		n.queue_free()
+	idTable.clear()
+	print("Closed level.")
+	pass
 
 func load_trileset(path: String) -> Error: ## Read a trileset from a path, and make it a child of the FEZLVL node.
 	var gltf_document_load = GLTFDocument.new()
@@ -83,7 +90,7 @@ func place_aos(path: String, ao_dict: Dictionary) -> Error: ## Place art objects
 		ao.quaternion = array_to_quat(ao_dict[i]["Rotation"])
 		
 		ao.add_to_group("aos")
-		objectsNode.add_child(ao)
+		add_child(ao)
 	
 	print("Placed %d AOs." % ao_dict.size())
 	return OK
@@ -93,14 +100,16 @@ func place_triles(tr_arr: Array) -> Error: ## Place triles specified in an array
 	### We have Emplacements, Position, Phi, Trile ID, and ActorSettings.
 	for trile in tr_arr:
 		var found = idTable.get(int(trile["Id"]), null)
-		if found == null: push_warning("Unknown or unmatched trile ID: %d", trile["Id"])
+		if found == null:
+			push_warning("Unknown or unmatched trile ID: %d" % trile["Id"])
+			continue
 		
 		var tri: Node3D = found.duplicate()
 		tri.position = (array_to_vec3(trile["Position"]) + Vector3(0.5, 0.5, 0.5)) ### Triles are offset by 0.5 on all axis. 
 		tri.rotation_degrees = Vector3(0, (-180 + (trile["Phi"] * 90)), 0)
 		tri.add_to_group("triles")
 		tri.show()
-		objectsNode.add_child(tri)
+		add_child(tri)
 	
 	print("Places %d triles." % tr_arr.size())
 	

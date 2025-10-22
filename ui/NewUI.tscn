@@ -1,15 +1,12 @@
-[gd_scene load_steps=28 format=3 uid="uid://dvki037st0vqu"]
+[gd_scene load_steps=19 format=3 uid="uid://dvki037st0vqu"]
 
 [ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://scripts/ui/select_box.gd" id="2_3gi0v"]
 [ext_resource type="Script" uid="uid://bki3a8v0ca5hq" path="res://scripts/ui/ui.gd" id="2_84d2t"]
-[ext_resource type="PackedScene" uid="uid://ncptfj1tqkke" path="res://ui/popups/new_level_setup.tscn" id="3_mm5ur"]
 [ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://ui/popups/set_paths.tscn" id="3_rldmy"]
 [ext_resource type="AnimationLibrary" uid="uid://dfov33a8axuij" path="res://ui/animations.res" id="4_ggqg0"]
-[ext_resource type="Script" uid="uid://cyt868sm8tgbv" path="res://scripts/ui/load_file.gd" id="4_ibrsc"]
-[ext_resource type="Material" uid="uid://bsu01pnv0uo8n" path="res://editor/materials/wireframe.tres" id="5_lovj8"]
+[ext_resource type="Script" uid="uid://dm6norv1y8mct" path="res://scripts/ui/file_diags.gd" id="5_ibrsc"]
 [ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://ui/skyrender/DefaultEnv.tres" id="6_lovj8"]
 [ext_resource type="Script" uid="uid://4k0tqt3y36yu" path="res://scripts/main/fezlvl_rw.gd" id="6_sb3qw"]
-[ext_resource type="Script" uid="uid://bukknaup14i5k" path="res://scripts/ui/dropdowns/file_dropdown.gd" id="7_l12al"]
 [ext_resource type="Script" uid="uid://d4lu2wylnj1sr" path="res://scripts/ui/sound_player.gd" id="8_mlaj1"]
 [ext_resource type="AudioStream" uid="uid://bhe5ma5q20hcs" path="res://ui/sounds/snd_ok.wav" id="9_rcp71"]
 [ext_resource type="AudioStream" uid="uid://be7334k2n2ond" path="res://ui/sounds/snd_cancel.wav" id="10_ibrsc"]
@@ -33,46 +30,13 @@ tracks/0/keys = {
 "update": 0,
 "values": [0.0]
 }
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:color")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(0.835294, 0.0588235, 0.0588235, 0)]
-}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_mm5ur"]
 _data = {
 &"RESET": SubResource("Animation_lovj8")
 }
 
-[sub_resource type="InputEventKey" id="InputEventKey_84d2t"]
-device = -1
-command_or_control_autoremap = true
-keycode = 79
-
-[sub_resource type="Shortcut" id="Shortcut_mlaj1"]
-events = [SubResource("InputEventKey_84d2t")]
-
-[sub_resource type="InputEventKey" id="InputEventKey_lovj8"]
-device = -1
-ctrl_pressed = true
-keycode = 71
-
-[sub_resource type="Shortcut" id="Shortcut_mm5ur"]
-events = [SubResource("InputEventKey_lovj8")]
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_72b8f"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_lovj8"]
-material = ExtResource("5_lovj8")
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_mm5ur"]
 
 [node name="Main" type="Node"]
 
@@ -91,6 +55,14 @@ soundNode = NodePath("Sounds")
 loaderNode = NodePath("../Loader")
 editorNode = NodePath("../Editor")
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI"]
+root_node = NodePath("../UI Elements/VSplitContainer/HSplitContainer/Control/Loading")
+libraries = {
+&"": SubResource("AnimationLibrary_mm5ur"),
+&"ui_animations": ExtResource("4_ggqg0")
+}
+speed_scale = 3.0
+
 [node name="Popups" type="Node" parent="UI"]
 
 [node name="Set Paths" parent="UI/Popups" instance=ExtResource("3_rldmy")]
@@ -107,7 +79,8 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
 use_native_dialog = true
-script = ExtResource("4_ibrsc")
+script = ExtResource("5_ibrsc")
+RootDir = "levels"
 
 [node name="Save File" type="FileDialog" parent="UI/Popups"]
 title = "Save FEZLVL as"
@@ -115,16 +88,15 @@ dialog_hide_on_ok = true
 access = 2
 use_native_dialog = true
 
-[node name="New Level Setup" parent="UI/Popups" instance=ExtResource("3_mm5ur")]
-visible = false
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI"]
-root_node = NodePath("../UI Elements/VSplitContainer/HSplitContainer/Control/Loading")
-libraries = {
-&"": SubResource("AnimationLibrary_mm5ur"),
-&"ui_animations": ExtResource("4_ggqg0")
-}
-speed_scale = 3.0
+[node name="Select Trileset" type="FileDialog" parent="UI/Popups"]
+oversampling_override = 1.0
+title = "Select a Trileset"
+mode_overrides_title = false
+file_mode = 0
+filters = PackedStringArray("*.fezts.glb ; FEZ Trilesets")
+use_native_dialog = true
+script = ExtResource("5_ibrsc")
+RootDir = "trile sets"
 
 [node name="UI Elements" type="VBoxContainer" parent="UI"]
 layout_mode = 1
@@ -143,45 +115,6 @@ layout_mode = 2
 text = "File"
 flat = false
 switch_on_hover = true
-script = ExtResource("7_l12al")
-
-[node name="Load File" type="Button" parent="UI/UI Elements/Topbar/File"]
-visible = false
-layout_mode = 0
-offset_left = -422.0
-offset_right = -313.0
-offset_bottom = 31.0
-focus_mode = 0
-shortcut = SubResource("Shortcut_mlaj1")
-text = "Open FEZLVL"
-
-[node name="New File" type="Button" parent="UI/UI Elements/Topbar/File"]
-visible = false
-layout_mode = 0
-offset_left = -309.0
-offset_right = -208.0
-offset_bottom = 31.0
-focus_mode = 0
-text = "New FEZLVL"
-
-[node name="Close File" type="Button" parent="UI/UI Elements/Topbar/File"]
-visible = false
-layout_mode = 0
-offset_left = -204.0
-offset_right = -96.0
-offset_bottom = 31.0
-focus_mode = 0
-disabled = true
-text = "Close FEZLVL"
-
-[node name="Quit Editor" type="Button" parent="UI/UI Elements/Topbar/File"]
-visible = false
-layout_mode = 0
-offset_left = -92.0
-offset_right = -4.0
-offset_bottom = 31.0
-focus_mode = 0
-text = "Quit Beret"
 
 [node name="Edit" type="MenuButton" parent="UI/UI Elements/Topbar"]
 layout_mode = 2
@@ -198,21 +131,8 @@ layout_mode = 2
 text = "Jump to..."
 flat = false
 
-[node name="Set Asset Dirs" type="Button" parent="UI/UI Elements/Topbar"]
+[node name="About" type="MenuButton" parent="UI/UI Elements/Topbar"]
 layout_mode = 2
-focus_mode = 0
-text = "Set Asset Directories..."
-
-[node name="Save File" type="Button" parent="UI/UI Elements/Topbar"]
-layout_mode = 2
-focus_mode = 0
-disabled = true
-text = "Save FEZLVL As"
-
-[node name="Go To Home" type="Button" parent="UI/UI Elements/Topbar"]
-layout_mode = 2
-shortcut = SubResource("Shortcut_mm5ur")
-text = "Go To Home"
 
 [node name="VSplitContainer" type="VSplitContainer" parent="UI/UI Elements"]
 layout_mode = 2
@@ -234,13 +154,14 @@ custom_minimum_size = Vector2(200, 0)
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
-offset_right = 200.0
+offset_right = 837.0
 offset_bottom = -313.0
 grow_vertical = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.57
 mouse_filter = 1
+fit_content = true
 scroll_active = false
 scroll_following = true
 shortcut_keys_enabled = false
@@ -259,6 +180,7 @@ mouse_filter = 1
 script = ExtResource("2_3gi0v")
 
 [node name="Loading" type="ColorRect" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control"]
+self_modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -272,7 +194,7 @@ offset_bottom = -30.0
 grow_horizontal = 0
 grow_vertical = 0
 pivot_offset = Vector2(30, 30)
-color = Color(0.835294, 0.0588235, 0.0588235, 0)
+color = Color(0.8352941, 0.05882353, 0.05882353, 1)
 
 [node name="Misc" type="PanelContainer" parent="UI/UI Elements/VSplitContainer/HSplitContainer"]
 layout_mode = 2
@@ -314,11 +236,8 @@ soundRT = ExtResource("12_2hw4j")
 soundUp = ExtResource("13_5wyky")
 soundDown = ExtResource("14_fq35x")
 
-[node name="Loader" type="Node" parent="." node_paths=PackedStringArray("objectsNode")]
+[node name="Loader" type="Node" parent="."]
 script = ExtResource("6_sb3qw")
-objectsNode = NodePath("Objects")
-
-[node name="Objects" type="Node" parent="Loader"]
 
 [node name="Editor" type="Node3D" parent="." node_paths=PackedStringArray("soundNode")]
 script = ExtResource("15_rcp71")
@@ -331,40 +250,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 current = true
 size = 10.0
 
-[node name="Area3D" type="Area3D" parent="Editor/Pivot"]
+[node name="Area3D" type="Area3D" parent="Editor"]
 top_level = true
 collision_mask = 30
 input_ray_pickable = false
 priority = 1
 
-[node name="Selection Shape" type="CollisionShape3D" parent="Editor/Pivot/Area3D"]
+[node name="Selection Shape" type="CollisionShape3D" parent="Editor/Area3D"]
 shape = SubResource("BoxShape3D_72b8f")
 debug_fill = false
 
-[node name="Level Boundary" type="MeshInstance3D" parent="Editor"]
-visible = false
-mesh = SubResource("BoxMesh_lovj8")
-
-[node name="Area3D" type="Area3D" parent="Editor/Level Boundary"]
-collision_mask = 30
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Editor/Level Boundary/Area3D"]
-shape = SubResource("BoxShape3D_mm5ur")
-debug_color = Color(0.53, 0.1696, 0.45792, 0.686275)
-
 [connection signal="file_selected" from="UI/Popups/Load File" to="UI" method="_on_load_file_selected"]
 [connection signal="file_selected" from="UI/Popups/Save File" to="." method="_ui_save_file"]
-[connection signal="level_setup" from="UI/Popups/New Level Setup" to="." method="_ui_new_file"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/File/Load File" to="." method="_ui_on_load_file_pressed"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/File/Load File" to="." method="_ui_load_pressed"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/File/New File" to="." method="_ui_on_new_file_pressed"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/File/Close File" to="." method="_ui_close_file"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/File/Quit Editor" to="." method="_ui_quit_editor"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/Set Asset Dirs" to="." method="_ui_set_dirs"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/Set Asset Dirs" to="UI" method="_on_set_asset_dirs_pressed"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/Save File" to="." method="_ui_save_pressed"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/Go To Home" to="." method="_ui_go_to_pressed"]
 [connection signal="rectChanged" from="UI/UI Elements/VSplitContainer/HSplitContainer/Control/Select Box" to="." method="_ui_selectbox_changed"]
-[connection signal="body_entered" from="Editor/Pivot/Area3D" to="." method="_area_body_entered"]
-[connection signal="body_exited" from="Editor/Pivot/Area3D" to="." method="_area_body_exited"]
-[connection signal="input_event" from="Editor/Level Boundary/Area3D" to="." method="_editor_boundary_clicked"]
+[connection signal="body_entered" from="Editor/Area3D" to="." method="_area_body_entered"]
+[connection signal="body_exited" from="Editor/Area3D" to="." method="_area_body_exited"]
