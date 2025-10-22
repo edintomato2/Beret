@@ -40,7 +40,6 @@ func _on_load_file_selected(path: String) -> void:
 	var gomez = loaderNode.get_node("Gomez")
 	editorNode.cam_tween_ctrl("global_position", gomez.global_position, 0.1)
 	
-	
 func tabs_triles_list() -> void:
 	
 	pass

@@ -1,13 +1,15 @@
-[gd_scene load_steps=26 format=3 uid="uid://dvki037st0vqu"]
+[gd_scene load_steps=28 format=3 uid="uid://dvki037st0vqu"]
 
 [ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://scripts/ui/select_box.gd" id="2_3gi0v"]
 [ext_resource type="Script" uid="uid://bki3a8v0ca5hq" path="res://scripts/ui/ui.gd" id="2_84d2t"]
 [ext_resource type="PackedScene" uid="uid://ncptfj1tqkke" path="res://ui/popups/new_level_setup.tscn" id="3_mm5ur"]
 [ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://ui/popups/set_paths.tscn" id="3_rldmy"]
 [ext_resource type="AnimationLibrary" uid="uid://dfov33a8axuij" path="res://ui/animations.res" id="4_ggqg0"]
+[ext_resource type="Script" uid="uid://cyt868sm8tgbv" path="res://scripts/ui/load_file.gd" id="4_ibrsc"]
 [ext_resource type="Material" uid="uid://bsu01pnv0uo8n" path="res://editor/materials/wireframe.tres" id="5_lovj8"]
 [ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://ui/skyrender/DefaultEnv.tres" id="6_lovj8"]
 [ext_resource type="Script" uid="uid://4k0tqt3y36yu" path="res://scripts/main/fezlvl_rw.gd" id="6_sb3qw"]
+[ext_resource type="Script" uid="uid://bukknaup14i5k" path="res://scripts/ui/dropdowns/file_dropdown.gd" id="7_l12al"]
 [ext_resource type="Script" uid="uid://d4lu2wylnj1sr" path="res://scripts/ui/sound_player.gd" id="8_mlaj1"]
 [ext_resource type="AudioStream" uid="uid://bhe5ma5q20hcs" path="res://ui/sounds/snd_ok.wav" id="9_rcp71"]
 [ext_resource type="AudioStream" uid="uid://be7334k2n2ond" path="res://ui/sounds/snd_cancel.wav" id="10_ibrsc"]
@@ -105,6 +107,7 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.fezlvl.json ; FEZ Levels")
 use_native_dialog = true
+script = ExtResource("4_ibrsc")
 
 [node name="Save File" type="FileDialog" parent="UI/Popups"]
 title = "Save FEZLVL as"
@@ -140,6 +143,7 @@ layout_mode = 2
 text = "File"
 flat = false
 switch_on_hover = true
+script = ExtResource("7_l12al")
 
 [node name="Load File" type="Button" parent="UI/UI Elements/Topbar/File"]
 visible = false
@@ -179,10 +183,19 @@ offset_bottom = 31.0
 focus_mode = 0
 text = "Quit Beret"
 
-[node name="Hide" type="MenuButton" parent="UI/UI Elements/Topbar"]
+[node name="Edit" type="MenuButton" parent="UI/UI Elements/Topbar"]
 layout_mode = 2
-disabled = true
-text = "Hide objects..."
+text = "Edit"
+flat = false
+
+[node name="View" type="MenuButton" parent="UI/UI Elements/Topbar"]
+layout_mode = 2
+text = "View"
+flat = false
+
+[node name="Jump" type="MenuButton" parent="UI/UI Elements/Topbar"]
+layout_mode = 2
+text = "Jump to..."
 flat = false
 
 [node name="Set Asset Dirs" type="Button" parent="UI/UI Elements/Topbar"]
@@ -342,8 +355,8 @@ debug_color = Color(0.53, 0.1696, 0.45792, 0.686275)
 [connection signal="file_selected" from="UI/Popups/Load File" to="UI" method="_on_load_file_selected"]
 [connection signal="file_selected" from="UI/Popups/Save File" to="." method="_ui_save_file"]
 [connection signal="level_setup" from="UI/Popups/New Level Setup" to="." method="_ui_new_file"]
-[connection signal="pressed" from="UI/UI Elements/Topbar/File/Load File" to="." method="_ui_load_pressed"]
 [connection signal="pressed" from="UI/UI Elements/Topbar/File/Load File" to="." method="_ui_on_load_file_pressed"]
+[connection signal="pressed" from="UI/UI Elements/Topbar/File/Load File" to="." method="_ui_load_pressed"]
 [connection signal="pressed" from="UI/UI Elements/Topbar/File/New File" to="." method="_ui_on_new_file_pressed"]
 [connection signal="pressed" from="UI/UI Elements/Topbar/File/Close File" to="." method="_ui_close_file"]
 [connection signal="pressed" from="UI/UI Elements/Topbar/File/Quit Editor" to="." method="_ui_quit_editor"]

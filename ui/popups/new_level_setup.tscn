@@ -48,21 +48,6 @@ label_settings = ExtResource("1_2i2bv")
 [node name="OptionButton" type="OptionButton" parent="Control/CenterContainer/VBoxContainer/Trileset/HBoxContainer"]
 layout_mode = 2
 
-[node name="Level Size" type="CenterContainer" parent="Control/CenterContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer/Level Size"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Control/CenterContainer/VBoxContainer/Level Size/HBoxContainer"]
-layout_mode = 2
-text = "Level Size:"
-label_settings = ExtResource("1_2i2bv")
-
-[node name="LineEdit" type="LineEdit" parent="Control/CenterContainer/VBoxContainer/Level Size/HBoxContainer"]
-layout_mode = 2
-placeholder_text = "X, Y, Z"
-
 [node name="Info" type="CenterContainer" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -75,4 +60,3 @@ text = "Press enter to confirm."
 label_settings = ExtResource("1_2i2bv")
 
 [connection signal="item_selected" from="Control/CenterContainer/VBoxContainer/Trileset/HBoxContainer/OptionButton" to="." method="_on_trileset_selected"]
-[connection signal="text_submitted" from="Control/CenterContainer/VBoxContainer/Level Size/HBoxContainer/LineEdit" to="." method="_on_level_size_text_submitted"]
