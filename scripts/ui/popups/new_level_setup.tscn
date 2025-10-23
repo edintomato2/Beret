@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://ncptfj1tqkke"]
 
-[ext_resource type="LabelSettings" uid="uid://bmw81fb8twy4k" path="res://ui/popups/label_settings.tres" id="1_2i2bv"]
-[ext_resource type="Script" uid="uid://80m82xf4karo" path="res://ui/popups/new_level_setup.gd" id="1_dok08"]
+[ext_resource type="LabelSettings" uid="uid://bmw81fb8twy4k" path="res://scripts/ui/popups/label_settings.tres" id="1_2i2bv"]
+[ext_resource type="Script" uid="uid://80m82xf4karo" path="res://scripts/ui/popups/new_level_setup.gd" id="1_dok08"]
 [ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://ui/theming/starback.png" id="1_ylru7"]
 
 [node name="New Level Setup" type="Window"]

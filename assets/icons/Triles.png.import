@@ -2,22 +2,24 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ewilfngtgpbq"
-path="res://.godot/imported/missing.png-9a795e98ed20eb6f1815d2150cae5c38.ctex"
+uid="uid://bcdq86qsbi7xq"
+path="res://.godot/imported/Triles.png-3e8e7bbe5053f5a2bd6b2ed22d1fa3c7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://main/save-load/missing.png"
-dest_files=["res://.godot/imported/missing.png-9a795e98ed20eb6f1815d2150cae5c38.ctex"]
+source_file="res://assets/icons/Triles.png"
+dest_files=["res://.godot/imported/Triles.png-3e8e7bbe5053f5a2bd6b2ed22d1fa3c7.ctex"]
 
 [params]
 
 compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
@@ -25,6 +27,10 @@ mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
+process/channel_remap/red=0
+process/channel_remap/green=1
+process/channel_remap/blue=2
+process/channel_remap/alpha=3
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/normal_map_invert_y=false

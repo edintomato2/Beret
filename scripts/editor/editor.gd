@@ -27,37 +27,33 @@ func _input(event: InputEvent) -> void:
 	pass
 
 func _editor_cam_control(event: InputEvent) -> void:
-	_editor_cam_qe()
-	_editor_cam_wasd()
-	_editor_cam_zoom()
+	cam_keyboard_movement()
+	cam_zoom()
 	# if Input.is_action_just_pressed("cam_projection", true): _editor_cam_proj_switch()
 	
 	### Mouse Button 3 Controls (all require mouse movement)	
 	if event is InputEventMouseMotion:
 		if Input.is_action_pressed("cam_orbit", true): _editor_cam_orbit(event.relative)
 		if Input.is_action_pressed("cam_pan", true): _editor_cam_pan(event.relative)
-
-func _editor_cam_qe() -> void: ## Q + E camera rotation, like in FEZ.
-	if _pivot_anim: return
 	
-	if Input.is_action_just_pressed("cam_closest_face", true):
-		var temp = Vector3.ZERO
-		temp.y = snappedf(_pvt.rotation_degrees.y, 90)
-		cam_tween_ctrl("rotation_degrees", temp, 0.3)
-		soundNode.play_sound("ok")
-		
-	if Input.is_action_just_pressed("cam_lt", true): cam_tween_ctrl("rotation_degrees", Vector3(0, -90, 0) + _pvt.rotation_degrees, 0.2); soundNode.play_sound("lt")
-	if Input.is_action_just_pressed("cam_rt", true): cam_tween_ctrl("rotation_degrees", Vector3(0, 90, 0) + _pvt.rotation_degrees, 0.2); soundNode.play_sound("rt")
-	
-func _editor_cam_wasd() -> void: ## Keyboard movement.
+func cam_keyboard_movement() -> void:
 	var move_target = Vector3.ZERO
 	
 	if _pivot_anim: return
 	
-	if Input.is_action_pressed("ui_up", true): move_target += Vector3.UP; soundNode.play_sound("up")
-	if Input.is_action_pressed("ui_down", true): move_target += Vector3.DOWN; soundNode.play_sound("down")
-	if Input.is_action_pressed("ui_right", true): move_target += Vector3.RIGHT; soundNode.play_sound("up")
-	if Input.is_action_pressed("ui_left", true): move_target += Vector3.LEFT; soundNode.play_sound("down")
+	if Input.is_action_just_pressed("cam_closest_face", true): cam_tween_ctrl("rotation_degrees", Vector3(0, snappedf(_pvt.rotation_degrees.y, 90), 0), 0.3); soundNode.play_sound("ok")
+	
+	if Input.is_action_just_pressed("cam_lt", true): cam_tween_ctrl("rotation_degrees", Vector3(0, -90, 0) + _pvt.rotation_degrees, 0.2); soundNode.play_sound("lt")
+	if Input.is_action_just_pressed("cam_rt", true): cam_tween_ctrl("rotation_degrees", Vector3(0, 90, 0) + _pvt.rotation_degrees, 0.2); soundNode.play_sound("rt")
+	
+	if Input.is_action_pressed("cam_up", true): move_target += Vector3.UP; soundNode.play_sound("up")
+	if Input.is_action_pressed("cam_down", true): move_target += Vector3.DOWN; soundNode.play_sound("down")
+	
+	if Input.is_action_pressed("cam_right", true): move_target += Vector3.RIGHT; soundNode.play_sound("up")
+	if Input.is_action_pressed("cam_left", true): move_target += Vector3.LEFT; soundNode.play_sound("down")
+	
+	if Input.is_action_pressed("cam_forward", true): move_target += Vector3.FORWARD; soundNode.play_sound("up")
+	if Input.is_action_pressed("cam_back", true): move_target += Vector3.BACK; soundNode.play_sound("down")
 	
 	if move_target == Vector3.ZERO: return
 	cam_tween_ctrl("global_position", _pvt.global_position + (_pvt.global_basis * move_target), 0.1)
@@ -91,7 +87,7 @@ func _editor_cam_pan(mouseVel: Vector2) -> void:
 	
 	_pvt.translate_object_local((xDir + yDir) * 0.05)
 
-func _editor_cam_zoom() -> void:
+func cam_zoom() -> void:
 	### We only care about the vertical component of the vector.
 	var dir =  Input.get_action_strength("cam_zoom_out") - Input.get_action_strength("cam_zoom_in")
 	

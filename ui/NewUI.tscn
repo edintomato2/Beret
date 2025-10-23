@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://scripts/ui/select_box.gd" id="2_3gi0v"]
 [ext_resource type="Script" uid="uid://bki3a8v0ca5hq" path="res://scripts/ui/ui.gd" id="2_84d2t"]
-[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://ui/popups/set_paths.tscn" id="3_rldmy"]
+[ext_resource type="PackedScene" uid="uid://b6ks8iuocigav" path="res://scripts/ui/popups/set_paths.tscn" id="3_rldmy"]
 [ext_resource type="AnimationLibrary" uid="uid://dfov33a8axuij" path="res://ui/animations.res" id="4_ggqg0"]
-[ext_resource type="Script" uid="uid://dm6norv1y8mct" path="res://scripts/ui/file_diags.gd" id="5_ibrsc"]
+[ext_resource type="Script" uid="uid://dm6norv1y8mct" path="res://scripts/ui/popups/file_diags.gd" id="5_ibrsc"]
 [ext_resource type="Environment" uid="uid://ctohsq6knqpup" path="res://ui/skyrender/DefaultEnv.tres" id="6_lovj8"]
 [ext_resource type="Script" uid="uid://4k0tqt3y36yu" path="res://scripts/main/fezlvl_rw.gd" id="6_sb3qw"]
 [ext_resource type="Script" uid="uid://d4lu2wylnj1sr" path="res://scripts/ui/sound_player.gd" id="8_mlaj1"]
@@ -110,29 +110,49 @@ grow_vertical = 2
 layout_mode = 2
 mouse_filter = 0
 
-[node name="File" type="MenuButton" parent="UI/UI Elements/Topbar"]
+[node name="Panel" type="Panel" parent="UI/UI Elements/Topbar"]
+custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="File" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+layout_mode = 0
+offset_left = 4.0
+offset_right = 39.0
+offset_bottom = 31.0
 text = "File"
 flat = false
 switch_on_hover = true
 
-[node name="Edit" type="MenuButton" parent="UI/UI Elements/Topbar"]
-layout_mode = 2
+[node name="Edit" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+layout_mode = 0
+offset_left = 43.0
+offset_right = 81.0
+offset_bottom = 31.0
 text = "Edit"
 flat = false
 
-[node name="View" type="MenuButton" parent="UI/UI Elements/Topbar"]
-layout_mode = 2
+[node name="View" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+layout_mode = 0
+offset_left = 85.0
+offset_right = 130.0
+offset_bottom = 31.0
 text = "View"
 flat = false
 
-[node name="Jump" type="MenuButton" parent="UI/UI Elements/Topbar"]
-layout_mode = 2
+[node name="Jump" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+layout_mode = 0
+offset_left = 134.0
+offset_right = 216.0
+offset_bottom = 31.0
 text = "Jump to..."
 flat = false
 
-[node name="About" type="MenuButton" parent="UI/UI Elements/Topbar"]
-layout_mode = 2
+[node name="About" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+layout_mode = 0
+offset_left = 220.0
+offset_right = 228.0
+offset_bottom = 31.0
 
 [node name="VSplitContainer" type="VSplitContainer" parent="UI/UI Elements"]
 layout_mode = 2

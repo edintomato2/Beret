@@ -15,6 +15,11 @@ extends Node
 ## Variables
 var idTable: Dictionary
 
+## Preloads
+var _mat_bkg_pln: StandardMaterial3D = preload("res://assets/materials/background_planes.tres")
+var _mat_volumes: StandardMaterial3D = preload("res://assets/materials/volumes.tres")
+var _mat_npcs: PackedScene = preload("res://assets/materials/npcs.tscn")
+
 func fezlvl_read(path: String) -> Error: ## Read contents from a FEZLVL file, and assemble the level.
 	### Many things are stored in a FEZLVL file, as you can expect.
 	### We load in the trileset for the level, trile positions, art object positions, volume data, and NPC data.
@@ -28,19 +33,35 @@ func fezlvl_read(path: String) -> Error: ## Read contents from a FEZLVL file, an
 	if err_json != OK:
 		push_error("Couldn't load JSON. (error code: %s)" % error_string(err_json))
 		return err_json
+		
+	## Probably the world's dumbest way to do this. Oh well.
+	var calls = \
+		[
+		load_trileset,
+		place_triles,
+		place_aos,
+		place_bkgplns,
+		place_gomez,
+		place_npcs,
+		place_vols
+		]
+		
+	var args = \
+		[
+		Settings.dict["AssetDirs"][Settings.idx] + "trile sets/" + readLvl.data["TrileSetName"].to_lower() + ".fezts.glb",
+		readLvl.data["Triles"],
+		readLvl.data["ArtObjects"],
+		readLvl.data["BackgroundPlanes"],
+		readLvl.data["StartingPosition"],
+		readLvl.data["NonPlayerCharacters"],
+		readLvl.data["Volumes"]
+		]
 	
-	var err_ts = load_trileset(Settings.dict["AssetDirs"][Settings.idx] + "trile sets/" + readLvl.data["TrileSetName"].to_lower() + ".fezts.glb")
-	if err_ts != OK: return err_ts
-	
-	var err_aos = place_aos(Settings.dict["AssetDirs"][Settings.idx] + "art objects/", readLvl.data["ArtObjects"])
-	if err_aos != OK: return err_aos
-	
-	var err_trs = place_triles(readLvl.data["Triles"])
-	if err_trs != OK: return err_trs
-	
-	var err_gomez = place_gomez(readLvl.data["StartingPosition"])
-	if err_gomez != OK: return err_gomez
-	
+	for i in calls.size():
+		var err = calls[i].call(args[i])
+		if err != OK:
+			push_error("Error %s in function %s." % [error_string(err), calls[i]])
+			return err
 	return OK
 
 func fezlvl_close() -> void:
@@ -51,7 +72,8 @@ func fezlvl_close() -> void:
 	print("Closed level.")
 	pass
 
-func load_trileset(path: String) -> Error: ## Read a trileset from a path, and make it a child of the FEZLVL node.
+func load_trileset(path: String) -> Error:
+	 ## Read a trileset from a path, and make it a child of the FEZLVL node.
 	var gltf_document_load = GLTFDocument.new()
 	var gltf_state_load = GLTFState.new()
 	var err = gltf_document_load.append_from_file(path, gltf_state_load)
@@ -60,7 +82,7 @@ func load_trileset(path: String) -> Error: ## Read a trileset from a path, and m
 		return err
 	
 	var trileset: Node3D = gltf_document_load.generate_scene(gltf_state_load)
-	trileset.add_to_group("trileset")
+	trileset.add_to_group("TrileSet")
 	trileset.hide()
 	self.add_child(trileset) ### Add trileset as child of fezloader for easy access
 	
@@ -69,13 +91,20 @@ func load_trileset(path: String) -> Error: ## Read a trileset from a path, and m
 		var dictapp = {int(trile.get_meta("extras")["TrileId"]): trile}
 		idTable.merge(dictapp)
 	
+	## Change some material options to work better with the lighting
+	for trile in trileset.get_children():
+		if trile is MeshInstance3D:
+			var mat: StandardMaterial3D = trile.mesh.surface_get_material(0)
+			mat.emission_enabled = false
+			break
 	print("Loaded %d triles from trileset %s." % [trileset.get_child_count(), path.get_file()])
 	return OK
 
-func place_aos(path: String, ao_dict: Dictionary) -> Error: ## Place art objects specified in a dictionary as children of the Objects subnode.
+func place_aos(ao_dict: Dictionary) -> Error:
 	### AO_DICT is a dict that contains dicts with key names of a unique number,
 	### whose dicts should contain AO name, position, rotation, scale, and ActorSetting info.
 	### {"0" = ["Name", "Position", "Scale"] ...}
+	var path = Settings.dict["AssetDirs"][Settings.idx] + "art objects/"
 	for i in ao_dict:
 		var gltf_document_load = GLTFDocument.new()
 		var gltf_state_load = GLTFState.new()
@@ -89,45 +118,187 @@ func place_aos(path: String, ao_dict: Dictionary) -> Error: ## Place art objects
 		ao.scale = array_to_vec3(ao_dict[i]["Scale"])
 		ao.quaternion = array_to_quat(ao_dict[i]["Rotation"])
 		
-		ao.add_to_group("aos")
+		ao.add_to_group("ArtObjects")
 		add_child(ao)
 	
 	print("Placed %d AOs." % ao_dict.size())
 	return OK
 
-func place_triles(tr_arr: Array) -> Error: ## Place triles specified in an array.
-	### Unlike AOs, trile placements are specified in an array, which contains dicts of trile info.
-	### We have Emplacements, Position, Phi, Trile ID, and ActorSettings.
+func place_triles(tr_arr: Array) -> Error:
+	## Unlike AOs, trile placements are specified in an array, which contains dicts of trile info.
+	## tr_arr = [{Emplacement = [Vec3], Position = [Vec3], Phi = int from 0 to 3, TrileID = float, ActorSettings = {...}, ...]
+	## Triles have an offset of +0.5 on all axes.
 	for trile in tr_arr:
 		var found = idTable.get(int(trile["Id"]), null)
 		if found == null:
-			push_warning("Unknown or unmatched trile ID: %d" % trile["Id"])
+			push_warning("Unknown or unmatched trile ID: %d. Replacing with a placeholder trile." % trile["Id"])
+			## TODO: Place a placeholder trile (maybe black and white checkerboard?)
 			continue
 		
 		var tri: Node3D = found.duplicate()
 		tri.position = (array_to_vec3(trile["Position"]) + Vector3(0.5, 0.5, 0.5)) ### Triles are offset by 0.5 on all axis. 
 		tri.rotation_degrees = Vector3(0, (-180 + (trile["Phi"] * 90)), 0)
-		tri.add_to_group("triles")
+		tri.add_to_group("Triles")
 		tri.show()
 		add_child(tri)
 	
-	print("Places %d triles." % tr_arr.size())
-	
+	print("Placed %d triles." % tr_arr.size())
 	return OK
 
-func place_npcs() -> Error: ## TODO: NPC placement
-	return ERR_DOES_NOT_EXIST
+func place_bkgplns(bkgplns: Dictionary) -> Error:
+	## dict = {1 = {Position = [Vec3], Rotation = [Quat], Scale = [Vec3], Size = [Vec3], TextureName = String, ...}, ...}
+	## Background planes are PNGs that are visible only one way.
+	## We'll make a plane with the size and scale specified, then set its aldebo to the texture.
+	
+	## TODO: This is from old code. May need a rework.
+	for i in bkgplns:
+		# TODO: Handle subdirs, and other paths.
+		var path = Settings.dict["AssetDirs"][Settings.idx] + "background planes/" + bkgplns[i]["TextureName"].to_lower() + ".png"
+		var tex
+		var inst := MeshInstance3D.new()
+		inst.mesh = PlaneMesh.new()
+		var mat := _mat_bkg_pln.duplicate()
+		
+		if !FileAccess.file_exists(path): ## File is most likely a gif and not a png.
+			path = Settings.dict["AssetDirs"][Settings.idx] + "background planes/" + bkgplns[i]["TextureName"].to_lower() + ".gif"
+			if FileAccess.file_exists(path):
+				tex = GifManager.sprite_frames_from_file(path)
+				mat.albedo_texture = tex.get_frame_texture("gif", 0)
+			else:
+				tex = load("res://assets/missing/missing.png")
+				mat.albedo_texture = tex
+		else:
+			tex = ImageTexture.create_from_image(Image.load_from_file(path))
+			mat.albedo_texture = tex
+		
+		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.set_distance_fade(BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER)
+		mat.set_distance_fade_max_distance(3)
+		
+		inst.position = array_to_vec3(bkgplns[i]["Position"])
+		inst.quaternion = array_to_quat(bkgplns[i]["Rotation"])
+		inst.layers = 16
+		inst.set_surface_override_material(0, mat)
+		
+		## Make collision for cursor interaction
+		var ab = inst.get_aabb()
+		var cent = ab.get_center()
+		
+		var statBod = StaticBody3D.new()
+		var colBod = CollisionShape3D.new()
+		var colShape = BoxShape3D.new()
+		
+		colShape.size = ab.size
+		colBod.shape = colShape
+		
+		#statBod.set_script(click_script)
+		statBod.collision_layer = 16
+		statBod.position = cent
+		
+		statBod.call_deferred("add_child", colBod)
+		inst.add_child(statBod)
+		
+		## Do some funny stuff to the bkgpln, as seen in the wiki.
+		### I suppose the Trixel engine renders each bkgpln as a thin cube,
+		### with a defined width, height, and depth? Very strange...
+		inst.rotation_degrees.x += 90
+		
+		inst.scale = Vector3(bkgplns[i]["Size"][0] / 2, bkgplns[i]["Size"][2], bkgplns[i]["Size"][1] / 2)
+		
+		inst.add_to_group("BackgroundPlanes")
+		add_child(inst)
+	print("Placed %d background planes." % bkgplns.size())
+	return OK
+
+func place_vols(vols: Dictionary) -> Error:
+	## vols = {, ...}
+	# TODO: Add support for clicking these things.
+	var volCube := BoxMesh.new()
+	volCube.material = _mat_volumes
+	
+	for v in vols:
+		## Customize the volume mesh.
+		var volModel := MeshInstance3D.new()
+		volModel.mesh = volCube
+		volModel.set_layer_mask_value(1, false)
+		volModel.set_layer_mask_value(6, true)
+		
+		# Now, let's get the size of the volume and where to place it.
+		var current: Dictionary = vols[v]
+		var to: Vector3 = array_to_vec3(current["To"])
+		var from: Vector3 = array_to_vec3(current["From"])
+		
+		volModel.position = ((to + from) / 2) # Midpoint
+		volModel.scale = abs(to - from) # Abs. Difference
+		volModel.set_meta("Type", "Volume")
+		volModel.set_meta("Id", v)
+		volModel.add_to_group("Volumes")
+		
+		## Add mouse collision
+		var statBod = StaticBody3D.new()
+		var colBod = CollisionShape3D.new()
+		var colShape = BoxShape3D.new()
+		colBod.shape = colShape
+		
+		statBod.scale = volModel.scale
+		
+		#statBod.set_script(click_script)
+		statBod.collision_layer = 2
+		statBod.call_deferred("add_child", colBod)
+		
+		volModel.add_child(statBod)
+		volModel.add_to_group("Volumes")
+		add_child(volModel)
+	print("Placed %d volumes." % vols.size())
+	return OK
+
+func place_npcs(npcs: Dictionary) -> Error:
+	## npcs = {}
+	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations/"
+	for i in npcs:
+		## Get idle animation, or last animation if N/A.
+		var filename: String
+		if npcs[i]["Actions"].has("Idle"): filename = "idle.gif"
+		else: filename = npcs[i]["Actions"].keys()[-1].to_lower() + ".gif"
+		
+		## Set up instance and texture.
+		var inst: AnimatedSprite3D = _mat_npcs.instantiate()
+		
+		var tex = GifManager.sprite_frames_from_file(dir + npcs[i]["Name"].to_lower() + "/" + filename)
+		inst.sprite_frames = tex
+		
+		## Set up collisions for Cursor
+		var statBod = StaticBody3D.new()
+		var colBod = CollisionShape3D.new()
+		var colShape = SphereShape3D.new()
+		
+		#statBod.set_script(click_script)
+		statBod.collision_layer = 8
+		colShape.radius = 0.05
+		colBod.shape = colShape
+		
+		statBod.call_deferred("add_child", colBod)
+		inst.add_child(statBod)
+		
+		inst.position = Vector3(npcs[i]["Position"][0], npcs[i]["Position"][1], npcs[i]["Position"][2])
+		inst.layers = 8
+		
+		inst.set_meta("Type", "NPC")
+		inst.set_meta("Name", npcs[i]["Name"].capitalize())
+		inst.play("gif")
+		inst.add_to_group("NPCs")
+		
+		add_child(inst)
+	return OK
 
 func place_gomez(dict: Dictionary) -> Error: # Load in player start as Gomez, placed at level entrance.
 	## Set up his mesh and material.
-	var gomez = AnimatedSprite3D.new()
+	var gomez: AnimatedSprite3D = _mat_npcs.instantiate()
 	var dir = Settings.dict["AssetDirs"][Settings.idx] + "character animations/"
 	var tex = GifManager.sprite_frames_from_file(dir + "gomez/idlewink.gif")
 	
-	gomez.billboard     = BaseMaterial3D.BILLBOARD_FIXED_Y
 	gomez.sprite_frames = tex
-	gomez.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	gomez.scale = Vector3(5, 5, 5)
 	
 	## Set up simple collisions for the cursor
 	var statBod = StaticBody3D.new()

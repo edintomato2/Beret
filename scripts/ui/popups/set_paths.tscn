@@ -1,13 +1,14 @@
 [gd_scene load_steps=6 format=3 uid="uid://b6ks8iuocigav"]
 
-[ext_resource type="Script" uid="uid://jvwlrvnbuwao" path="res://ui/popups/set_paths.gd" id="1_uscpf"]
+[ext_resource type="Script" uid="uid://jvwlrvnbuwao" path="res://scripts/ui/popups/set_paths.gd" id="1_uscpf"]
 [ext_resource type="Texture2D" uid="uid://dwbicf3xmqxgd" path="res://ui/theming/starback.png" id="2_1o483"]
 [ext_resource type="Theme" uid="uid://cd7ntvqe12ygn" path="res://ui/theming/Main.tres" id="3_pwdo3"]
-[ext_resource type="Theme" uid="uid://cd3wy0ejn28l0" path="res://ui/popups/Popups.tres" id="4_jtps0"]
+[ext_resource type="Theme" uid="uid://cd3wy0ejn28l0" path="res://scripts/ui/popups/Popups.tres" id="4_jtps0"]
 
 [sub_resource type="Theme" id="Theme_x2ok3"]
 
 [node name="Set Paths" type="Window"]
+oversampling_override = 1.0
 title = "Set Asset Paths"
 initial_position = 1
 size = Vector2i(800, 500)

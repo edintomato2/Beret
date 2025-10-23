@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://d3o0m75clmq5a"]
+
+[resource]
+transparency = 1
+texture_filter = 0
+distance_fade_max_distance = 3.0
