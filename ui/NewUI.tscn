@@ -246,6 +246,11 @@ icon_mode = 0
 icon_scale = 2.5
 metadata/_tab_index = 0
 
+[node name="AOs" type="ItemList" parent="UI/UI Elements/VSplitContainer/Bottombar/Object Tabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
 [node name="Sounds" type="AudioStreamPlayer" parent="UI"]
 volume_db = -2.0
 script = ExtResource("8_mlaj1")
