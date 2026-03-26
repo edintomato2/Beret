@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dvki037st0vqu"]
+[gd_scene format=3 uid="uid://dvki037st0vqu"]
 
 [ext_resource type="Script" uid="uid://5fyt5kpdv52q" path="res://scripts/ui/select_box.gd" id="2_3gi0v"]
 [ext_resource type="Script" uid="uid://bki3a8v0ca5hq" path="res://scripts/ui/ui.gd" id="2_84d2t"]
@@ -38,12 +38,12 @@ _data = {
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_72b8f"]
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node" unique_id=123738675]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=438617562]
 environment = ExtResource("6_lovj8")
 
-[node name="UI" type="Control" parent="." node_paths=PackedStringArray("soundNode", "loaderNode", "editorNode")]
+[node name="UI" type="Control" parent="." unique_id=700741759 node_paths=PackedStringArray("soundNode", "loaderNode", "editorNode")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -55,20 +55,18 @@ soundNode = NodePath("Sounds")
 loaderNode = NodePath("../Loader")
 editorNode = NodePath("../Editor")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI" unique_id=444951740]
 root_node = NodePath("../UI Elements/VSplitContainer/HSplitContainer/Control/Loading")
-libraries = {
-&"": SubResource("AnimationLibrary_mm5ur"),
-&"ui_animations": ExtResource("4_ggqg0")
-}
+libraries/ = SubResource("AnimationLibrary_mm5ur")
+libraries/ui_animations = ExtResource("4_ggqg0")
 speed_scale = 3.0
 
-[node name="Popups" type="Node" parent="UI"]
+[node name="Popups" type="Node" parent="UI" unique_id=626549102]
 
-[node name="Set Paths" parent="UI/Popups" instance=ExtResource("3_rldmy")]
+[node name="Set Paths" parent="UI/Popups" unique_id=280490502 instance=ExtResource("3_rldmy")]
 visible = false
 
-[node name="Load File" type="FileDialog" parent="UI/Popups"]
+[node name="Load File" type="FileDialog" parent="UI/Popups" unique_id=209887534]
 auto_translate_mode = 1
 title = "Open a File"
 initial_position = 1
@@ -82,13 +80,13 @@ use_native_dialog = true
 script = ExtResource("5_ibrsc")
 RootDir = "levels"
 
-[node name="Save File" type="FileDialog" parent="UI/Popups"]
+[node name="Save File" type="FileDialog" parent="UI/Popups" unique_id=997956304]
 title = "Save FEZLVL as"
 dialog_hide_on_ok = true
 access = 2
 use_native_dialog = true
 
-[node name="Select Trileset" type="FileDialog" parent="UI/Popups"]
+[node name="Select Trileset" type="FileDialog" parent="UI/Popups" unique_id=1355049894]
 oversampling_override = 1.0
 title = "Select a Trileset"
 mode_overrides_title = false
@@ -98,7 +96,7 @@ use_native_dialog = true
 script = ExtResource("5_ibrsc")
 RootDir = "trile sets"
 
-[node name="UI Elements" type="VBoxContainer" parent="UI"]
+[node name="UI Elements" type="VBoxContainer" parent="UI" unique_id=2134567031]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -106,16 +104,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Topbar" type="HBoxContainer" parent="UI/UI Elements"]
+[node name="Topbar" type="HBoxContainer" parent="UI/UI Elements" unique_id=321570324]
 layout_mode = 2
 mouse_filter = 0
 
-[node name="Panel" type="Panel" parent="UI/UI Elements/Topbar"]
+[node name="Panel" type="Panel" parent="UI/UI Elements/Topbar" unique_id=106697345]
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="File" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+[node name="File" type="MenuButton" parent="UI/UI Elements/Topbar/Panel" unique_id=259054037]
 layout_mode = 0
 offset_left = 4.0
 offset_right = 39.0
@@ -124,7 +122,7 @@ text = "File"
 flat = false
 switch_on_hover = true
 
-[node name="Edit" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+[node name="Edit" type="MenuButton" parent="UI/UI Elements/Topbar/Panel" unique_id=768591054]
 layout_mode = 0
 offset_left = 43.0
 offset_right = 81.0
@@ -132,7 +130,7 @@ offset_bottom = 31.0
 text = "Edit"
 flat = false
 
-[node name="View" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+[node name="View" type="MenuButton" parent="UI/UI Elements/Topbar/Panel" unique_id=1676347004]
 layout_mode = 0
 offset_left = 85.0
 offset_right = 130.0
@@ -140,7 +138,7 @@ offset_bottom = 31.0
 text = "View"
 flat = false
 
-[node name="Jump" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+[node name="Jump" type="MenuButton" parent="UI/UI Elements/Topbar/Panel" unique_id=1809158144]
 layout_mode = 0
 offset_left = 134.0
 offset_right = 216.0
@@ -148,27 +146,27 @@ offset_bottom = 31.0
 text = "Jump to..."
 flat = false
 
-[node name="About" type="MenuButton" parent="UI/UI Elements/Topbar/Panel"]
+[node name="About" type="MenuButton" parent="UI/UI Elements/Topbar/Panel" unique_id=1827392300]
 layout_mode = 0
 offset_left = 220.0
 offset_right = 228.0
 offset_bottom = 31.0
 
-[node name="VSplitContainer" type="VSplitContainer" parent="UI/UI Elements"]
+[node name="VSplitContainer" type="VSplitContainer" parent="UI/UI Elements" unique_id=976278862]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSplitContainer" type="HSplitContainer" parent="UI/UI Elements/VSplitContainer"]
+[node name="HSplitContainer" type="HSplitContainer" parent="UI/UI Elements/VSplitContainer" unique_id=109884567]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="UI/UI Elements/VSplitContainer/HSplitContainer"]
+[node name="Control" type="Control" parent="UI/UI Elements/VSplitContainer/HSplitContainer" unique_id=743296158]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 1
 
-[node name="Console" type="RichTextLabel" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control"]
+[node name="Console" type="RichTextLabel" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control" unique_id=170433655]
 z_index = -2
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 1
@@ -186,7 +184,7 @@ scroll_active = false
 scroll_following = true
 shortcut_keys_enabled = false
 
-[node name="Select Box" type="Control" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control"]
+[node name="Select Box" type="Control" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control" unique_id=1431668080]
 z_index = 10
 z_as_relative = false
 layout_mode = 1
@@ -199,7 +197,7 @@ size_flags_vertical = 3
 mouse_filter = 1
 script = ExtResource("2_3gi0v")
 
-[node name="Loading" type="ColorRect" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control"]
+[node name="Loading" type="ColorRect" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Control" unique_id=985908108]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 3
@@ -216,27 +214,27 @@ grow_vertical = 0
 pivot_offset = Vector2(30, 30)
 color = Color(0.8352941, 0.05882353, 0.05882353, 1)
 
-[node name="Misc" type="PanelContainer" parent="UI/UI Elements/VSplitContainer/HSplitContainer"]
+[node name="Misc" type="PanelContainer" parent="UI/UI Elements/VSplitContainer/HSplitContainer" unique_id=412691898]
 layout_mode = 2
 
-[node name="Position" type="Label" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Misc"]
+[node name="Position" type="Label" parent="UI/UI Elements/VSplitContainer/HSplitContainer/Misc" unique_id=1140237008]
 layout_mode = 2
 size_flags_vertical = 8
 text = "0, 0, 0
 Facing: Front"
 horizontal_alignment = 1
 
-[node name="Bottombar" type="HBoxContainer" parent="UI/UI Elements/VSplitContainer"]
+[node name="Bottombar" type="HBoxContainer" parent="UI/UI Elements/VSplitContainer" unique_id=956729792]
 layout_mode = 2
 mouse_filter = 0
 
-[node name="Object Tabs" type="TabContainer" parent="UI/UI Elements/VSplitContainer/Bottombar"]
+[node name="Object Tabs" type="TabContainer" parent="UI/UI Elements/VSplitContainer/Bottombar" unique_id=474970256]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="Triles" type="ItemList" parent="UI/UI Elements/VSplitContainer/Bottombar/Object Tabs"]
+[node name="Triles" type="ItemList" parent="UI/UI Elements/VSplitContainer/Bottombar/Object Tabs" unique_id=607279449]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
@@ -246,12 +244,12 @@ icon_mode = 0
 icon_scale = 2.5
 metadata/_tab_index = 0
 
-[node name="AOs" type="ItemList" parent="UI/UI Elements/VSplitContainer/Bottombar/Object Tabs"]
+[node name="AOs" type="ItemList" parent="UI/UI Elements/VSplitContainer/Bottombar/Object Tabs" unique_id=1441291499]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Sounds" type="AudioStreamPlayer" parent="UI"]
+[node name="Sounds" type="AudioStreamPlayer" parent="UI" unique_id=318567915]
 volume_db = -2.0
 script = ExtResource("8_mlaj1")
 soundOK = ExtResource("9_rcp71")
@@ -261,27 +259,27 @@ soundRT = ExtResource("12_2hw4j")
 soundUp = ExtResource("13_5wyky")
 soundDown = ExtResource("14_fq35x")
 
-[node name="Loader" type="Node" parent="."]
+[node name="Loader" type="Node" parent="." unique_id=1154858709]
 script = ExtResource("6_sb3qw")
 
-[node name="Editor" type="Node3D" parent="." node_paths=PackedStringArray("soundNode")]
+[node name="Editor" type="Node3D" parent="." unique_id=747422615 node_paths=PackedStringArray("soundNode")]
 script = ExtResource("15_rcp71")
 soundNode = NodePath("../UI/Sounds")
 
-[node name="Pivot" type="Node3D" parent="Editor"]
+[node name="Pivot" type="Node3D" parent="Editor" unique_id=1773593752]
 
-[node name="Camera" type="Camera3D" parent="Editor/Pivot"]
+[node name="Camera" type="Camera3D" parent="Editor/Pivot" unique_id=1587062496]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 current = true
 size = 10.0
 
-[node name="Area3D" type="Area3D" parent="Editor"]
+[node name="Area3D" type="Area3D" parent="Editor" unique_id=171310293]
 top_level = true
 collision_mask = 30
 input_ray_pickable = false
 priority = 1
 
-[node name="Selection Shape" type="CollisionShape3D" parent="Editor/Area3D"]
+[node name="Selection Shape" type="CollisionShape3D" parent="Editor/Area3D" unique_id=266787533]
 shape = SubResource("BoxShape3D_72b8f")
 debug_fill = false
 
