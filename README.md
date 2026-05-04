@@ -1,3 +1,9 @@
+> [!WARNING]
+> This project is archived!
+> For a current level and asset editor for FEZ, please check out [FEZEditor](https://github.com/FEZModding/FEZEditor)!
+
+---
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/edintomato2/Beret/master/Assets/logo.png" width="500"/>
   <br>(logo by zeko)
